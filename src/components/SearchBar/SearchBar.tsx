@@ -1,4 +1,4 @@
-import { ItemMode, MODES } from '@/app/page';
+import { ItemMode, MODES } from '@/interfaces/ItemModes';
 import Delete from '../Icons/Delete';
 import Edit from '../Icons/Edit';
 import { SearchBarInput } from './SearchBar.style';

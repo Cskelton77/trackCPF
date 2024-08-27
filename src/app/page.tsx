@@ -4,13 +4,7 @@ import moment from 'moment';
 import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/components';
 import { DailyData } from '@/interfaces/DailyData';
 import getDailyData from '@/api/getDailyData';
-
-export enum MODES {
-  MANUAL = 'manual',
-  CALCULATE = 'calculate'
-} 
-
-export type ItemMode = MODES.MANUAL | MODES.CALCULATE | null
+import { ItemMode } from '@/interfaces/ItemModes';
 
 export default function Home() {
   const [dailyData, setDailyData] = useState<DailyData[]>([]);
