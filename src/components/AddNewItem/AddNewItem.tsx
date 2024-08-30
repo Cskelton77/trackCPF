@@ -104,7 +104,7 @@ const AddNewItem = ({
           <AttributeInput
             id="serving"
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             value={serving || ''}
             onChange={(e) => setServing(e.target.value)}
           />
@@ -115,7 +115,7 @@ const AddNewItem = ({
           <AttributeInput
             id="calories"
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             value={calories || ''}
             onChange={(e) => setCalories(e.target.value)}
           />
@@ -125,7 +125,7 @@ const AddNewItem = ({
           <AttributeInput
             id="protein"
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             value={protein || ''}
             onChange={(e) => setProtein(e.target.value)}
           />
@@ -135,7 +135,7 @@ const AddNewItem = ({
           <AttributeInput
             id="fibre"
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             value={fibre || ''}
             onChange={(e) => setFibre(e.target.value)}
           />
