@@ -28,7 +28,9 @@ const MainDisplay = ({
       <tbody>
         {data.length == 0 && (
           <tr>
-            <TableCell>No Data for Today Yet</TableCell>
+            <TableCell colSpan={5} style={{ textAlign: 'center' }}>
+              No Data for Today Yet
+            </TableCell>
           </tr>
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry }) => {

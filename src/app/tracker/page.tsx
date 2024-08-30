@@ -13,7 +13,8 @@ import { DEBUGMODE } from '@/config';
 export default function Home() {
   const router = useRouter();
 
-  const [uid, setUid] = useState<string>(localStorage?.getItem('uid') || 'ERROR');
+  const [uid, setUid] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
   const [displayDate, setDisplayDate] = useState(moment());
   const [searchValue, setSearchValue] = useState('');
@@ -41,20 +42,27 @@ export default function Home() {
     setDailyData(response);
   }
 
-  // Initial Load
+  // Initial Load to retreive UID & Email
   useEffect(() => {
     if (uid !== 'ERROR') {
-      fetchDaily();
+      setUid(localStorage.getItem('uid') || 'ERROR');
+      setEmail(localStorage.getItem('email') || 'ERROR');
     } else {
-      localStorage.removeItem('uid');
-      localStorage.removeItem('email');
-      router.push('/');
+      logout();
     }
   }, []);
 
+  // Use UID to pull daily data
   useEffect(() => {
-    fetchDaily();
-  }, [displayDate]);
+    console.log('fetchDaily updated uid', uid);
+    if (uid == 'ERROR') {
+      logout();
+    } else {
+      if (uid != '') {
+        fetchDaily();
+      }
+    }
+  }, [uid, displayDate]);
 
   // Search as typing happens
   useEffect(() => {
@@ -150,10 +158,11 @@ export default function Home() {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
+          paddingBottom: '6px',
           borderBottom: '1px solid #E0E0E0',
         }}
       >
-        User: {localStorage?.getItem('email')}
+        User: {email}
         <button onClick={logout}>Log Out</button>
       </div>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
