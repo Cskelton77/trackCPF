@@ -12,4 +12,5 @@ export const theme = {
   largeText: '36px',
   mediumText: '24px',
   smallText: '18px',
+  extraSmallText: '12px',
 };

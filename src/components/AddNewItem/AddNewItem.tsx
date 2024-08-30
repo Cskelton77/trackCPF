@@ -103,7 +103,8 @@ const AddNewItem = ({
         <EntryBox>
           <AttributeInput
             id="serving"
-            type="text"
+            type="number"
+            inputMode="numeric"
             value={serving || ''}
             onChange={(e) => setServing(e.target.value)}
           />
@@ -113,7 +114,8 @@ const AddNewItem = ({
         <EntryBox>
           <AttributeInput
             id="calories"
-            // type="number"
+            type="number"
+            inputMode="numeric"
             value={calories || ''}
             onChange={(e) => setCalories(e.target.value)}
           />
@@ -122,7 +124,8 @@ const AddNewItem = ({
         <EntryBox>
           <AttributeInput
             id="protein"
-            // type="number"
+            type="number"
+            inputMode="numeric"
             value={protein || ''}
             onChange={(e) => setProtein(e.target.value)}
           />
@@ -131,7 +134,8 @@ const AddNewItem = ({
         <EntryBox>
           <AttributeInput
             id="fibre"
-            // type="number"
+            type="number"
+            inputMode="numeric"
             value={fibre || ''}
             onChange={(e) => setFibre(e.target.value)}
           />
