@@ -142,7 +142,7 @@ const AddNewItem = ({
         <DiscardAction onClick={handleDiscard}>
           {isUpdateMode ? 'Discard Changes' : 'Discard'}
         </DiscardAction>
-        <SaveAction type={'submit'} disabled={serving == null}>
+        <SaveAction type={'submit'} disabled={serving == null || Number.isNaN(parseInt(serving))}>
           {isUpdateMode ? 'Update Entry' : 'Save'}
         </SaveAction>
       </Actions>
