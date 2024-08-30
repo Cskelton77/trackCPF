@@ -42,27 +42,27 @@ const AddNewItem = ({
   const isManualMode = mode === MODES.MANUAL;
   const isUpdateMode = mode === MODES.UPDATE;
 
-  const [calories, setCalories] = useState<NullableNumber>();
-  const [protein, setProtein] = useState<NullableNumber>();
-  const [fibre, setFibre] = useState<NullableNumber>();
-  const [serving, setServing] = useState<NullableNumber>();
+  const [calories, setCalories] = useState<string>();
+  const [protein, setProtein] = useState<string>();
+  const [fibre, setFibre] = useState<string>();
+  const [serving, setServing] = useState<string>();
 
   useEffect(() => {
     if (selectedFood) {
-      setCalories(selectedFood.calories);
-      setProtein(selectedFood.protein);
-      setFibre(selectedFood.fibre);
+      setCalories(selectedFood.calories?.toString());
+      setProtein(selectedFood.protein?.toString());
+      setFibre(selectedFood.fibre?.toString());
     }
     if (isUpdateMode) {
-      setServing(selectedFoodServing);
+      setServing(selectedFoodServing?.toString());
     }
   }, [selectedFood, isUpdateMode]);
 
   const resetForm = () => {
-    setCalories(null);
-    setProtein(null);
-    setFibre(null);
-    setServing(null);
+    setCalories(undefined);
+    setProtein(undefined);
+    setFibre(undefined);
+    setServing(undefined);
   };
   const handleDiscard = () => {
     resetForm();
@@ -71,7 +71,12 @@ const AddNewItem = ({
 
   const handleSubmit = () => {
     if (serving) {
-      handleSave(serving, calories || null, protein || null, fibre || null);
+      handleSave(
+        parseFloat(serving),
+        parseFloat(calories || ''),
+        parseFloat(protein || ''),
+        parseFloat(fibre || ''),
+      );
     }
     resetForm();
   };
@@ -98,9 +103,9 @@ const AddNewItem = ({
         <EntryBox>
           <AttributeInput
             id="serving"
-            type="number"
+            type="text"
             value={serving || ''}
-            onChange={(e) => setServing(parseInt(e.target.value))}
+            onChange={(e) => setServing(e.target.value)}
           />
           <TextDisplay>{isManualMode ? 'Serving' : 'grams'}</TextDisplay>
         </EntryBox>
@@ -108,27 +113,27 @@ const AddNewItem = ({
         <EntryBox>
           <AttributeInput
             id="calories"
-            type="number"
+            // type="number"
             value={calories || ''}
-            onChange={(e) => setCalories(parseInt(e.target.value))}
+            onChange={(e) => setCalories(e.target.value)}
           />
           <TextDisplay>Calories</TextDisplay>
         </EntryBox>
         <EntryBox>
           <AttributeInput
             id="protein"
-            type="number"
+            // type="number"
             value={protein || ''}
-            onChange={(e) => setProtein(parseInt(e.target.value))}
+            onChange={(e) => setProtein(e.target.value)}
           />
           <TextDisplay>Protein</TextDisplay>
         </EntryBox>
         <EntryBox>
           <AttributeInput
             id="fibre"
-            type="number"
+            // type="number"
             value={fibre || ''}
-            onChange={(e) => setFibre(parseInt(e.target.value))}
+            onChange={(e) => setFibre(e.target.value)}
           />
           <TextDisplay>Fibre</TextDisplay>
         </EntryBox>
