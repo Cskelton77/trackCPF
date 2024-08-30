@@ -1,6 +1,6 @@
 import { DiaryData } from '@/interfaces/DailyData';
 
-const postDiary = async ({uid, date, serving, isDirectEntry, isCompleteEntry, foodEntry}: Omit<DiaryData, 'did'>) => {
+const postDiary = async ({uid, date, serving, isDirectEntry, foodEntry}: Omit<DiaryData, 'did'>) => {
   const res = await fetch(`api/diary`, {
     method: 'POST',
     headers: {
@@ -11,7 +11,6 @@ const postDiary = async ({uid, date, serving, isDirectEntry, isCompleteEntry, fo
       date,
       serving,
       isDirectEntry,
-      isCompleteEntry,
       foodEntry: {
         name: foodEntry.name,
         calories: foodEntry.calories,

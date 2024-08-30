@@ -13,11 +13,11 @@ export async function POST(request: Request) {
   const foodEntry = JSON.stringify(body.foodEntry);
   const serving = body.serving;
   const isDirectEntry = body.isDirectEntry;
-  const isCompleteEntry = body.isCompleteEntry;
+  const timestamp = Date.now()
 
   const data = await sql<DiaryData>`
-          INSERT INTO diary(did, uid, date, serving, "foodEntry", "isDirectEntry", "isCompleteEntry") 
-          VALUES (${did}, ${uid}, ${date}, ${serving},${foodEntry}, ${isDirectEntry}, ${isCompleteEntry});`;
+          INSERT INTO diary(did, uid, date, serving, "foodEntry", "isDirectEntry", timestamp) 
+          VALUES (${did}, ${uid}, ${date}, ${serving},${foodEntry}, ${isDirectEntry}, ${timestamp});`;
   return new Response('201');
 }
 
@@ -30,6 +30,7 @@ export async function GET(request: Request) {
         FROM diary
         WHERE uid like ${user}
         AND date::text like ${date}
+        ORDER BY timestamp ASC
         `;
 
   const filteredJunk: DiaryData[] = [];
@@ -65,7 +66,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const did = searchParams.get('did');
-  const data = await sql`
+  const data = await sql<DiaryData>`
       DELETE FROM diary
       WHERE did like ${did}
       RETURNING *`;

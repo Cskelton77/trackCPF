@@ -1,0 +1,16 @@
+import styled from 'styled-components';
+import { theme } from '@/theme';
+export const LoginHeader = styled.h1`
+  text-align: center;
+`;
+
+export const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const EmailForm = styled.input`
+  height: 36px;
+  padding: ${theme.inputPadding};
+  margin: ${theme.layoutPadding};
+`;

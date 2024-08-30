@@ -1,6 +1,7 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import Delete from '../Icons/Delete';
 import { FoodObject } from '@/interfaces/FoodObject';
+import { MainDisplayTable, TableCell } from './MainDisplay.style';
 
 export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
@@ -11,15 +12,10 @@ const MainDisplay = ({
 }: {
   data: DiaryData[];
   deleteEntry: (diaryId: string) => Promise<void>;
-  modifyEntry: (
-    diaryId: string,
-    currentServing: number,
-    update: FoodObject,
-  ) => Promise<void>;
+  modifyEntry: (diaryId: string, currentServing: number, update: FoodObject) => Promise<void>;
 }) => {
-
   return (
-    <table>
+    <MainDisplayTable>
       <thead>
         <tr>
           <th>Item Name</th>
@@ -31,12 +27,12 @@ const MainDisplay = ({
       </thead>
       <tbody>
         {data.length == 0 && (
-            <tr>
-                <td>No Data for Today Yet</td>
-            </tr>
+          <tr>
+            <TableCell>No Data for Today Yet</TableCell>
+          </tr>
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
-          const servingDivider = (isDirectEntry ? 1 : serving/100);
+          const servingDivider = isDirectEntry ? 1 : serving / 100;
           const calculateDisplay = (metric: number | undefined): string =>
             metric == null ? '--' : roundDisplay(metric * servingDivider).toString();
 
@@ -44,22 +40,30 @@ const MainDisplay = ({
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
 
           return (
-            <tr key={name} onClick={isDirectEntry? undefined : () => modifyEntry(did, serving, foodEntry)}>
-              <td>{name}</td>
-              <td>
+            <tr
+              key={name}
+              onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
+            >
+              <TableCell>{name}</TableCell>
+              <TableCell>
                 {serving} {unit}
-              </td>
-              <td>{calculateDisplay(calories)}</td>
-              <td>{calculateDisplay(protein)}</td>
-              <td>{calculateDisplay(fibre)}</td>
-              <td onClick={(e) => { e.stopPropagation(); deleteEntry(did);}}>
-                <Delete size={24}  />
-              </td>
+              </TableCell>
+              <TableCell>{calculateDisplay(calories)}</TableCell>
+              <TableCell>{calculateDisplay(protein)}g</TableCell>
+              <TableCell>{calculateDisplay(fibre)}g</TableCell>
+              <TableCell
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteEntry(did);
+                }}
+              >
+                <Delete size={24} />
+              </TableCell>
             </tr>
           );
         })}
       </tbody>
-    </table>
+    </MainDisplayTable>
   );
 };
 

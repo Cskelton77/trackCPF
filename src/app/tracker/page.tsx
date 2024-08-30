@@ -9,7 +9,7 @@ import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 
-export const DEBUGMODE = true;
+export const DEBUGMODE = false;
 
 export default function Home() {
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function Home() {
 
     if (isCompleteEntry && !isManualMode) {
       // Save full nutritional data per 100g'
-      await postFood('01', {
+      await postFood(uid, {
         name: searchValue,
         calories: calories,
         protein: protein,
@@ -110,7 +110,6 @@ export default function Home() {
         date: moment(displayDate).format('YYYY-MM-DD'),
         serving: serving || 0,
         isDirectEntry: isManualMode,
-        isCompleteEntry: isCompleteEntry,
         foodEntry: {
           name: searchValue,
           calories: calories as number,
@@ -148,7 +147,13 @@ export default function Home() {
   };
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #E0E0E0',
+        }}
+      >
         User: {localStorage.getItem('email')}
         <button onClick={logout}>Log Out</button>
       </div>
@@ -174,7 +179,7 @@ export default function Home() {
         response={searchResponse}
         addNewItem={setShowAddNewItem}
         setSelectedFood={setSelectedFood}
-        handleDelete={handleDeleteFoodEntry}
+        deleteFoodItem={handleDeleteFoodEntry}
       />
       <Summary data={dailyData} />
 

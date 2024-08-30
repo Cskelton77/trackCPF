@@ -40,17 +40,18 @@ export async function DELETE(request: Request) {
   const email = searchParams.get('email');
   const uid = searchParams.get('uid');
   if (email) {
-    const data = await sql`
+    const data = await sql<Users>`
         DELETE FROM users
         WHERE email like ${email}
-        RETURNING *`;
+        RETURNING *
+        `;
     if (data.rowCount !== 1) {
       return new Response('500');
     }
     return new Response('204');
   }
   if (uid) {
-    const data = await sql`
+    const data = await sql<Users>`
         DELETE FROM users
         WHERE uid like ${uid}
         RETURNING *`;
