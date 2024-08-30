@@ -10,4 +10,6 @@ export const theme = {
   inputPadding: '6px',
 
   largeText: '36px',
+  mediumText: '24px',
+  smallText: '18px',
 };
