@@ -13,7 +13,7 @@ import { DEBUGMODE } from '@/config';
 export default function Home() {
   const router = useRouter();
 
-  const [uid, setUid] = useState<string>(localStorage.getItem('uid') || 'ERROR');
+  const [uid, setUid] = useState<string>(localStorage?.getItem('uid') || 'ERROR');
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
   const [displayDate, setDisplayDate] = useState(moment());
   const [searchValue, setSearchValue] = useState('');
@@ -153,7 +153,7 @@ export default function Home() {
           borderBottom: '1px solid #E0E0E0',
         }}
       >
-        User: {localStorage.getItem('email')}
+        User: {localStorage?.getItem('email')}
         <button onClick={logout}>Log Out</button>
       </div>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
