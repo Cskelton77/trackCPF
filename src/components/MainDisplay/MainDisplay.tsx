@@ -30,8 +30,13 @@ const MainDisplay = ({
         </tr>
       </thead>
       <tbody>
-        {data.map(({ did, serving, isDirectEntry, isCompleteEntry, foodEntry }) => {
-          const servingDivider = (isDirectEntry ? 1 : serving) / 100;
+        {data.length == 0 && (
+            <tr>
+                <td>No Data for Today Yet</td>
+            </tr>
+        )}
+        {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
+          const servingDivider = (isDirectEntry ? 1 : serving/100);
           const calculateDisplay = (metric: number | undefined): string =>
             metric == null ? '--' : roundDisplay(metric * servingDivider).toString();
 

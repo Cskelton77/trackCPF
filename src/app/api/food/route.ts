@@ -28,7 +28,6 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const user = searchParams.get('user');
   const query = searchParams.get('q');
-  console.log('query', query);
   const data = await sql`
     SELECT foodobject
     FROM fooddatabase
@@ -37,14 +36,11 @@ export async function GET(request: Request) {
   const listOfFoods: FoodObject[] = [];
   data.rows.forEach((row) => {
     const rowName = row.foodobject.name.toLowerCase();
-    const queryLower = query?.toLowerCase() || ''
-    console.log('row',row);
-    console.log('queryLower',queryLower);
+    const queryLower = query?.toLowerCase() || '';
     if (query && rowName.includes(queryLower)) {
       listOfFoods.push(row.foodobject);
     }
   });
-//   console.log(listOfFoods);
   return Response.json(listOfFoods);
 }
 

@@ -20,7 +20,6 @@ const SearchBar = ({ value, setValue, response, addNewItem, setSelectedFood, han
   const [showDropdown, setShowDropdown] = useState(false);
 
   const addExistingFoodItem = (response: FoodObject) => {
-    console.log('addExistingFoodItem')
     setSelectedFood(response)
     addNewItem(MODES.CALCULATE)
   }

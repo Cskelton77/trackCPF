@@ -1,33 +1,39 @@
-import moment, { Moment } from 'moment'
-import ChevronLeft from '../Icons/Chevron-Left'
-import ChevronRight from '../Icons/Chevron-Right'
-import { DatePickerWrapper, DateSelector, YearWrapper } from './DatePicker.style'
+import moment, { Moment } from 'moment';
+import ChevronLeft from '../Icons/Chevron-Left';
+import ChevronRight from '../Icons/Chevron-Right';
+import { DatePickerWrapper, DateSelector, YearWrapper } from './DatePicker.style';
 
 interface DatePicker {
-    date: Moment
+  date: Moment;
+  setDisplayDate: (date: Moment) => void;
 }
 
-const DatePicker = ({date}: DatePicker) => {
-
-    const handleDateChange = () => {
-        // console.log('date', date)
+const DatePicker = ({ date, setDisplayDate }: DatePicker) => {
+  const handleDateChange = (dir: string) => {
+    if (dir == 'back') {
+      const yesterday = date.clone().subtract(1, 'day');
+      setDisplayDate(yesterday);
+    } else {
+      const tomorrow = date.clone().add(1, 'day');
+      const isTomorrowTheFuture = moment(tomorrow).isAfter(moment(), 'day');
+      if (!isTomorrowTheFuture) {
+        setDisplayDate(tomorrow);
+      }
     }
+  };
 
-    
-    const formatDate = (date: Moment) => moment(date).format('MMM Do');
+  const formatDate = (date: Moment) => moment(date).format('MMM Do');
 
-    return (
-        <DatePickerWrapper>  
-            <DateSelector>
-                <ChevronLeft size={48} onClick={handleDateChange} />
-                {formatDate(date)}
-                <ChevronRight size={48} onClick={handleDateChange} />
-            </DateSelector>
-            <YearWrapper>
-                {moment(date).format('yyyy')}
-            </YearWrapper>
-        </DatePickerWrapper>
-    )
-}
+  return (
+    <DatePickerWrapper>
+      <DateSelector>
+        <ChevronLeft size={48} onClick={() => handleDateChange('back')} />
+        {formatDate(date)}
+        <ChevronRight size={48} onClick={() => handleDateChange('fwd')} />
+      </DateSelector>
+      <YearWrapper>{moment(date).format('yyyy')}</YearWrapper>
+    </DatePickerWrapper>
+  );
+};
 
-export default DatePicker
+export default DatePicker;

@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
-import { DEBUGMODE } from '@/app/page';
+import { DEBUGMODE } from '@/app/tracker/page';
 
 interface AddNewItem {
   name: string;
@@ -48,7 +48,6 @@ const AddNewItem = ({
   const [serving, setServing] = useState<NullableNumber>();
 
   useEffect(() => {
-    console.log('useEffect AddNewItem');
     if (selectedFood) {
       setCalories(selectedFood.calories);
       setProtein(selectedFood.protein);
@@ -60,7 +59,6 @@ const AddNewItem = ({
   }, [selectedFood, isUpdateMode]);
 
   const resetForm = () => {
-    console.log('clear form');
     setCalories(null);
     setProtein(null);
     setFibre(null);
@@ -79,7 +77,6 @@ const AddNewItem = ({
   };
 
   const getTitle = () => {
-    console.log(mode);
     switch (mode) {
       case MODES.MANUAL:
         return `New Entry: ${name}`;
