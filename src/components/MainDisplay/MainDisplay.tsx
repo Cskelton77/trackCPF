@@ -34,12 +34,13 @@ const MainDisplay = ({
           </tr>
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
-          const servingDivider = isDirectEntry ? 1 : serving / 100;
+          const denominator = isDirectEntry ? 1 : 100;
           const calculateDisplay = (metric: number | undefined): string =>
-            metric == null ? '--' : roundDisplay(metric * servingDivider).toString();
+            metric == null ? '--' : roundDisplay((serving * metric) / denominator).toString();
 
           const { name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
+          console.log('serving', serving, calories);
 
           return (
             <tr

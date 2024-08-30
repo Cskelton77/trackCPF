@@ -12,7 +12,7 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
     return data.reduce(
       (runningTotal, { serving, isDirectEntry, foodEntry: { [toSum]: metric } }) => {
         if (metric) {
-          const denominator = isDirectEntry ? serving : 100;
+          const denominator = isDirectEntry ? 1 : 100;
           const calculatedCalories = (serving * metric) / denominator;
           return runningTotal + calculatedCalories;
         }
