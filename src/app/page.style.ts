@@ -14,3 +14,8 @@ export const EmailForm = styled.input`
   padding: ${theme.inputPadding};
   margin: ${theme.layoutPadding};
 `;
+
+export const LoginButton = styled.button`
+  margin: 0 24px;
+  height: 48px;
+`;

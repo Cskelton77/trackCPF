@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { postUser } from '@/api/users';
 import { FormEvent, useEffect, useState } from 'react';
-import { EmailForm, LoginForm, LoginHeader } from './page.style';
+import { EmailForm, LoginButton, LoginForm, LoginHeader } from './page.style';
 
 export default function Page() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function Page() {
           onChange={(e) => setUserEmail(e.target.value)}
           placeholder="Please enter your email"
         />
-        <button type="submit">Log In</button>
+        <LoginButton type="submit">Log In</LoginButton>
       </LoginForm>
       {errorState && <h3>Sorry, something has gone wrong with your log in.</h3>}
     </>

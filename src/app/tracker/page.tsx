@@ -150,7 +150,7 @@ export default function Home() {
   const logout = () => {
     localStorage.removeItem('uid');
     localStorage.removeItem('email');
-    router.push('/tracker/');
+    router.push('/');
   };
   return (
     <>
@@ -163,7 +163,7 @@ export default function Home() {
         }}
       >
         User: {email}
-        <button onClick={logout}>Log Out</button>
+        <button onClick={() => logout()}>Log Out</button>
       </div>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
       <MainDisplay
