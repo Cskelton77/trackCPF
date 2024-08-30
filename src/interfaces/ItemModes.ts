@@ -1,6 +1,9 @@
 export enum MODES {
     MANUAL = 'manual',
-    CALCULATE = 'calculate'
+    CALCULATE = 'calculate',
+    UPDATE = 'update'
   } 
   
-  export type ItemMode = MODES.MANUAL | MODES.CALCULATE | null
+  export type ItemMode = MODES.MANUAL | MODES.CALCULATE | MODES.UPDATE | null
+
+  export type NullableNumber = number | null

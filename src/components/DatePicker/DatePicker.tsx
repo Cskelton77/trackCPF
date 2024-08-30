@@ -10,7 +10,7 @@ interface DatePicker {
 const DatePicker = ({date}: DatePicker) => {
 
     const handleDateChange = () => {
-        console.log('date', date)
+        // console.log('date', date)
     }
 
     

@@ -1,5 +1,7 @@
 export interface IconProps {
     style?: Object,
     size?: number,
-    onClick?: () => void
+    // onClick?: ((e: Event) => void) | (() => void)
+    onClick?: () => void | ((e: Event) => void)
+
 }

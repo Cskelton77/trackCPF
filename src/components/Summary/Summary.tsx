@@ -1,17 +1,21 @@
-import { DailyData } from '@/interfaces/DailyData';
+import { DiaryData } from '@/interfaces/DailyData';
 import { roundDisplay } from '../MainDisplay/MainDisplay';
 
-const Summary = ({ data }: { data: DailyData[] }) => {
+
+const fibreGoal = 30;
+const proteinGoal = 45;
+
+const Summary = ({ data }: { data: DiaryData[] }) => {
 
     const calorieTotal = data.reduce(
-    (runningTotal, nextEntry) => runningTotal + (nextEntry.calories * (nextEntry.isDirectEntry ? 1 : nextEntry.serving)/100),
+    (runningTotal, nextEntry) => runningTotal + (nextEntry.foodEntry.calories  || 0 * (nextEntry.isDirectEntry ? 1 : nextEntry.serving)/100),
     0,
   );
   const proteinTotal = data.reduce(
-    (runningTotal, nextEntry) => runningTotal + (nextEntry.protein * (nextEntry.isDirectEntry ? 1 : nextEntry.serving)/100),
+    (runningTotal, nextEntry) => runningTotal + (nextEntry.foodEntry.protein || 0 * (nextEntry.isDirectEntry ? 1 : nextEntry.serving)/100),
     0,
   );
-  const fibreTotal = data.reduce((runningTotal, nextEntry) => runningTotal + (nextEntry.fibre * (nextEntry.isDirectEntry ? 1 : nextEntry.serving)/100), 0);
+  const fibreTotal = data.reduce((runningTotal, nextEntry) => runningTotal + (nextEntry.foodEntry.fibre || 0 * (nextEntry.isDirectEntry ? 1 : nextEntry.serving)/100), 0);
 
   return (
     <table>

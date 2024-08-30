@@ -1,0 +1,27 @@
+import { DiaryData } from '@/interfaces/DailyData';
+
+const postDiary = async ({uid, date, serving, isDirectEntry, isCompleteEntry, foodEntry}: Omit<DiaryData, 'did'>) => {
+  const res = await fetch(`api/diary`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      user: uid,
+      date,
+      serving,
+      isDirectEntry,
+      isCompleteEntry,
+      foodEntry: {
+        name: foodEntry.name,
+        calories: foodEntry.calories,
+        protein: foodEntry.protein,
+        fibre: foodEntry.fibre,
+      },
+    }),
+  });
+  const response = await res.json();
+  return response;
+};
+
+export default postDiary;

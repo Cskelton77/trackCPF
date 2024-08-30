@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const NewItemModal = styled.div`
+export const NewItemModal = styled.form`
   display: flex;
   align-self: center;
   flex-direction: column;
@@ -10,12 +10,14 @@ export const NewItemModal = styled.div`
   height: 100%;
   top: 0;
   padding: 25px;
+  color: #000;
 `;
 
 export const ItemName = styled.div`
   align-self: center;
   border: 1px solid grey;
   padding: 12px;
+
 `;
 
 export const ItemAttributes = styled.div`
@@ -27,6 +29,8 @@ export const EntryBox = styled.div`
   display: flex;
   align-items: center;
   padding: 4px;
+  color: #000,
+
 `;
 export const AttributeInput = styled.input`
   height: 36px;
@@ -57,6 +61,6 @@ export const DiscardAction = styled(Action)`
   background-color: #ca7068;
 `;
 
-export const SaveAction = styled(Action)`
+export const SaveAction = styled.button`
   background-color: #6c824e;
 `;

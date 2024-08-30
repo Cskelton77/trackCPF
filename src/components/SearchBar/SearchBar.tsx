@@ -3,34 +3,66 @@ import Delete from '../Icons/Delete';
 import Edit from '../Icons/Edit';
 import { SearchBarInput } from './SearchBar.style';
 import styled from 'styled-components';
+import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { deleteFood } from '@/api/food';
+import { useState } from 'react';
 
 interface SearchBar {
   value: string;
   setValue: (val: string) => void;
-  response: string[];
+  response: DefinedFoodObject[];
   addNewItem: (mode: ItemMode) => void;
+  setSelectedFood: (food: FoodObject) => void;
+  handleDelete: (foodId: string) => void;
 }
 
-const SearchBar = ({ value, setValue, response, addNewItem }: SearchBar) => {
+const SearchBar = ({ value, setValue, response, addNewItem, setSelectedFood, handleDelete }: SearchBar) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const addExistingFoodItem = (response: FoodObject) => {
+    console.log('addExistingFoodItem')
+    setSelectedFood(response)
+    addNewItem(MODES.CALCULATE)
+  }
+
+  const handleBlur = ()=> {
+    setTimeout(() => {
+        setShowDropdown(false)
+    }, 150)
+  }
   return (
     <>
-      <SearchBarInput value={value} onChange={(e) => setValue(e.target.value)} />
-      <ResponseDropdown>
-        {value && <ResponseRow onClick={()=> addNewItem(MODES.CALCULATE)}>Add {value} (p/100g)</ResponseRow>}
-        {value && <ResponseRow onClick={()=> addNewItem(MODES.MANUAL)}>Add {value} (p/serving)</ResponseRow>}
-        {response.map((response) => {
-          console.log('response', response);
-          return (
-            <ResponseRow key={response}>
-              {response}
-              <ActionBlock>
-                <Edit size={24} />
-                <Delete  size={24}/>
-              </ActionBlock>
+      <SearchBarInput
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => handleBlur()}
+      />
+      {showDropdown && (
+        <ResponseDropdown>
+          {value && (
+            <ResponseRow onClick={() => addNewItem(MODES.CALCULATE)}>
+              Add {value} (p/100g)
             </ResponseRow>
-          );
-        })}
-      </ResponseDropdown>
+          )}
+          {value && (
+            <ResponseRow onClick={() => addNewItem(MODES.MANUAL)}>
+              Add {value} (p/serving)
+            </ResponseRow>
+          )}
+          {response.map((response) => {
+            return (
+              <ResponseRow key={response.fid} onClick={()=> addExistingFoodItem(response)}>
+                {response.name}
+                <ActionBlock>
+                  <Edit size={24} />
+                  <Delete size={24} onClick={() => handleDelete(response.fid)} />
+                </ActionBlock>
+              </ResponseRow>
+            );
+          })}
+        </ResponseDropdown>
+      )}
     </>
   );
 };
