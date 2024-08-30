@@ -18,9 +18,9 @@ const MainDisplay = ({
     <MainDisplayTable>
       <thead>
         <tr>
-          <th>Item Name</th>
+          <th>Item</th>
           <th>Serving</th>
-          <th>Calories</th>
+          <th>Cal</th>
           <th>Protein</th>
           <th>Fibre</th>
         </tr>

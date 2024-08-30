@@ -1,11 +1,12 @@
+import { theme } from '@/theme';
 import styled from 'styled-components';
 
 export const SearchBarInput = styled.input`
   width: 100%;
   height: 36px;
-  font-size: 24px;
+  font-size: ${theme.mediumText};
   border-radius: 12px;
-  padding: 6px;
+  padding: ${theme.inputPadding};
 `;
 
 export const ResponseDropdown = styled.div`
@@ -19,10 +20,10 @@ export const ResponseRow = styled.div`
   cursor: 'pointer';
   width: 100%;
   height: 36px;
-  font-size: 18px;
-  padding: 6px;
-  color: #000;
-  //   background-color: #fee;
+  font-size: ${theme.smallText};
+  padding: ${theme.inputPadding};
+  color: ${theme.colours.black};
+  background-color: ${theme.colours.lightGrey};
   border-left: 1px solid black;
   border-right: 1px solid black;
   border-bottom: 1px solid black;
