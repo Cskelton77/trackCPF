@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
-import { DEBUGMODE } from '@/app/tracker/page';
+import { DEBUGMODE } from '@/config';
 
 interface AddNewItem {
   name: string;

@@ -8,8 +8,7 @@ import { deleteFood, getFood, postFood } from '@/api/food';
 import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
-
-export const DEBUGMODE = false;
+import { DEBUGMODE } from '@/config';
 
 export default function Home() {
   const router = useRouter();
