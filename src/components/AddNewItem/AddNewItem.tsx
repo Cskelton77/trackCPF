@@ -23,6 +23,7 @@ interface AddNewItem {
   isVisible: boolean;
   mode: ItemMode;
   handleSave: (
+    name: string,
     serving: number,
     calories: NullableNumber,
     protein: NullableNumber,
@@ -72,6 +73,7 @@ const AddNewItem = ({
   const handleSubmit = () => {
     if (serving) {
       handleSave(
+        selectedFood?.name || name,
         parseFloat(serving),
         parseFloat(calories || ''),
         parseFloat(protein || ''),
@@ -86,7 +88,7 @@ const AddNewItem = ({
       case MODES.MANUAL:
         return `New Entry: ${name}`;
       case MODES.CALCULATE:
-        return `New Item: ${name}`;
+        return `New Item: ${selectedFood?.name || name}`;
       case MODES.UPDATE:
         return `Update Entry: ${selectedFood?.name}`;
       default:

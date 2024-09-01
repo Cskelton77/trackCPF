@@ -20,12 +20,14 @@ export async function POST(request: Request) {
       LIMIT 1`;
 
   if (data.rowCount !== 1) {
-    const uid = uuidv4();
-    const data = await sql<Users>`
-        INSERT INTO users(email, uid) 
-        VALUES (${email}, ${uid})
-        RETURNING *;`;
-    return Response.json(data.rows[0].uid);
+    // NO NEW ACCOUNTS!
+    return new Response('500');
+    // const uid = uuidv4();
+    // const data = await sql<Users>`
+    //     INSERT INTO users(email, uid)
+    //     VALUES (${email}, ${uid})
+    //     RETURNING *;`;
+    // return Response.json(data.rows[0].uid);
   }
 
   return Response.json(data.rows[0].uid);

@@ -80,6 +80,7 @@ export default function Home() {
   };
 
   const handleSaveDiaryEntry = async (
+    name: string,
     serving: number,
     calories: NullableNumber,
     protein: NullableNumber,
@@ -88,10 +89,10 @@ export default function Home() {
     const isCompleteEntry = !!calories && !!protein && !!fibre;
     const isManualMode = showAddNewItem === MODES.MANUAL;
 
-    if (isCompleteEntry && !isManualMode) {
+    if (isCompleteEntry && !isManualMode && !selectedFood) {
       // Save full nutritional data per 100g'
       await postFood(uid, {
-        name: searchValue,
+        name: name,
         calories: calories,
         protein: protein,
         fibre: fibre,
@@ -118,7 +119,7 @@ export default function Home() {
         serving: serving || 0,
         isDirectEntry: isManualMode,
         foodEntry: {
-          name: searchValue,
+          name: name,
           calories: calories as number,
           protein: protein as number,
           fibre: fibre as number,
