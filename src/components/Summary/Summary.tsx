@@ -16,7 +16,11 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
           const calculatedCalories = (serving * metric) / denominator;
           return runningTotal + calculatedCalories;
         }
-        skippedEntry = true;
+        if (metric == null) {
+          // Want to alert the user if there is a partial entry,
+          // but not if the entry is just 0
+          skippedEntry = true;
+        }
         return runningTotal + 0;
       },
       0,
