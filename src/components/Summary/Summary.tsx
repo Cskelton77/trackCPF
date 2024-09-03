@@ -1,6 +1,7 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import { roundDisplay } from '../MainDisplay/MainDisplay';
 import { SkipWarning, SummaryTable } from './Summary.style';
+import { useEffect } from 'react';
 
 const fibreGoal = 30;
 const proteinGoal = 45;
@@ -31,6 +32,17 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
   const proteinTotal = sum('protein');
   const fibreTotal = sum('fibre');
 
+  const drawRing = () => {
+    const canvas = document.getElementById('myRing') as HTMLCanvasElement;
+    const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
+
+    ctx.beginPath();
+    ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+    ctx.stroke();
+  };
+  useEffect(() => {
+    drawRing();
+  }, []);
   return (
     <SummaryTable>
       <tbody>
@@ -50,6 +62,7 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
           </tr>
         )}
       </tbody>
+      <div id="myRing"></div>
     </SummaryTable>
   );
 };

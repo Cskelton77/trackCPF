@@ -9,3 +9,5 @@ export const SummaryTable = styled.table`
 export const SkipWarning = styled.td`
   font-size: ${theme.extraSmallText};
 `;
+
+export const calorieBar = styled.div``;
