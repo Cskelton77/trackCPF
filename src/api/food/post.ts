@@ -1,13 +1,13 @@
 import { FoodObject } from "@/interfaces/FoodObject";
 
-const postFood = async (uuid: string, food: FoodObject) => {
+const postFood = async (uid: string, food: FoodObject) => {
   const res = await fetch(`api/food`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      user: uuid,
+      user: uid,
       food: {
         name: food.name,
         calories: food.calories,
@@ -17,7 +17,7 @@ const postFood = async (uuid: string, food: FoodObject) => {
     }),
   });
   const response = await res.json();
-  return response
+  return response;
 };
 
 export default postFood;

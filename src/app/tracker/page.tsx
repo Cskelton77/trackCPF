@@ -86,11 +86,17 @@ export default function Home() {
     protein: NullableNumber,
     fibre: NullableNumber,
   ) => {
-    const isCompleteEntry = !!calories && !!protein && !!fibre;
+    console.log('protein', protein);
+    const isCompleteEntry = !(
+      Number.isNaN(calories) ||
+      Number.isNaN(protein) ||
+      Number.isNaN(fibre)
+    );
     const isManualMode = showAddNewItem === MODES.MANUAL;
-
+    console.log('save diary entry', isCompleteEntry);
     if (isCompleteEntry && !isManualMode && !selectedFood) {
       // Save full nutritional data per 100g'
+      console.log('save new food item');
       await postFood(uid, {
         name: name,
         calories: calories,
