@@ -40,7 +40,6 @@ const MainDisplay = ({
 
           const { name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
-          console.log('serving', serving, calories);
 
           return (
             <tr

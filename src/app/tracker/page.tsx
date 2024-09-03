@@ -54,7 +54,6 @@ export default function Home() {
 
   // Use UID to pull daily data
   useEffect(() => {
-    console.log('fetchDaily updated uid', uid);
     if (uid == 'ERROR') {
       logout();
     } else {
@@ -86,16 +85,19 @@ export default function Home() {
     protein: NullableNumber,
     fibre: NullableNumber,
   ) => {
-    const isCompleteEntry = !!calories && !!protein && !!fibre;
+    const isCompleteEntry = !(
+      Number.isNaN(calories) ||
+      Number.isNaN(protein) ||
+      Number.isNaN(fibre)
+    );
     const isManualMode = showAddNewItem === MODES.MANUAL;
-
     if (isCompleteEntry && !isManualMode && !selectedFood) {
       // Save full nutritional data per 100g'
       await postFood(uid, {
         name: name,
-        calories: calories,
-        protein: protein,
-        fibre: fibre,
+        calories: calories as number,
+        protein: protein as number,
+        fibre: fibre as number,
       });
     }
 
