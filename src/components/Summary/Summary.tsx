@@ -1,12 +1,18 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import { roundDisplay } from '../MainDisplay/MainDisplay';
-import { SkipWarning, SummaryTable } from './Summary.style';
-import { useEffect } from 'react';
+import { ChartBinder, Ring, RingsWrapper, SkipWarning, SummaryTable } from './Summary.style';
+import 'chart.js/auto';
+import * as chart from 'react-chartjs-2';
+import { theme } from '@/theme';
+import { useContext } from 'react';
+import { SettingsContext } from '@/context';
 
-const fibreGoal = 30;
-const proteinGoal = 45;
+const NHS_DAILY_FIBRE = 30;
+const AVERAGE_DAILY_PROTEIN = 50;
 
 const Summary = ({ data }: { data: DiaryData[] }) => {
+  // const { rounding } = useContext(SettingsContext);
+
   let skippedEntry = false;
 
   const sum = (toSum: 'calories' | 'protein' | 'fibre') => {
@@ -28,41 +34,66 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
     );
   };
 
-  const calorieTotal = sum('calories');
-  const proteinTotal = sum('protein');
-  const fibreTotal = sum('fibre');
+  const currentCalorieTotal = sum('calories');
+  const currentProteinTotal = sum('protein');
+  const currentFibreTotal = sum('fibre');
 
-  const drawRing = () => {
-    const canvas = document.getElementById('myRing') as HTMLCanvasElement;
-    const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
+  const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
+  const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
 
-    ctx.beginPath();
-    ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-    ctx.stroke();
+  const proteinPercentage = (currentProteinTotal * 100) / AVERAGE_DAILY_PROTEIN;
+  const proteinRemaining = Math.max(0, AVERAGE_DAILY_PROTEIN - currentProteinTotal);
+
+  const generateChartData = (type: 'protein' | 'fibre') => {
+    const isFibre = type === 'fibre';
+    return {
+      labels: [],
+      datasets: [
+        {
+          label: '',
+          data: isFibre ? [fibrePercentage, fibreRemaining] : [proteinPercentage, proteinRemaining],
+          backgroundColor: [
+            isFibre ? theme.colours.fibreRing : theme.colours.proteinRing,
+            theme.colours.white,
+          ],
+          cutout: '65%',
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+          },
+        },
+      ],
+    };
   };
-  useEffect(() => {
-    drawRing();
-  }, []);
+  const fibreData = generateChartData('fibre');
+  const proteinData = generateChartData('protein');
+
   return (
     <SummaryTable>
-      <tbody>
-        <tr>
-          <td>Total:</td>
-          <td></td>
-          <td>{roundDisplay(calorieTotal)} calories</td>
-          <td>{roundDisplay(proteinTotal)}g protein</td>
-          <td>{roundDisplay(fibreTotal)}g fibre</td>
-          <td></td>
-        </tr>
-        {skippedEntry && (
-          <tr>
-            <SkipWarning colSpan={6}>
-              Note: At least one partially completed item above is excluded from these totals.
-            </SkipWarning>
-          </tr>
-        )}
-      </tbody>
-      <div id="myRing"></div>
+      <span>Total: {roundDisplay(currentCalorieTotal)} calories</span>
+
+      <RingsWrapper>
+        <Ring>
+          <ChartBinder>
+            <chart.Doughnut data={proteinData} style={{ flex: 1 }} />
+          </ChartBinder>
+          <span>{roundDisplay(currentProteinTotal)}g Protein</span>
+        </Ring>
+        <Ring>
+          <ChartBinder>
+            <chart.Doughnut data={fibreData} style={{ flex: 1 }} />
+          </ChartBinder>
+          <span>{roundDisplay(currentFibreTotal)}g Fibre</span>
+        </Ring>
+      </RingsWrapper>
+
+      {skippedEntry && (
+        <span>
+          <SkipWarning>
+            Note: At least one partially completed item above is excluded from these totals.
+          </SkipWarning>
+        </span>
+      )}
     </SummaryTable>
   );
 };

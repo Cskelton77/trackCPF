@@ -4,13 +4,9 @@ export const NewItemModal = styled.form`
   display: flex;
   align-self: center;
   flex-direction: column;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
+
   background-color: ${theme.colours.white};
   padding: ${theme.layoutPadding};
-  color: ${theme.colours.black};
 `;
 
 export const ItemName = styled.div`

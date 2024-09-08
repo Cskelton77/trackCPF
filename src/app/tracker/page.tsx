@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/components';
 import { DiaryData } from '@/interfaces/DailyData';
@@ -9,11 +9,16 @@ import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { DEBUGMODE } from '@/config';
+import Modal from '@/components/_Modal/Modal';
+import { Settings } from '@/components/Settings/Settings';
+import getSettings from '@/api/users/settings/get';
+import { SettingsContext, SettingsContextInterface } from '@/context';
 
 export default function Home() {
   const router = useRouter();
 
   const [uid, setUid] = useState<string>('');
+  const [userSettings, setUserSettings] = useState<SettingsContextInterface>();
   const [email, setEmail] = useState<string>('');
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
   const [displayDate, setDisplayDate] = useState(moment());
@@ -23,7 +28,7 @@ export default function Home() {
   const [selectedFoodServing, setSelectedFoodServing] = useState<number>();
   const [selectedDiaryEntry, setSelectedDiaryEntry] = useState<string>();
   const [showAddNewItem, setShowAddNewItem] = useState<ItemMode>(null);
-
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const resetSelection = () => {
     setSelectedFood(undefined);
     setSelectedFoodServing(undefined);
@@ -42,6 +47,11 @@ export default function Home() {
     setDailyData(response);
   }
 
+  async function fetchSettings() {
+    const settings = await getSettings(uid);
+    setUserSettings(settings);
+  }
+
   // Initial Load to retreive UID & Email
   useEffect(() => {
     if (uid !== 'ERROR') {
@@ -52,13 +62,14 @@ export default function Home() {
     }
   }, []);
 
-  // Use UID to pull daily data
+  // Use UID to pull user data
   useEffect(() => {
     console.log('fetchDaily updated uid', uid);
     if (uid == 'ERROR') {
       logout();
     } else {
       if (uid != '') {
+        fetchSettings();
         fetchDaily();
       }
     }
@@ -148,13 +159,23 @@ export default function Home() {
     setShowAddNewItem(MODES.UPDATE);
   };
 
+  const openSettings = () => {
+    console.log('open settings');
+    setSettingsOpen(true);
+  };
+  const closeSettings = () => {
+    console.log('close settings');
+
+    setSettingsOpen(false);
+  };
+
   const logout = () => {
     localStorage.removeItem('uid');
     localStorage.removeItem('email');
     router.push('/');
   };
   return (
-    <>
+    <SettingsContext.Provider value={userSettings}>
       <div
         style={{
           display: 'flex',
@@ -163,7 +184,7 @@ export default function Home() {
           borderBottom: '1px solid #E0E0E0',
         }}
       >
-        User: {email}
+        <span onClick={() => openSettings()}>User: {email}</span>
         <button onClick={() => logout()}>Log Out</button>
       </div>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
@@ -191,6 +212,8 @@ export default function Home() {
         deleteFoodItem={handleDeleteFoodEntry}
       />
       <Summary data={dailyData} />
+
+      <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} />
 
       {DEBUGMODE && (
         <div>
@@ -226,6 +249,6 @@ export default function Home() {
           </div>
         </div>
       )}
-    </>
+    </SettingsContext.Provider>
   );
 }

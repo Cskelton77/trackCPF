@@ -2,6 +2,8 @@ import { DiaryData } from '@/interfaces/DailyData';
 import Delete from '../Icons/Delete';
 import { FoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, TableCell } from './MainDisplay.style';
+import { useContext } from 'react';
+import { useSettingsContext } from '@/context';
 
 export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
@@ -14,6 +16,8 @@ const MainDisplay = ({
   deleteEntry: (diaryId: string) => Promise<void>;
   modifyEntry: (diaryId: string, currentServing: number, update: FoodObject) => Promise<void>;
 }) => {
+  const { rounding } = useSettingsContext();
+
   return (
     <MainDisplayTable>
       <thead>
@@ -35,8 +39,18 @@ const MainDisplay = ({
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
           const denominator = isDirectEntry ? 1 : 100;
-          const calculateDisplay = (metric: number | undefined): string =>
-            metric == null ? '--' : roundDisplay((serving * metric) / denominator).toString();
+          const calculateDisplay = (metric: number | undefined): string => {
+            if (metric === null || metric === undefined) {
+              return '---';
+            } else if (rounding) {
+              console.log('rounding');
+              return Math.round(metric).toString();
+            } else {
+              console.log('not rounding');
+
+              return roundDisplay((serving * metric) / denominator).toString();
+            }
+          };
 
           const { name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';

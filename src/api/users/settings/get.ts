@@ -1,5 +1,5 @@
-const getFood = async (uid: string, query: string) => {
-  const res = await fetch(`api/food?user=${uid}&q=${query}`, {
+const getSettings = async (uid: string) => {
+  const res = await fetch(`api/users/settings?user=${uid}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -9,4 +9,4 @@ const getFood = async (uid: string, query: string) => {
   return response;
 };
 
-export default getFood;
+export default getSettings;
