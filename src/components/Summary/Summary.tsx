@@ -5,13 +5,17 @@ import 'chart.js/auto';
 import * as chart from 'react-chartjs-2';
 import { theme } from '@/theme';
 import { useContext } from 'react';
-import { SettingsContext } from '@/context';
+import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
 
 const NHS_DAILY_FIBRE = 30;
-const AVERAGE_DAILY_PROTEIN = 50;
+const NHS_DAILY_PROTEIN = 50;
 
 const Summary = ({ data }: { data: DiaryData[] }) => {
-  // const { rounding } = useContext(SettingsContext);
+  const context = useContext(SettingsContext);
+  const { rounding, weight, protein } = context;
+
+  const proteinMultiplier = protein == PROTEIN_CALCULATION.AGGRESSIVE ? 1.0 : 0.75;
+  const dailyProteinGoal = weight > 1 ? proteinMultiplier * (weight / 2.205) : NHS_DAILY_PROTEIN;
 
   let skippedEntry = false;
 
@@ -41,8 +45,8 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
   const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
   const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
 
-  const proteinPercentage = (currentProteinTotal * 100) / AVERAGE_DAILY_PROTEIN;
-  const proteinRemaining = Math.max(0, AVERAGE_DAILY_PROTEIN - currentProteinTotal);
+  const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
+  const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
 
   const generateChartData = (type: 'protein' | 'fibre') => {
     const isFibre = type === 'fibre';
@@ -68,22 +72,31 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
   const fibreData = generateChartData('fibre');
   const proteinData = generateChartData('protein');
 
+  const calorieDisplay = rounding
+    ? Math.round(currentCalorieTotal)
+    : roundDisplay(currentCalorieTotal);
+  const proteinDisplay = rounding
+    ? Math.round(currentProteinTotal)
+    : roundDisplay(currentProteinTotal);
+  const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
   return (
     <SummaryTable>
-      <span>Total: {roundDisplay(currentCalorieTotal)} calories</span>
+      <span>Total: {calorieDisplay} calories</span>
 
       <RingsWrapper>
         <Ring>
           <ChartBinder>
             <chart.Doughnut data={proteinData} style={{ flex: 1 }} />
           </ChartBinder>
-          <span>{roundDisplay(currentProteinTotal)}g Protein</span>
+          <span>{proteinDisplay}g Protein</span>
+          <span>/{Math.round(dailyProteinGoal)}g</span>
         </Ring>
         <Ring>
           <ChartBinder>
             <chart.Doughnut data={fibreData} style={{ flex: 1 }} />
           </ChartBinder>
-          <span>{roundDisplay(currentFibreTotal)}g Fibre</span>
+          <span>{fibreDisplay}g Fibre</span>
+          <span>/30g</span>
         </Ring>
       </RingsWrapper>
 

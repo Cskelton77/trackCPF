@@ -17,19 +17,20 @@ export interface SettingsContextInterface {
   gender: GENDER;
   age: number;
   heightFeet: number;
+  heightInches: number;
   weight: number;
   protein: PROTEIN_CALCULATION;
   rounding: boolean;
 }
 
-export const SettingsContext = createContext<SettingsContextInterface | undefined>(undefined);
+export const defaultSettings: SettingsContextInterface = {
+  gender: GENDER.MALE,
+  age: 1,
+  heightFeet: 1,
+  heightInches: 1,
+  weight: 1,
+  protein: PROTEIN_CALCULATION.CONSERVATIVE,
+  rounding: false,
+};
 
-export function useSettingsContext() {
-  const context = useContext(SettingsContext);
-  if (context === undefined) {
-    // throw new Error('useSettingsContext must be within TodoProvider');
-    return {};
-  }
-
-  return context;
-}
+export const SettingsContext = createContext<SettingsContextInterface>(defaultSettings);

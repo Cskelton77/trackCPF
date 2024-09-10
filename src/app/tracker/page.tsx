@@ -12,13 +12,13 @@ import { DEBUGMODE } from '@/config';
 import Modal from '@/components/_Modal/Modal';
 import { Settings } from '@/components/Settings/Settings';
 import getSettings from '@/api/users/settings/get';
-import { SettingsContext, SettingsContextInterface } from '@/context';
+import { SettingsContext, SettingsContextInterface, defaultSettings } from '@/context';
 
 export default function Home() {
   const router = useRouter();
 
   const [uid, setUid] = useState<string>('');
-  const [userSettings, setUserSettings] = useState<SettingsContextInterface>();
+  const [userSettings, setUserSettings] = useState<SettingsContextInterface>(defaultSettings);
   const [email, setEmail] = useState<string>('');
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
   const [displayDate, setDisplayDate] = useState(moment());
@@ -64,7 +64,6 @@ export default function Home() {
 
   // Use UID to pull user data
   useEffect(() => {
-    console.log('fetchDaily updated uid', uid);
     if (uid == 'ERROR') {
       logout();
     } else {
@@ -96,10 +95,10 @@ export default function Home() {
     calories: NullableNumber,
     protein: NullableNumber,
     fibre: NullableNumber,
+    plantPoints: NullableNumber,
   ) => {
-    const isCompleteEntry = !!calories && !!protein && !!fibre;
+    const isCompleteEntry = !!calories && !!protein && !!fibre && !!plantPoints;
     const isManualMode = showAddNewItem === MODES.MANUAL;
-
     if (isCompleteEntry && !isManualMode && !selectedFood) {
       // Save full nutritional data per 100g'
       await postFood(uid, {
@@ -107,6 +106,7 @@ export default function Home() {
         calories: calories,
         protein: protein,
         fibre: fibre,
+        plantPoints: plantPoints,
       });
     }
 
@@ -120,6 +120,7 @@ export default function Home() {
           calories: calories as number,
           protein: protein as number,
           fibre: fibre as number,
+          plantPoints: plantPoints as number,
         },
       };
       await updateDiary(diaryUpdate);
@@ -134,6 +135,7 @@ export default function Home() {
           calories: calories as number,
           protein: protein as number,
           fibre: fibre as number,
+          plantPoints: plantPoints as number,
         },
       };
       await postDiary(diaryEntry);
@@ -160,12 +162,9 @@ export default function Home() {
   };
 
   const openSettings = () => {
-    console.log('open settings');
     setSettingsOpen(true);
   };
   const closeSettings = () => {
-    console.log('close settings');
-
     setSettingsOpen(false);
   };
 

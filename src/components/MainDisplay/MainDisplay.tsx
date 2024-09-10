@@ -3,7 +3,7 @@ import Delete from '../Icons/Delete';
 import { FoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, TableCell } from './MainDisplay.style';
 import { useContext } from 'react';
-import { useSettingsContext } from '@/context';
+import { SettingsContext } from '@/context';
 
 export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
@@ -16,7 +16,8 @@ const MainDisplay = ({
   deleteEntry: (diaryId: string) => Promise<void>;
   modifyEntry: (diaryId: string, currentServing: number, update: FoodObject) => Promise<void>;
 }) => {
-  const { rounding } = useSettingsContext();
+  const context = useContext(SettingsContext);
+  const { rounding } = context;
 
   return (
     <MainDisplayTable>
@@ -43,18 +44,14 @@ const MainDisplay = ({
             if (metric === null || metric === undefined) {
               return '---';
             } else if (rounding) {
-              console.log('rounding');
               return Math.round(metric).toString();
             } else {
-              console.log('not rounding');
-
               return roundDisplay((serving * metric) / denominator).toString();
             }
           };
 
           const { name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
-          console.log('serving', serving, calories);
 
           return (
             <tr

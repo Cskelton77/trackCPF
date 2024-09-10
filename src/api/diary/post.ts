@@ -16,6 +16,7 @@ const postDiary = async ({uid, date, serving, isDirectEntry, foodEntry}: Omit<Di
         calories: foodEntry.calories,
         protein: foodEntry.protein,
         fibre: foodEntry.fibre,
+        plantPoints: foodEntry.plantPoints,
       },
     }),
   });

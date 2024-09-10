@@ -29,6 +29,7 @@ interface AddNewItem {
     calories: NullableNumber,
     protein: NullableNumber,
     fibre: NullableNumber,
+    plantPoints: NullableNumber,
   ) => void;
   close: () => void;
 }
@@ -47,6 +48,7 @@ const AddNewItem = ({
   const [calories, setCalories] = useState<string>();
   const [protein, setProtein] = useState<string>();
   const [fibre, setFibre] = useState<string>();
+  const [plantPoints, setPlantPoints] = useState<string>();
   const [serving, setServing] = useState<string>();
 
   useEffect(() => {
@@ -54,6 +56,7 @@ const AddNewItem = ({
       setCalories(selectedFood.calories?.toString());
       setProtein(selectedFood.protein?.toString());
       setFibre(selectedFood.fibre?.toString());
+      setPlantPoints(selectedFood.plantPoints?.toString());
     }
     if (isUpdateMode) {
       setServing(selectedFoodServing?.toString());
@@ -65,6 +68,7 @@ const AddNewItem = ({
     setProtein(undefined);
     setFibre(undefined);
     setServing(undefined);
+    setPlantPoints(undefined);
   };
   const handleDiscard = () => {
     resetForm();
@@ -79,6 +83,7 @@ const AddNewItem = ({
         parseFloat(calories || ''),
         parseFloat(protein || ''),
         parseFloat(fibre || ''),
+        parseFloat(plantPoints || ''),
       );
     }
     resetForm();
@@ -107,7 +112,6 @@ const AddNewItem = ({
           <EntryBox>
             <AttributeInput
               id="serving"
-              type="number"
               inputMode="decimal"
               value={serving || ''}
               onChange={(e) => setServing(e.target.value)}
@@ -118,7 +122,6 @@ const AddNewItem = ({
           <EntryBox>
             <AttributeInput
               id="calories"
-              type="number"
               inputMode="decimal"
               value={calories || ''}
               onChange={(e) => setCalories(e.target.value)}
@@ -128,7 +131,6 @@ const AddNewItem = ({
           <EntryBox>
             <AttributeInput
               id="protein"
-              type="number"
               inputMode="decimal"
               value={protein || ''}
               onChange={(e) => setProtein(e.target.value)}
@@ -138,14 +140,20 @@ const AddNewItem = ({
           <EntryBox>
             <AttributeInput
               id="fibre"
-              type="number"
               inputMode="decimal"
               value={fibre || ''}
               onChange={(e) => setFibre(e.target.value)}
             />
             <TextDisplay>Fibre</TextDisplay>
           </EntryBox>
+          <select value={plantPoints} onChange={(e) => setPlantPoints(e.target.value)}>
+            <option value={0}>0 Plant Points</option>
+            <option value={1}>1 Plant Point</option>
+            <option value={0.5}>1/2 Plant Point</option>
+            <option value={0.25}>1/4 Plant Point</option>
+          </select>
         </ItemAttributes>
+
         <Actions>
           <DiscardAction onClick={handleDiscard}>
             {isUpdateMode ? 'Discard Changes' : 'Discard'}

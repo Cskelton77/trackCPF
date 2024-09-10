@@ -11,7 +11,6 @@ export async function POST(request: Request) {
   WHERE uid like ${uid}
   LIMIT 1`;
   if (existingSettings.rowCount !== null && existingSettings.rowCount > 0) {
-    console.log('existing', existingSettings);
     const newSettings = {
       ...existingSettings.rows[0].settings,
       ...settings,
@@ -23,8 +22,6 @@ export async function POST(request: Request) {
     `;
     return new Response('201');
   } else {
-    console.log('no existing');
-
     const data = await sql`
         INSERT INTO settings(uid, settings)
         VALUES(${uid}, ${settings})

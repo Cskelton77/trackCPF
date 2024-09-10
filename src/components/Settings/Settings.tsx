@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Modal, { ModalInterface } from '../_Modal/Modal';
 import {
   Actions,
@@ -12,7 +12,13 @@ import {
   WeightInput,
 } from './Settings.style';
 import saveSettings from '@/api/users/settings/post';
-import { GENDER, Genders, PROTEIN_CALCULATION, ProteinCalculation } from '@/context';
+import {
+  GENDER,
+  Genders,
+  PROTEIN_CALCULATION,
+  ProteinCalculation,
+  SettingsContext,
+} from '@/context';
 
 interface Settings extends Omit<ModalInterface, 'children'> {
   uid: string;
@@ -23,25 +29,17 @@ interface Settings extends Omit<ModalInterface, 'children'> {
 
 //
 export const Settings = ({ title, close, isVisible, uid }: Settings) => {
-  const [gender, setGender] = useState<Genders>();
-  const [age, setAge] = useState<number>();
-  const [heightInches, setHeightInches] = useState<number>();
-  const [heightFeet, setHeightFeet] = useState<number>();
-  const [weight, setWeight] = useState<number>();
-  const [protein, setProtein] = useState<ProteinCalculation>();
-  const [rounding, setRounding] = useState<boolean>();
+  const context = useContext(SettingsContext);
+
+  const [gender, setGender] = useState<Genders>(context.gender);
+  const [age, setAge] = useState<number>(context.age);
+  const [heightFeet, setHeightFeet] = useState<number>(context.heightFeet);
+  const [heightInches, setHeightInches] = useState<number>(context.heightInches);
+  const [weight, setWeight] = useState<number>(context.weight);
+  const [protein, setProtein] = useState<ProteinCalculation>(context.protein);
+  const [rounding, setRounding] = useState<boolean>(context.rounding);
 
   const handleSubmit = () => {
-    // if (serving) {
-    //   handleSave(
-    //     selectedFood?.name || name,
-    //     parseFloat(serving),
-    //     parseFloat(calories || ''),
-    //     parseFloat(protein || ''),
-    //     parseFloat(fibre || ''),
-    //   );
-    // }
-    // resetForm();
     const settings = {
       gender,
       age,
@@ -51,8 +49,10 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
       protein,
       rounding,
     };
-    console.log(settings);
     saveSettings(uid, settings);
+    if (close) {
+      close();
+    }
   };
 
   return (
@@ -112,8 +112,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
           <SettingsSection>
             <h4>
               My weight is:
-              <WeightInput
-                maxLength={3}
+              <HeightInput
                 inputMode="decimal"
                 value={weight}
                 onChange={(e) => setWeight(parseInt(e.target.value))}
@@ -168,7 +167,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
         </AppSettings>
 
         <Actions>
-          <DiscardAction onClick={undefined}>{'Discard'}</DiscardAction>
+          <DiscardAction onClick={close}>{'Discard'}</DiscardAction>
           <SaveAction type={'submit'} disabled={false}>
             {'Save'}
           </SaveAction>
