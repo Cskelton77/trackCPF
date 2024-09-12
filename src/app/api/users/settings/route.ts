@@ -4,7 +4,6 @@ export async function POST(request: Request) {
   const body = await request.json();
   const uid = body.uid;
   const settings = body.settings;
-
   const existingSettings = await sql`
   SELECT settings
   FROM settings

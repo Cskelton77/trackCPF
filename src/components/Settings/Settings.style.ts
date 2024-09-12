@@ -32,7 +32,7 @@ export const WeightInput = styled.input`
   border-top: none;
 `;
 
-export const Checkbox = styled.input`
+export const RadioButton = styled.input`
   height: 25px;
   width: 35px;
   padding: ${theme.inputPadding};

@@ -15,8 +15,7 @@ export async function POST(request: Request) {
   const serving = body.serving;
   const isDirectEntry = body.isDirectEntry;
   const timestamp = Date.now();
-  console.log('foodEntry', foodEntry);
-  const data = await sql<DiaryData>`
+  await sql<DiaryData>`
           INSERT INTO diary(did, uid, date, serving, "foodEntry", "isDirectEntry", timestamp) 
           VALUES (${did}, ${uid}, ${date}, ${serving},${foodEntry}, ${isDirectEntry}, ${timestamp});`;
   return new Response('201');
@@ -55,21 +54,21 @@ export async function GET(request: Request) {
     if (hasPlantPoints) {
       if (!plantPointData.foods.includes(row.foodEntry.fid)) {
         plantPointData.foods.push(row.foodEntry.fid);
-        if (row.foodEntry.plantPoints) {
-          console.log('***', row.foodEntry.plantPoints);
-        }
         plantPointData.points += parseFloat(row.foodEntry.plantPoints?.toString() || '');
       }
     }
   });
 
-  console.log(plantPointData);
+  // Eventually this can be removed, this is a filter
+  // to handle bad entries in the DB from early testing that
+  // might not have all been removed.
   const filteredJunk: DiaryData[] = [];
   data.rows.forEach((row) => {
     if (row.foodEntry) {
       filteredJunk.push(row);
     }
   });
+
   const response = {
     dailyData: filteredJunk,
     weeklyPlantPoints: plantPointData.points,

@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/components';
 import { DiaryData } from '@/interfaces/DailyData';
@@ -9,7 +9,6 @@ import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { DEBUGMODE } from '@/config';
-import Modal from '@/components/_Modal/Modal';
 import { Settings } from '@/components/Settings/Settings';
 import getSettings from '@/api/users/settings/get';
 import { SettingsContext, SettingsContextInterface, defaultSettings } from '@/context';
@@ -41,14 +40,13 @@ export default function Home() {
     setNewItemMode(null);
   };
 
-  async function getDropdownOptions() {
+  async function fetchFoodResults() {
     const response = await getFood(uid, searchValue);
     setSearchResponse(response);
   }
 
   async function fetchDaily() {
     const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
-    console.log('response', response);
     setDailyData(response.dailyData);
     setWeeklyPlantPoints(response.weeklyPlantPoints);
   }
@@ -56,6 +54,7 @@ export default function Home() {
   async function fetchSettings() {
     const settings = await getSettings(uid);
     setUserSettings(settings);
+    await fetchDaily();
   }
 
   // Initial Load to retreive UID & Email
@@ -75,7 +74,6 @@ export default function Home() {
     } else {
       if (uid != '') {
         fetchSettings();
-        fetchDaily();
       }
     }
   }, [uid, displayDate]);
@@ -83,18 +81,14 @@ export default function Home() {
   // Search as typing happens
   useEffect(() => {
     if (searchValue !== '') {
-      getDropdownOptions();
+      fetchFoodResults();
     }
     if (searchValue == '') {
       setSearchResponse([]);
     }
   }, [searchValue]);
 
-  const handleDeleteFoodEntry = async (foodId: string) => {
-    const x = await deleteFood(foodId);
-    await getDropdownOptions();
-  };
-
+  // Diary API Calls
   const handleSaveDiaryEntry = async (
     name: string,
     serving: number,
@@ -124,7 +118,6 @@ export default function Home() {
           plantPoints: plantPoints,
         }),
       );
-      console.log('newFood', newFood);
       const diaryEntry: Omit<DiaryData, 'did'> = {
         uid,
         date: moment(displayDate).format('YYYY-MM-DD'),
@@ -139,7 +132,6 @@ export default function Home() {
           plantPoints: plantPoints as number,
         },
       };
-      console.log('diaryEntry', diaryEntry);
       await postDiary(diaryEntry);
     }
 
@@ -179,16 +171,10 @@ export default function Home() {
           plantPoints: plantPoints as number,
         },
       };
-      console.log('diaryEntry', diaryEntry);
       await postDiary(diaryEntry);
     }
 
     resetSelection();
-    await fetchDaily();
-  };
-
-  const handleDeleteDiaryEntry = async (diaryId: string) => {
-    await deleteDiary(diaryId);
     await fetchDaily();
   };
 
@@ -203,18 +189,30 @@ export default function Home() {
     setNewItemMode(MODES.UPDATE);
   };
 
+  const handleDeleteDiaryEntry = async (diaryId: string) => {
+    await deleteDiary(diaryId);
+    await fetchDaily();
+  };
+
+  const handleDeleteFoodEntry = async (foodId: string) => {
+    await deleteFood(foodId);
+    await fetchFoodResults();
+  };
+
+  // Modal Open/Close + Header
   const openSettings = () => {
     setSettingsOpen(true);
   };
-  const closeSettings = () => {
+  const closeSettings = async () => {
+    await fetchSettings();
     setSettingsOpen(false);
   };
-
   const logout = () => {
     localStorage.removeItem('uid');
     localStorage.removeItem('email');
     router.push('/');
   };
+
   return (
     <SettingsContext.Provider value={userSettings}>
       <div

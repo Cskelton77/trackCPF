@@ -81,7 +81,6 @@ const AddNewItem = ({
 
   const handleSubmit = () => {
     if (serving) {
-      console.log('plantPoints', parseFloat(plantPoints || ''));
       handleSave(
         selectedFood?.name || name,
         parseFloat(serving),

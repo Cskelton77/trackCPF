@@ -15,10 +15,9 @@ export async function POST(request: Request) {
   const fid = uuidv4();
   const uid = body.user;
   const foodobject = JSON.stringify({ fid, ...body.food });
-  const data = await sql<FoodDatabase>`
+  await sql<FoodDatabase>`
         INSERT INTO fooddatabase(fid, uid, foodobject) 
         VALUES (${fid}, ${uid}, ${foodobject});`;
-  console.log('data', data);
   return Response.json(foodobject);
 }
 

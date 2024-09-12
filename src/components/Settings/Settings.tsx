@@ -3,7 +3,7 @@ import Modal, { ModalInterface } from '../_Modal/Modal';
 import {
   Actions,
   AppSettings,
-  Checkbox,
+  RadioButton,
   DiscardAction,
   HeightInput,
   PersonalInfo,
@@ -27,7 +27,6 @@ interface Settings extends Omit<ModalInterface, 'children'> {
 // Men: BMR = 88.362 + (13.397 x weight in kg) + (4.799 x height in cm) – (5.677 x age in years)
 // Women: BMR = 447.593 + (9.247 x weight in kg) + (3.098 x height in cm) – (4.330 x age in years)
 
-//
 export const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const context = useContext(SettingsContext);
 
@@ -40,7 +39,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const [rounding, setRounding] = useState<boolean>(context.rounding);
   const [usePlantPoints, setUsePlantPoints] = useState<boolean>(context.usePlantPoints);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const settings = {
       gender,
       age,
@@ -51,7 +50,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
       rounding,
       usePlantPoints,
     };
-    saveSettings(uid, settings);
+    await saveSettings(uid, settings);
     if (close) {
       close();
     }
@@ -63,18 +62,15 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
         <PersonalInfo>
           <SettingsSection>
             <h4>I am :</h4>
-            <Checkbox
+            <RadioButton
               type="radio"
-              name="gender"
               checked={gender === GENDER.MALE}
               value={GENDER.MALE}
               onChange={(e) => setGender(GENDER.MALE)}
             />{' '}
             Male <br />
-            <Checkbox
+            <RadioButton
               type="radio"
-              name="gender"
-              value={gender}
               checked={gender === GENDER.FEMALE}
               value={GENDER.FEMALE}
               onChange={(e) => setGender(GENDER.FEMALE)}
@@ -127,7 +123,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
         <AppSettings>
           <SettingsSection>
             <h4>Protein Calculation Settings:</h4>
-            <Checkbox
+            <RadioButton
               type="radio"
               name="protein"
               value={PROTEIN_CALCULATION.CONSERVATIVE}
@@ -136,7 +132,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               defaultChecked
             />{' '}
             Conservative (Default) <br />
-            <Checkbox
+            <RadioButton
               type="radio"
               name="protein"
               value={PROTEIN_CALCULATION.AGGRESSIVE}
@@ -147,20 +143,18 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
           </SettingsSection>
           <SettingsSection>
             <h4>Round my numbers:</h4>
-            <Checkbox
+            <RadioButton
               type="radio"
-              name="rounding"
-              value={false}
+              value={'false'}
               checked={rounding == false}
               onChange={() => setRounding(false)}
               defaultChecked
             />{' '}
             Two decimal places (Default)
             <br />
-            <Checkbox
+            <RadioButton
               type="radio"
-              name="rounding"
-              value={true}
+              value={'true'}
               checked={rounding == true}
               onChange={() => setRounding(true)}
             />{' '}
@@ -169,20 +163,18 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
 
           <SettingsSection>
             <h4>Enable Plant Points Feature:</h4>
-            <Checkbox
+            <RadioButton
               type="radio"
-              name="usePlantPoints"
-              value={true}
+              value={'true'}
               checked={usePlantPoints == true}
               onChange={() => setUsePlantPoints(true)}
               defaultChecked
             />{' '}
             Yes (Default)
             <br />
-            <Checkbox
+            <RadioButton
               type="radio"
-              name="usePlantPoints"
-              value={false}
+              value={'false'}
               checked={usePlantPoints == false}
               onChange={() => setUsePlantPoints(false)}
             />{' '}
