@@ -1,6 +1,13 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import { roundDisplay } from '../MainDisplay/MainDisplay';
-import { ChartBinder, Ring, RingsWrapper, SkipWarning, SummaryTable } from './Summary.style';
+import {
+  ChartBinder,
+  FlatStats,
+  Ring,
+  RingsWrapper,
+  SkipWarning,
+  SummaryTable,
+} from './Summary.style';
 import 'chart.js/auto';
 import * as chart from 'react-chartjs-2';
 import { theme } from '@/theme';
@@ -10,9 +17,9 @@ import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
 const NHS_DAILY_FIBRE = 30;
 const NHS_DAILY_PROTEIN = 50;
 
-const Summary = ({ data }: { data: DiaryData[] }) => {
+const Summary = ({ data, plantPoints }: { data: DiaryData[]; plantPoints: number }) => {
   const context = useContext(SettingsContext);
-  const { rounding, weight, protein } = context;
+  const { rounding, weight, protein, usePlantPoints } = context;
 
   const proteinMultiplier = protein == PROTEIN_CALCULATION.AGGRESSIVE ? 1.0 : 0.75;
   const dailyProteinGoal = weight > 1 ? proteinMultiplier * (weight / 2.205) : NHS_DAILY_PROTEIN;
@@ -81,7 +88,7 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
   const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
   return (
     <SummaryTable>
-      <span>Total: {calorieDisplay} calories</span>
+      <FlatStats>Total: {calorieDisplay} calories</FlatStats>
 
       <RingsWrapper>
         <Ring>
@@ -107,6 +114,7 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
           </SkipWarning>
         </span>
       )}
+      {usePlantPoints && <FlatStats>Plant Points for Week: {plantPoints}</FlatStats>}
     </SummaryTable>
   );
 };

@@ -18,6 +18,7 @@ const postFood = async (uuid: string, food: FoodObject) => {
     }),
   });
   const response = await res.json();
+  console.log(response);
   return response
 };
 

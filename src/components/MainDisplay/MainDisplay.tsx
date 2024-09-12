@@ -1,6 +1,6 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import Delete from '../Icons/Delete';
-import { FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, TableCell } from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
@@ -14,7 +14,11 @@ const MainDisplay = ({
 }: {
   data: DiaryData[];
   deleteEntry: (diaryId: string) => Promise<void>;
-  modifyEntry: (diaryId: string, currentServing: number, update: FoodObject) => Promise<void>;
+  modifyEntry: (
+    diaryId: string,
+    currentServing: number,
+    update: DefinedFoodObject,
+  ) => Promise<void>;
 }) => {
   const context = useContext(SettingsContext);
   const { rounding } = context;
@@ -50,12 +54,12 @@ const MainDisplay = ({
             }
           };
 
-          const { name, calories, protein, fibre } = foodEntry;
+          const { fid, name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
 
           return (
             <tr
-              key={name}
+              key={`${fid}+${serving}`}
               onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
             >
               <TableCell>{name}</TableCell>

@@ -10,11 +10,12 @@ import {
   AttributeInput,
   TextDisplay,
 } from './AddNewItem.style';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
 import { DEBUGMODE } from '@/config';
 import Modal from '../_Modal/Modal';
+import { SettingsContext } from '@/context';
 
 interface AddNewItem {
   name: string;
@@ -42,6 +43,9 @@ const AddNewItem = ({
   mode,
   close,
 }: AddNewItem) => {
+  const context = useContext(SettingsContext);
+  const { usePlantPoints } = context;
+
   const isManualMode = mode === MODES.MANUAL;
   const isUpdateMode = mode === MODES.UPDATE;
 
@@ -77,6 +81,7 @@ const AddNewItem = ({
 
   const handleSubmit = () => {
     if (serving) {
+      console.log('plantPoints', parseFloat(plantPoints || ''));
       handleSave(
         selectedFood?.name || name,
         parseFloat(serving),
@@ -105,10 +110,8 @@ const AddNewItem = ({
   return (
     <Modal title={getTitle()} isVisible={isVisible} close={close}>
       <NewItemModal id="foodObjectForm" action={handleSubmit}>
-        {/* <ItemName>{getTitle()}</ItemName> */}
         <ItemAttributes>
           <EntryBox>Amount Eaten</EntryBox>
-
           <EntryBox>
             <AttributeInput
               id="serving"
@@ -146,12 +149,17 @@ const AddNewItem = ({
             />
             <TextDisplay>Fibre</TextDisplay>
           </EntryBox>
-          <select value={plantPoints} onChange={(e) => setPlantPoints(e.target.value)}>
-            <option value={0}>0 Plant Points</option>
-            <option value={1}>1 Plant Point</option>
-            <option value={0.5}>1/2 Plant Point</option>
-            <option value={0.25}>1/4 Plant Point</option>
-          </select>
+          {usePlantPoints && (
+            <EntryBox>
+              <span>Plant Points:</span>
+              <select value={plantPoints} onChange={(e) => setPlantPoints(e.target.value)}>
+                <option value={0}>0 Plant Points</option>
+                <option value={1}>1 Plant Point</option>
+                <option value={0.5}>1/2 Plant Point</option>
+                <option value={0.25}>1/4 Plant Point</option>
+              </select>
+            </EntryBox>
+          )}
         </ItemAttributes>
 
         <Actions>

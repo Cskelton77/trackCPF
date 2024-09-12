@@ -38,6 +38,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const [weight, setWeight] = useState<number>(context.weight);
   const [protein, setProtein] = useState<ProteinCalculation>(context.protein);
   const [rounding, setRounding] = useState<boolean>(context.rounding);
+  const [usePlantPoints, setUsePlantPoints] = useState<boolean>(context.usePlantPoints);
 
   const handleSubmit = () => {
     const settings = {
@@ -48,6 +49,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
       weight,
       protein,
       rounding,
+      usePlantPoints,
     };
     saveSettings(uid, settings);
     if (close) {
@@ -163,6 +165,28 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               onChange={() => setRounding(true)}
             />{' '}
             Whole numbers
+          </SettingsSection>
+
+          <SettingsSection>
+            <h4>Enable Plant Points Feature:</h4>
+            <Checkbox
+              type="radio"
+              name="usePlantPoints"
+              value={true}
+              checked={usePlantPoints == true}
+              onChange={() => setUsePlantPoints(true)}
+              defaultChecked
+            />{' '}
+            Yes (Default)
+            <br />
+            <Checkbox
+              type="radio"
+              name="usePlantPoints"
+              value={false}
+              checked={usePlantPoints == false}
+              onChange={() => setUsePlantPoints(false)}
+            />{' '}
+            No
           </SettingsSection>
         </AppSettings>
 

@@ -27,3 +27,9 @@ export const SkipWarning = styled.td`
   font-size: ${theme.extraSmallText};
   text-align: center;
 `;
+
+export const FlatStats = styled.div`
+  display: block;
+  text-align: center;
+  padding: ${theme.layoutPadding};
+`;

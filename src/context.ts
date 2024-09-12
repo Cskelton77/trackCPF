@@ -21,6 +21,7 @@ export interface SettingsContextInterface {
   weight: number;
   protein: PROTEIN_CALCULATION;
   rounding: boolean;
+  usePlantPoints: boolean;
 }
 
 export const defaultSettings: SettingsContextInterface = {
@@ -31,6 +32,7 @@ export const defaultSettings: SettingsContextInterface = {
   weight: 1,
   protein: PROTEIN_CALCULATION.CONSERVATIVE,
   rounding: false,
+  usePlantPoints: true,
 };
 
 export const SettingsContext = createContext<SettingsContextInterface>(defaultSettings);
