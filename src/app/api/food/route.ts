@@ -31,8 +31,7 @@ export async function GET(request: Request) {
   const data = await sql`
     SELECT foodobject
     FROM fooddatabase
-    WHERE uid like ${user}
-    LIMIT 5`;
+    WHERE uid like ${user}`;
   const listOfFoods: FoodObject[] = [];
   data.rows.forEach((row) => {
     const rowName = row.foodobject.name.toLowerCase();

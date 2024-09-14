@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/components';
 import { DiaryData } from '@/interfaces/DailyData';
@@ -23,6 +23,20 @@ export default function Home() {
   const [selectedFoodServing, setSelectedFoodServing] = useState<number>();
   const [selectedDiaryEntry, setSelectedDiaryEntry] = useState<string>();
   const [showAddNewItem, setShowAddNewItem] = useState<ItemMode>(null);
+
+  const addNewItemRef = useRef<HTMLFormElement>(null);
+  const searchBarRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (addNewItemRef.current && showAddNewItem) {
+      addNewItemRef.current.scrollIntoView();
+    }
+  }, [showAddNewItem]);
+  useEffect(() => {
+    if (searchBarRef.current && !showAddNewItem) {
+      searchBarRef.current.scrollIntoView();
+    }
+  }, [showAddNewItem]);
 
   const resetSelection = () => {
     setSelectedFood(undefined);
@@ -173,6 +187,7 @@ export default function Home() {
         deleteEntry={handleDeleteDiaryEntry}
       />
       <AddNewItem
+        ref={addNewItemRef}
         date={displayDate}
         isVisible={!!showAddNewItem}
         mode={showAddNewItem}
@@ -183,6 +198,7 @@ export default function Home() {
         close={resetSelection}
       />
       <SearchBar
+        ref={searchBarRef}
         value={searchValue}
         setValue={setSearchValue}
         response={searchResponse}
