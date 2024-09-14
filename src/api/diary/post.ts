@@ -12,10 +12,12 @@ const postDiary = async ({uid, date, serving, isDirectEntry, foodEntry}: Omit<Di
       serving,
       isDirectEntry,
       foodEntry: {
+        fid: foodEntry.fid,
         name: foodEntry.name,
         calories: foodEntry.calories,
         protein: foodEntry.protein,
         fibre: foodEntry.fibre,
+        plantPoints: foodEntry.plantPoints,
       },
     }),
   });
