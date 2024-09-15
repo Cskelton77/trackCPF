@@ -12,4 +12,10 @@ export const DateSelector = styled.div`
   font-size: ${theme.largeText};
 `;
 
-export const YearWrapper = styled.div``;
+export const Day = styled.div`
+  font-size: ${theme.mediumText};
+`;
+
+export const YearWrapper = styled.div`
+  font-size: ${theme.mediumText};
+`;

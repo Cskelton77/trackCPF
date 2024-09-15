@@ -13,6 +13,7 @@ const postFood = async (uid: string, food: FoodObject) => {
         calories: food.calories,
         protein: food.protein,
         fibre: food.fibre,
+        plantPoints: food.plantPoints,
       },
     }),
   });

@@ -1,7 +1,11 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import Delete from '../Icons/Delete';
-import { FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, TableCell } from './MainDisplay.style';
+import { useContext } from 'react';
+import { SettingsContext } from '@/context';
+import PlantPoint from '../Icons/PlantPoint';
+import { theme } from '@/theme';
 
 export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
@@ -12,8 +16,15 @@ const MainDisplay = ({
 }: {
   data: DiaryData[];
   deleteEntry: (diaryId: string) => Promise<void>;
-  modifyEntry: (diaryId: string, currentServing: number, update: FoodObject) => Promise<void>;
+  modifyEntry: (
+    diaryId: string,
+    currentServing: number,
+    update: DefinedFoodObject,
+  ) => Promise<void>;
 }) => {
+  const context = useContext(SettingsContext);
+  const { rounding } = context;
+
   return (
     <MainDisplayTable>
       <thead>
@@ -35,18 +46,34 @@ const MainDisplay = ({
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
           const denominator = isDirectEntry ? 1 : 100;
-          const calculateDisplay = (metric: number | undefined): string =>
-            metric == null ? '--' : roundDisplay((serving * metric) / denominator).toString();
+          const calculateDisplay = (metric: number | undefined): string => {
+            if (metric === null || metric === undefined) {
+              return '---';
+            }
+            const calculation = (serving * metric) / denominator;
+            if (rounding) {
+              return Math.round(calculation).toString();
+            } else {
+              return roundDisplay(calculation).toString();
+            }
+          };
 
-          const { name, calories, protein, fibre } = foodEntry;
+          const { fid, name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
 
           return (
             <tr
-              key={name}
+              key={`${fid}+${serving}`}
               onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
             >
-              <TableCell>{name}</TableCell>
+              <TableCell>
+                {name}{' '}
+                {foodEntry.plantPoints ? (
+                  <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                ) : (
+                  ''
+                )}
+              </TableCell>
               <TableCell>
                 {serving} {unit}
               </TableCell>

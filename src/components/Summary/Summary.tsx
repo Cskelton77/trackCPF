@@ -1,11 +1,39 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import { roundDisplay } from '../MainDisplay/MainDisplay';
-import { SkipWarning, SummaryTable } from './Summary.style';
+import {
+  ChartBinder,
+  FlatStats,
+  Ring,
+  RingsWrapper,
+  SkipWarning,
+  SummaryTable,
+} from './Summary.style';
+import 'chart.js/auto';
+import * as chart from 'react-chartjs-2';
+import { theme } from '@/theme';
+import { useContext } from 'react';
+import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
+import moment, { Moment } from 'moment';
+import PlantPoint from '../Icons/PlantPoint';
 
-const fibreGoal = 30;
-const proteinGoal = 45;
+const NHS_DAILY_FIBRE = 30;
+const NHS_DAILY_PROTEIN = 50;
 
-const Summary = ({ data }: { data: DiaryData[] }) => {
+const Summary = ({
+  date,
+  data,
+  plantPoints,
+}: {
+  date: Moment;
+  data: DiaryData[];
+  plantPoints: number;
+}) => {
+  const context = useContext(SettingsContext);
+  const { rounding, weight, protein, usePlantPoints } = context;
+
+  const proteinMultiplier = protein == PROTEIN_CALCULATION.AGGRESSIVE ? 1.0 : 0.75;
+  const dailyProteinGoal = weight > 1 ? proteinMultiplier * (weight / 2.205) : NHS_DAILY_PROTEIN;
+  const proteinLimit = weight > 1 ? 2 * (weight / 2.205) : 2 * NHS_DAILY_PROTEIN;
   let skippedEntry = false;
 
   const sum = (toSum: 'calories' | 'protein' | 'fibre') => {
@@ -26,30 +54,122 @@ const Summary = ({ data }: { data: DiaryData[] }) => {
       0,
     );
   };
+  let servingFlag = false;
 
-  const calorieTotal = sum('calories');
-  const proteinTotal = sum('protein');
-  const fibreTotal = sum('fibre');
+  const totalCaloriesOfProtein = data.reduce(
+    (count, { serving, isDirectEntry, foodEntry: { calories, protein } }) => {
+      if (isDirectEntry) {
+        servingFlag = true;
+        return count + 0;
+      } else {
+        const percentageOfServing = (protein || 0 / serving) * (calories || 1);
+        return count + percentageOfServing;
+      }
+    },
+    0,
+  );
+
+  const currentCalorieTotal = sum('calories');
+  const currentProteinTotal = sum('protein');
+  const currentFibreTotal = sum('fibre');
+
+  const generateChartData = (type: 'protein' | 'fibre') => {
+    const isFibre = type === 'fibre';
+
+    const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
+    const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
+
+    const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
+    const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
+    const proteinColour =
+      currentProteinTotal >= proteinLimit
+        ? theme.colours.proteinRingWarning
+        : theme.colours.proteinRing;
+    return {
+      labels: [],
+      datasets: [
+        {
+          label: '',
+          data: isFibre ? [fibrePercentage, fibreRemaining] : [proteinPercentage, proteinRemaining],
+          backgroundColor: [isFibre ? theme.colours.fibreRing : proteinColour, theme.colours.white],
+          cutout: '65%',
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+          },
+        },
+      ],
+    };
+  };
+
+  const fibreData = generateChartData('fibre');
+  const proteinData = generateChartData('protein');
+
+  const calorieDisplay = rounding
+    ? Math.round(currentCalorieTotal)
+    : roundDisplay(currentCalorieTotal);
+  const proteinDisplay = rounding
+    ? Math.round(currentProteinTotal)
+    : roundDisplay(currentProteinTotal);
+  const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
+
+  const caloriesFromProteinDisplay = rounding
+    ? Math.round(totalCaloriesOfProtein / currentCalorieTotal)
+    : roundDisplay(totalCaloriesOfProtein / currentCalorieTotal);
+
+  const weekStart = moment(date).startOf('isoWeek').format('ddd, MMM Do').toString();
+  const weekEnd = moment(date).endOf('isoWeek').format('ddd, MMM Do').toString();
 
   return (
     <SummaryTable>
-      <tbody>
-        <tr>
-          <td>Total:</td>
-          <td></td>
-          <td>{roundDisplay(calorieTotal)} calories</td>
-          <td>{roundDisplay(proteinTotal)}g protein</td>
-          <td>{roundDisplay(fibreTotal)}g fibre</td>
-          <td></td>
-        </tr>
-        {skippedEntry && (
-          <tr>
-            <SkipWarning colSpan={6}>
-              Note: At least one partially completed item above is excluded from these totals.
-            </SkipWarning>
-          </tr>
-        )}
-      </tbody>
+      <FlatStats>Daily Total: {calorieDisplay} calories</FlatStats>
+      <FlatStats>% calories from protein: {caloriesFromProteinDisplay}%</FlatStats>
+      {servingFlag && (
+        <span>
+          <SkipWarning>
+            Note: This percentage excludes at least one item not entered by weight.
+          </SkipWarning>
+        </span>
+      )}
+      <RingsWrapper>
+        <Ring>
+          <ChartBinder>
+            <chart.Doughnut data={proteinData} style={{ flex: 1 }} />
+          </ChartBinder>
+          <span>{proteinDisplay}g Protein</span>
+          <span>/{Math.round(dailyProteinGoal)}g</span>
+        </Ring>
+        <Ring>
+          <ChartBinder>
+            <chart.Doughnut data={fibreData} style={{ flex: 1 }} />
+          </ChartBinder>
+          <span>{fibreDisplay}g Fibre</span>
+          <span>/30g</span>
+        </Ring>
+      </RingsWrapper>
+      {currentProteinTotal >= proteinLimit && (
+        <span>
+          <SkipWarning>Note: You have exceeded the max protein of 2g/KM.</SkipWarning>
+        </span>
+      )}
+
+      {skippedEntry && (
+        <span>
+          <SkipWarning>
+            Note: At least one partially completed item above is excluded from these totals.
+          </SkipWarning>
+        </span>
+      )}
+      {usePlantPoints && (
+        <>
+          <FlatStats>
+            {weekStart} - {weekEnd}
+          </FlatStats>
+          <FlatStats>
+            <PlantPoint style={{ fill: theme.colours.plantPoint }} /> Plant Points: {plantPoints}
+          </FlatStats>
+        </>
+      )}
     </SummaryTable>
   );
 };
