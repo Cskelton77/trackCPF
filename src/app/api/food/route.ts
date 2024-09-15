@@ -19,8 +19,9 @@ export async function POST(request: Request) {
         INSERT INTO fooddatabase(fid, uid, foodobject) 
         VALUES (${fid}, ${uid}, ${foodobject});`;
 
-  if (response.rowCount == 1) {
+  if (data.rowCount == 1) {
     return Response.json(foodobject);
+
   }
   return new Response('500');
 }

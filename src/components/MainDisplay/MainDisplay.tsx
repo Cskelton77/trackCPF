@@ -60,8 +60,7 @@ const MainDisplay = ({
 
           const { fid, name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
-          if (foodEntry.plantPoints) {
-          }
+
           return (
             <tr
               key={`${fid}+${serving}`}
