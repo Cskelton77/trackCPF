@@ -19,7 +19,6 @@ export const ResponseRow = styled.div`
   justify-content: space-between;
   cursor: 'pointer';
   width: 100%;
-  height: 36px;
   font-size: ${theme.smallText};
   padding: ${theme.inputPadding};
   color: ${theme.colours.black};
