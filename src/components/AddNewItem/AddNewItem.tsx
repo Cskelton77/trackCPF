@@ -77,7 +77,6 @@ const AddNewItem = forwardRef(
 
     const handleSubmit = () => {
       if (serving) {
-        console.log(' handleSubmit plantPoints', plantPoints);
         handleSave(
           selectedFood?.name || name,
           parseFloat(serving),

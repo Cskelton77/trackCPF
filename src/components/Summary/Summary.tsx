@@ -71,7 +71,6 @@ const Summary = ({ data, plantPoints }: { data: DiaryData[]; plantPoints: number
 
       const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
       const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
-      console.log('currentProteinTotal >= proteinLimit', currentProteinTotal, proteinLimit);
       const proteinColour =
         currentProteinTotal >= proteinLimit
           ? theme.colours.proteinRingWarning
