@@ -5,7 +5,7 @@ import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/compo
 import { DiaryData } from '@/interfaces/DailyData';
 import { ItemMode, MODES, NullableNumber } from '@/interfaces/ItemModes';
 import { deleteFood, getFood, postFood } from '@/api/food';
-import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { DEBUGMODE } from '@/config';

@@ -5,21 +5,11 @@ import {
   EntryBox,
   ItemAttributes,
   NewItemModal,
-  ItemName,
   SaveAction,
   AttributeInput,
   TextDisplay,
 } from './AddNewItem.style';
-import {
-  ForwardedRef,
-  Ref,
-  RefObject,
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
 import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
 import { DEBUGMODE } from '@/config';

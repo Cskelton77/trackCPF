@@ -1,7 +1,7 @@
 import { ItemMode, MODES } from '@/interfaces/ItemModes';
 import Delete from '../Icons/Delete';
 import { ActionBlock, ResponseDropdown, ResponseRow, SearchBarInput } from './SearchBar.style';
-import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { ForwardedRef, forwardRef, useState } from 'react';
 
 interface SearchBar {
