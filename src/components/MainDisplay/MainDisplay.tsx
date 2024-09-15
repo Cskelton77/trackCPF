@@ -4,6 +4,8 @@ import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, TableCell } from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
+import PlantPoint from '../Icons/PlantPoint';
+import { theme } from '@/theme';
 
 export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
@@ -58,13 +60,21 @@ const MainDisplay = ({
 
           const { fid, name, calories, protein, fibre } = foodEntry;
           const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
-
+          if (foodEntry.plantPoints) {
+          }
           return (
             <tr
               key={`${fid}+${serving}`}
               onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
             >
-              <TableCell>{name}</TableCell>
+              <TableCell>
+                {name}{' '}
+                {foodEntry.plantPoints ? (
+                  <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                ) : (
+                  ''
+                )}
+              </TableCell>
               <TableCell>
                 {serving} {unit}
               </TableCell>
