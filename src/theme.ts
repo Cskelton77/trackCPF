@@ -9,6 +9,8 @@ export const theme = {
     fibreRing: '#23541B', // '#B0AB80',
     proteinRing: '#6D7393', // '#B3B3F1',
     proteinRingWarning: '#FF0000',
+
+    plantPoint: '#45f248', // '#B0AB80',
   },
   layoutPadding: '24px',
   buttonPadding: '12px',
