@@ -32,19 +32,19 @@ export default function Home() {
   const [newItemMode, setNewItemMode] = useState<ItemMode>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const addNewItemRef = useRef<HTMLFormElement>(null);
+  const addNewItemRef = useRef<HTMLDivElement>(null);
   const searchBarRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (addNewItemRef.current && showAddNewItem) {
+    if (addNewItemRef.current && newItemMode) {
       addNewItemRef.current.scrollIntoView();
     }
-  }, [showAddNewItem]);
+  }, [newItemMode]);
   useEffect(() => {
-    if (searchBarRef.current && !showAddNewItem) {
+    if (searchBarRef.current && !newItemMode) {
       searchBarRef.current.scrollIntoView();
     }
-  }, [showAddNewItem]);
+  }, [newItemMode]);
 
   const resetSelection = () => {
     setSelectedFood(undefined);
