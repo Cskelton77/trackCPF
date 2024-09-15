@@ -265,7 +265,7 @@ export default function Home() {
         setSelectedFood={setSelectedFood}
         deleteFoodItem={handleDeleteFoodEntry}
       />
-      <Summary data={dailyData} plantPoints={weeklyPlantPoints} />
+      <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
 
       <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} />
 

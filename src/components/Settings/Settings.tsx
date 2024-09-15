@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Modal, { ModalInterface } from '../_Modal/Modal';
 import {
   Actions,
@@ -9,7 +9,6 @@ import {
   PersonalInfo,
   SaveAction,
   SettingsSection,
-  WeightInput,
 } from './Settings.style';
 import saveSettings from '@/api/users/settings/post';
 import {
@@ -23,13 +22,9 @@ import {
 interface Settings extends Omit<ModalInterface, 'children'> {
   uid: string;
 }
-
-// Men: BMR = 88.362 + (13.397 x weight in kg) + (4.799 x height in cm) – (5.677 x age in years)
-// Women: BMR = 447.593 + (9.247 x weight in kg) + (3.098 x height in cm) – (4.330 x age in years)
-
 export const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const context = useContext(SettingsContext);
-
+  console.log('context', context);
   const [gender, setGender] = useState<Genders>(context.gender);
   const [age, setAge] = useState<number>(context.age);
   const [heightFeet, setHeightFeet] = useState<number>(context.heightFeet);
@@ -38,6 +33,17 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const [protein, setProtein] = useState<ProteinCalculation>(context.protein);
   const [rounding, setRounding] = useState<boolean>(context.rounding);
   const [usePlantPoints, setUsePlantPoints] = useState<boolean>(context.usePlantPoints);
+
+  useEffect(() => {
+    setGender(context.gender);
+    setAge(context.age);
+    setHeightFeet(context.heightFeet);
+    setHeightInches(context.heightInches);
+    setWeight(context.weight);
+    setProtein(context.protein);
+    setRounding(context.rounding);
+    setUsePlantPoints(context.usePlantPoints);
+  }, [context]);
 
   const handleSubmit = async () => {
     const settings = {
@@ -84,7 +90,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
                 maxLength={2}
                 inputMode="decimal"
                 value={age}
-                onChange={(e) => setAge(parseInt(e.target.value))}
+                onChange={(e) => setAge(parseInt(e.target.value) || 0)}
               />
             </h4>
           </SettingsSection>
@@ -95,14 +101,14 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
                 maxLength={2}
                 inputMode="decimal"
                 value={heightFeet}
-                onChange={(e) => setHeightFeet(parseInt(e.target.value))}
+                onChange={(e) => setHeightFeet(parseInt(e.target.value) || 0)}
               />{' '}
               feet,{' '}
               <HeightInput
                 maxLength={2}
                 inputMode="decimal"
                 value={heightInches}
-                onChange={(e) => setHeightInches(parseInt(e.target.value))}
+                onChange={(e) => setHeightInches(parseInt(e.target.value) || 0)}
               />{' '}
               inches.
             </h4>
@@ -113,7 +119,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               <HeightInput
                 inputMode="decimal"
                 value={weight}
-                onChange={(e) => setWeight(parseInt(e.target.value))}
+                onChange={(e) => setWeight(parseInt(e.target.value) || 0)}
               />{' '}
               lbs.
             </h4>
