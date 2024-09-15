@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/components';
 import { DiaryData } from '@/interfaces/DailyData';
 import { ItemMode, MODES, NullableNumber } from '@/interfaces/ItemModes';
 import { deleteFood, getFood, postFood } from '@/api/food';
-import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { DEBUGMODE } from '@/config';
@@ -31,6 +31,20 @@ export default function Home() {
 
   const [newItemMode, setNewItemMode] = useState<ItemMode>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const addNewItemRef = useRef<HTMLDivElement>(null);
+  const searchBarRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (addNewItemRef.current && newItemMode) {
+      addNewItemRef.current.scrollIntoView();
+    }
+  }, [newItemMode]);
+  useEffect(() => {
+    if (searchBarRef.current && !newItemMode) {
+      searchBarRef.current.scrollIntoView();
+    }
+  }, [newItemMode]);
 
   const resetSelection = () => {
     setSelectedFood(undefined);
@@ -233,6 +247,7 @@ export default function Home() {
         deleteEntry={handleDeleteDiaryEntry}
       />
       <AddNewItem
+        ref={addNewItemRef}
         date={displayDate}
         isVisible={!!newItemMode}
         mode={newItemMode}
@@ -243,6 +258,7 @@ export default function Home() {
         close={resetSelection}
       />
       <SearchBar
+        ref={searchBarRef}
         value={searchValue}
         setValue={setSearchValue}
         response={searchResponse}

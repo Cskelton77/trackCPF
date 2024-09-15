@@ -1,3 +1,4 @@
+import { ForwardedRef, forwardRef } from 'react';
 import { ModalClose, ModalHeader, ModalWindow } from './Modal.style';
 
 export interface ModalInterface {
@@ -6,18 +7,20 @@ export interface ModalInterface {
   close?: () => void;
   children: JSX.Element;
 }
-const Modal = ({ title, isVisible, close, children }: ModalInterface) => {
-  return isVisible ? (
-    <ModalWindow>
-      <ModalHeader>
-        <span>{title || `Modal`}</span>
-        <ModalClose onClick={close ? () => close() : undefined} />
-      </ModalHeader>
-      {children}
-    </ModalWindow>
-  ) : (
-    <></>
-  );
-};
+const Modal = forwardRef(
+  ({ title, isVisible, close, children }: ModalInterface, ref: ForwardedRef<HTMLDivElement>) => {
+    return isVisible ? (
+      <ModalWindow ref={ref}>
+        <ModalHeader>
+          <span>{title || `Modal`}</span>
+          <ModalClose onClick={close ? () => close() : undefined} />
+        </ModalHeader>
+        {children}
+      </ModalWindow>
+    ) : (
+      <></>
+    );
+  },
+);
 
 export default Modal;
