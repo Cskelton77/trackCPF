@@ -10,6 +10,7 @@ export const SummaryTable = styled.div`
 export const RingsWrapper = styled.div`
   display: flex;
   justify-content: space-around;
+  padding: ${theme.buttonPadding} ${theme.layoutPadding};
 `;
 
 export const Ring = styled.div`
@@ -23,13 +24,14 @@ export const ChartBinder = styled.div`
   width: 75px;
 `;
 
-export const SkipWarning = styled.td`
+export const SkipWarning = styled.div`
   font-size: ${theme.extraSmallText};
   text-align: center;
 `;
 
 export const FlatStats = styled.div`
   display: block;
+  font-size: ${theme.smallText};
   text-align: center;
-  padding: ${theme.layoutPadding};
+  padding: ${theme.inputPadding} ${theme.layoutPadding};
 `;

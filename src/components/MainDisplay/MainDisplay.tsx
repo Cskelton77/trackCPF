@@ -1,6 +1,6 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import Delete from '../Icons/Delete';
-import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, TableCell } from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
@@ -47,10 +47,12 @@ const MainDisplay = ({
           const calculateDisplay = (metric: number | undefined): string => {
             if (metric === null || metric === undefined) {
               return '---';
-            } else if (rounding) {
-              return Math.round(metric).toString();
+            }
+            const calculation = (serving * metric) / denominator;
+            if (rounding) {
+              return Math.round(calculation).toString();
             } else {
-              return roundDisplay((serving * metric) / denominator).toString();
+              return roundDisplay(calculation).toString();
             }
           };
 

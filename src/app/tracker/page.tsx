@@ -111,12 +111,19 @@ export default function Home() {
     fibre: NullableNumber,
     plantPoints: NullableNumber,
   ) => {
+    // Plant Points coming thru as 0
+    console.log('handleSaveDiaryEntry plantPoints', plantPoints);
+    // console.log('handleSave', !!calories, !!protein, !!fibre, !!plantPoints);
+
     // Add a new diary item with a food that should be saved to food DB
-    const isCompleteEntry = !!calories && !!protein && !!fibre && !!plantPoints;
+    const isCompleteEntry = !!calories && !!protein && !!fibre;
     const isManualMode = newItemMode === MODES.MANUAL;
     const isUpdateMode = newItemMode === MODES.UPDATE;
     const isCalculateMode = newItemMode === MODES.CALCULATE && selectedFood;
-
+    console.log('isCompleteEntry', isCompleteEntry);
+    console.log('isManualMode', isManualMode);
+    console.log('isUpdateMode', isUpdateMode);
+    console.log('isCalculateMode', isCalculateMode);
     // Complete Entry means we have a full piece of food
     // Not manual mode means we can save info for /100g
     // Not update mode means we are going to PUT not PATCH
@@ -129,7 +136,7 @@ export default function Home() {
           calories: calories,
           protein: protein,
           fibre: fibre,
-          plantPoints: plantPoints,
+          plantPoints: plantPoints || 0,
         }),
       );
       const diaryEntry: Omit<DiaryData, 'did'> = {

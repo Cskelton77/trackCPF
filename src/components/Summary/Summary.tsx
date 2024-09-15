@@ -23,100 +23,139 @@ const Summary = ({ data, plantPoints }: { data: DiaryData[]; plantPoints: number
 
   const proteinMultiplier = protein == PROTEIN_CALCULATION.AGGRESSIVE ? 1.0 : 0.75;
   const dailyProteinGoal = weight > 1 ? proteinMultiplier * (weight / 2.205) : NHS_DAILY_PROTEIN;
+    const proteinLimit = weight > 1 ? 2 * (weight / 2.205) : 2 * NHS_DAILY_PROTEIN;
+    let skippedEntry = false;
 
-  let skippedEntry = false;
+    const sum = (toSum: 'calories' | 'protein' | 'fibre') => {
+      return data.reduce(
+        (runningTotal, { serving, isDirectEntry, foodEntry: { [toSum]: metric } }) => {
+          if (metric) {
+            const denominator = isDirectEntry ? 1 : 100;
+            const calculatedCalories = (serving * metric) / denominator;
+            return runningTotal + calculatedCalories;
+          }
+          if (metric == null) {
+            // Want to alert the user if there is a partial entry,
+            // but not if the entry is just 0
+            skippedEntry = true;
+          }
+          return runningTotal + 0;
+        },
+        0,
+      );
+    };
+    let servingFlag = false;
 
-  const sum = (toSum: 'calories' | 'protein' | 'fibre') => {
-    return data.reduce(
-      (runningTotal, { serving, isDirectEntry, foodEntry: { [toSum]: metric } }) => {
-        if (metric) {
-          const denominator = isDirectEntry ? 1 : 100;
-          const calculatedCalories = (serving * metric) / denominator;
-          return runningTotal + calculatedCalories;
+    const totalCaloriesOfProtein = data.reduce(
+      (count, { serving, isDirectEntry, foodEntry: { calories, protein } }) => {
+        if (isDirectEntry) {
+          servingFlag = true;
+          return count + 0;
+        } else {
+          const percentageOfServing = (protein || 0 / serving) * (calories || 1);
+          return count + percentageOfServing;
         }
-        if (metric == null) {
-          // Want to alert the user if there is a partial entry,
-          // but not if the entry is just 0
-          skippedEntry = true;
-        }
-        return runningTotal + 0;
       },
       0,
     );
-  };
 
-  const currentCalorieTotal = sum('calories');
-  const currentProteinTotal = sum('protein');
-  const currentFibreTotal = sum('fibre');
+    const currentCalorieTotal = sum('calories');
+    const currentProteinTotal = sum('protein');
+    const currentFibreTotal = sum('fibre');
 
-  const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
-  const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
+    const generateChartData = (type: 'protein' | 'fibre') => {
+      const isFibre = type === 'fibre';
 
-  const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
-  const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
+      const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
+      const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
 
-  const generateChartData = (type: 'protein' | 'fibre') => {
-    const isFibre = type === 'fibre';
-    return {
-      labels: [],
-      datasets: [
-        {
-          label: '',
-          data: isFibre ? [fibrePercentage, fibreRemaining] : [proteinPercentage, proteinRemaining],
-          backgroundColor: [
-            isFibre ? theme.colours.fibreRing : theme.colours.proteinRing,
-            theme.colours.white,
-          ],
-          cutout: '65%',
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
+      const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
+      const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
+      console.log('currentProteinTotal >= proteinLimit', currentProteinTotal, proteinLimit);
+      const proteinColour =
+        currentProteinTotal >= proteinLimit
+          ? theme.colours.proteinRingWarning
+          : theme.colours.proteinRing;
+      return {
+        labels: [],
+        datasets: [
+          {
+            label: '',
+            data: isFibre
+              ? [fibrePercentage, fibreRemaining]
+              : [proteinPercentage, proteinRemaining],
+            backgroundColor: [
+              isFibre ? theme.colours.fibreRing : proteinColour,
+              theme.colours.white,
+            ],
+            cutout: '65%',
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+            },
           },
-        },
-      ],
+        ],
+      };
     };
-  };
-  const fibreData = generateChartData('fibre');
-  const proteinData = generateChartData('protein');
 
-  const calorieDisplay = rounding
-    ? Math.round(currentCalorieTotal)
-    : roundDisplay(currentCalorieTotal);
-  const proteinDisplay = rounding
-    ? Math.round(currentProteinTotal)
-    : roundDisplay(currentProteinTotal);
-  const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
-  return (
-    <SummaryTable>
-      <FlatStats>Total: {calorieDisplay} calories</FlatStats>
+    const fibreData = generateChartData('fibre');
+    const proteinData = generateChartData('protein');
 
-      <RingsWrapper>
-        <Ring>
-          <ChartBinder>
-            <chart.Doughnut data={proteinData} style={{ flex: 1 }} />
-          </ChartBinder>
-          <span>{proteinDisplay}g Protein</span>
-          <span>/{Math.round(dailyProteinGoal)}g</span>
-        </Ring>
-        <Ring>
-          <ChartBinder>
-            <chart.Doughnut data={fibreData} style={{ flex: 1 }} />
-          </ChartBinder>
-          <span>{fibreDisplay}g Fibre</span>
-          <span>/30g</span>
-        </Ring>
-      </RingsWrapper>
+    const calorieDisplay = rounding
+      ? Math.round(currentCalorieTotal)
+      : roundDisplay(currentCalorieTotal);
+    const proteinDisplay = rounding
+      ? Math.round(currentProteinTotal)
+      : roundDisplay(currentProteinTotal);
+    const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
 
-      {skippedEntry && (
-        <span>
-          <SkipWarning>
-            Note: At least one partially completed item above is excluded from these totals.
-          </SkipWarning>
-        </span>
-      )}
-      {usePlantPoints && <FlatStats>Plant Points for Week: {plantPoints}</FlatStats>}
-    </SummaryTable>
-  );
+    const caloriesFromProteinDisplay = rounding
+      ? Math.round(totalCaloriesOfProtein / currentCalorieTotal)
+      : roundDisplay(totalCaloriesOfProtein / currentCalorieTotal);
+
+    return (
+      <SummaryTable>
+        <FlatStats>Daily Total: {calorieDisplay} calories</FlatStats>
+        <FlatStats>% from Protein: {caloriesFromProteinDisplay} calories</FlatStats>
+        {servingFlag && (
+          <span>
+            <SkipWarning>
+              Note: This percentage excludes at least one item not entered by weight.
+            </SkipWarning>
+          </span>
+        )}
+        <RingsWrapper>
+          <Ring>
+            <ChartBinder>
+              <chart.Doughnut data={proteinData} style={{ flex: 1 }} />
+            </ChartBinder>
+            <span>{proteinDisplay}g Protein</span>
+            <span>/{Math.round(dailyProteinGoal)}g</span>
+          </Ring>
+          <Ring>
+            <ChartBinder>
+              <chart.Doughnut data={fibreData} style={{ flex: 1 }} />
+            </ChartBinder>
+            <span>{fibreDisplay}g Fibre</span>
+            <span>/30g</span>
+          </Ring>
+        </RingsWrapper>
+        {currentProteinTotal >= proteinLimit && (
+          <span>
+            <SkipWarning>Note: You have exceeded the max protein of 2g/KM.</SkipWarning>
+          </span>
+        )}
+
+        {skippedEntry && (
+          <span>
+            <SkipWarning>
+              Note: At least one partially completed item above is excluded from these totals.
+            </SkipWarning>
+          </span>
+        )}
+        {usePlantPoints && <FlatStats>Plant Points for Week: {plantPoints}</FlatStats>}
+      </SummaryTable>
+    );
 };
 
 export default Summary;
