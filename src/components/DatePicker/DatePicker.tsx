@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment';
 import ChevronLeft from '../Icons/Chevron-Left';
 import ChevronRight from '../Icons/Chevron-Right';
-import { DatePickerWrapper, DateSelector, YearWrapper } from './DatePicker.style';
+import { DatePickerWrapper, DateSelector, Day, YearWrapper } from './DatePicker.style';
 
 interface DatePicker {
   date: Moment;
@@ -23,9 +23,10 @@ const DatePicker = ({ date, setDisplayDate }: DatePicker) => {
   };
 
   const formatDate = (date: Moment) => moment(date).format('MMM Do');
-
+  const getDay = (date: Moment) => moment(date).format('dddd');
   return (
     <DatePickerWrapper>
+      <Day>{getDay(date)}</Day>
       <DateSelector>
         <ChevronLeft size={48} onClick={() => handleDateChange('back')} />
         {formatDate(date)}

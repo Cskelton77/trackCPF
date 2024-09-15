@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { sql } from '@vercel/postgres';
-import { FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 
 interface FoodDatabase {
   fid: string;
@@ -15,10 +15,10 @@ export async function POST(request: Request) {
   const fid = uuidv4();
   const uid = body.user;
   const foodobject = JSON.stringify({ fid, ...body.food });
-  const data = await sql<FoodDatabase>`
+  await sql<FoodDatabase>`
         INSERT INTO fooddatabase(fid, uid, foodobject) 
         VALUES (${fid}, ${uid}, ${foodobject});`;
-  return new Response('201');
+  return Response.json(foodobject);
 }
 
 /**
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     SELECT foodobject
     FROM fooddatabase
     WHERE uid like ${user}`;
-  const listOfFoods: FoodObject[] = [];
+  const listOfFoods: DefinedFoodObject[] = [];
   data.rows.forEach((row) => {
     const rowName = row.foodobject.name.toLowerCase();
     const queryLower = query?.toLowerCase() || '';

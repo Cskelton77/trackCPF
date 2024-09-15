@@ -15,6 +15,7 @@ const updateDiary = async ({ did, uid, serving, foodEntry }: Partial<DiaryData>)
         calories: foodEntry?.calories,
         protein: foodEntry?.protein,
         fibre: foodEntry?.fibre,
+        plantPoints: foodEntry?.plantPoints,
       },
     }),
   });
