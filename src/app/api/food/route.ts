@@ -15,10 +15,14 @@ export async function POST(request: Request) {
   const fid = uuidv4();
   const uid = body.user;
   const foodobject = JSON.stringify({ fid, ...body.food });
-  await sql<FoodDatabase>`
+  const response = await sql<FoodDatabase>`
         INSERT INTO fooddatabase(fid, uid, foodobject) 
         VALUES (${fid}, ${uid}, ${foodobject});`;
-  return Response.json(foodobject);
+
+  if (response.rowCount == 1) {
+    return Response.json(foodobject);
+  }
+  return new Response('500');
 }
 
 /**
