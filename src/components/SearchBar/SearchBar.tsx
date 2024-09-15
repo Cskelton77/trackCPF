@@ -9,7 +9,7 @@ interface SearchBar {
   setValue: (val: string) => void;
   response: DefinedFoodObject[];
   addNewItem: (mode: ItemMode) => void;
-  setSelectedFood: (food: FoodObject) => void;
+  setSelectedFood: (food: DefinedFoodObject) => void;
   deleteFoodItem: (foodId: string) => void;
 }
 
@@ -20,10 +20,10 @@ const SearchBar = forwardRef(
   ) => {
     const [showDropdown, setShowDropdown] = useState(false);
 
-    const addExistingFoodItem = (response: FoodObject) => {
-      setSelectedFood(response);
-      addNewItem(MODES.CALCULATE);
-    };
+  const addExistingFoodItem = (response: DefinedFoodObject) => {
+    setSelectedFood(response);
+    addNewItem(MODES.CALCULATE);
+  };
 
     const handleBlur = () => {
       setTimeout(() => {

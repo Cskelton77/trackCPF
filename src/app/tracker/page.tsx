@@ -9,20 +9,28 @@ import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { DEBUGMODE } from '@/config';
+import { Settings } from '@/components/Settings/Settings';
+import getSettings from '@/api/users/settings/get';
+import { SettingsContext, SettingsContextInterface, defaultSettings } from '@/context';
 
 export default function Home() {
   const router = useRouter();
 
   const [uid, setUid] = useState<string>('');
+  const [userSettings, setUserSettings] = useState<SettingsContextInterface>(defaultSettings);
   const [email, setEmail] = useState<string>('');
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
+  const [weeklyPlantPoints, setWeeklyPlantPoints] = useState(0);
   const [displayDate, setDisplayDate] = useState(moment());
   const [searchValue, setSearchValue] = useState('');
   const [searchResponse, setSearchResponse] = useState<DefinedFoodObject[]>([]);
-  const [selectedFood, setSelectedFood] = useState<FoodObject>();
+
+  const [selectedFood, setSelectedFood] = useState<DefinedFoodObject>();
   const [selectedFoodServing, setSelectedFoodServing] = useState<number>();
   const [selectedDiaryEntry, setSelectedDiaryEntry] = useState<string>();
-  const [showAddNewItem, setShowAddNewItem] = useState<ItemMode>(null);
+
+  const [newItemMode, setNewItemMode] = useState<ItemMode>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const addNewItemRef = useRef<HTMLFormElement>(null);
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -43,17 +51,24 @@ export default function Home() {
     setSelectedFoodServing(undefined);
     setSelectedDiaryEntry(undefined);
     setSearchValue('');
-    setShowAddNewItem(null);
+    setNewItemMode(null);
   };
 
-  async function getDropdownOptions() {
+  async function fetchFoodResults() {
     const response = await getFood(uid, searchValue);
     setSearchResponse(response);
   }
 
   async function fetchDaily() {
     const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
-    setDailyData(response);
+    setDailyData(response.dailyData);
+    setWeeklyPlantPoints(response.weeklyPlantPoints);
+  }
+
+  async function fetchSettings() {
+    const settings = await getSettings(uid);
+    setUserSettings(settings);
+    await fetchDaily();
   }
 
   // Initial Load to retreive UID & Email
@@ -66,14 +81,13 @@ export default function Home() {
     }
   }, []);
 
-  // Use UID to pull daily data
+  // Use UID to pull user data
   useEffect(() => {
-    console.log('fetchDaily updated uid', uid);
     if (uid == 'ERROR') {
       logout();
     } else {
       if (uid != '') {
-        fetchDaily();
+        fetchSettings();
       }
     }
   }, [uid, displayDate]);
@@ -81,62 +95,94 @@ export default function Home() {
   // Search as typing happens
   useEffect(() => {
     if (searchValue !== '') {
-      getDropdownOptions();
+      fetchFoodResults();
     }
     if (searchValue == '') {
       setSearchResponse([]);
     }
   }, [searchValue]);
 
-  const handleDeleteFoodEntry = async (foodId: string) => {
-    const x = await deleteFood(foodId);
-    await getDropdownOptions();
-  };
-
+  // Diary API Calls
   const handleSaveDiaryEntry = async (
     name: string,
     serving: number,
     calories: NullableNumber,
     protein: NullableNumber,
     fibre: NullableNumber,
+    plantPoints: NullableNumber,
   ) => {
-    const isCompleteEntry = !!calories && !!protein && !!fibre;
-    const isManualMode = showAddNewItem === MODES.MANUAL;
+    // Add a new diary item with a food that should be saved to food DB
+    const isCompleteEntry = !!calories && !!protein && !!fibre && !!plantPoints;
+    const isManualMode = newItemMode === MODES.MANUAL;
+    const isUpdateMode = newItemMode === MODES.UPDATE;
+    const isCalculateMode = newItemMode === MODES.CALCULATE && selectedFood;
 
-    if (isCompleteEntry && !isManualMode && !selectedFood) {
+    // Complete Entry means we have a full piece of food
+    // Not manual mode means we can save info for /100g
+    // Not update mode means we are going to PUT not PATCH
+    // No selected food means we did not select an item from the existing dropdown
+    if (isCompleteEntry && !isManualMode && !isUpdateMode && !selectedFood) {
       // Save full nutritional data per 100g'
-      await postFood(uid, {
-        name: name,
-        calories: calories,
-        protein: protein,
-        fibre: fibre,
-      });
-    }
-
-    if (showAddNewItem === MODES.UPDATE) {
-      const diaryUpdate: Partial<DiaryData> = {
-        did: selectedDiaryEntry,
-        uid,
-        serving,
-        foodEntry: {
-          name: selectedFood?.name || 'error',
-          calories: calories as number,
-          protein: protein as number,
-          fibre: fibre as number,
-        },
-      };
-      await updateDiary(diaryUpdate);
-    } else {
+      const newFood = JSON.parse(
+        await postFood(uid, {
+          name: name,
+          calories: calories,
+          protein: protein,
+          fibre: fibre,
+          plantPoints: plantPoints,
+        }),
+      );
       const diaryEntry: Omit<DiaryData, 'did'> = {
         uid,
         date: moment(displayDate).format('YYYY-MM-DD'),
         serving: serving || 0,
         isDirectEntry: isManualMode,
         foodEntry: {
+          fid: newFood?.fid || '',
           name: name,
           calories: calories as number,
           protein: protein as number,
           fibre: fibre as number,
+          plantPoints: plantPoints as number,
+        },
+      };
+      await postDiary(diaryEntry);
+    }
+
+    // Update an existing diary item
+    // isUpdateMode
+    if (isUpdateMode) {
+      const diaryUpdate: Partial<DiaryData> = {
+        did: selectedDiaryEntry,
+        uid,
+        serving,
+        foodEntry: {
+          fid: selectedFood?.fid || '',
+          name: selectedFood?.name || 'error',
+          calories: calories as number,
+          protein: protein as number,
+          fibre: fibre as number,
+          plantPoints: plantPoints as number,
+        },
+      };
+      await updateDiary(diaryUpdate);
+    }
+
+    // add a new diary item with a food that should not be saved
+    // isManualMode
+    if (isManualMode || isCalculateMode) {
+      const diaryEntry: Omit<DiaryData, 'did'> = {
+        uid,
+        date: moment(displayDate).format('YYYY-MM-DD'),
+        serving: serving || 0,
+        isDirectEntry: isManualMode,
+        foodEntry: {
+          fid: selectedFood?.fid || '',
+          name: name,
+          calories: calories as number,
+          protein: protein as number,
+          fibre: fibre as number,
+          plantPoints: plantPoints as number,
         },
       };
       await postDiary(diaryEntry);
@@ -146,29 +192,43 @@ export default function Home() {
     await fetchDaily();
   };
 
+  const handleModifyDiaryEntry = async (
+    diaryId: string,
+    currentServing: number,
+    update: DefinedFoodObject,
+  ) => {
+    setSelectedFood(update);
+    setSelectedDiaryEntry(diaryId);
+    setSelectedFoodServing(currentServing);
+    setNewItemMode(MODES.UPDATE);
+  };
+
   const handleDeleteDiaryEntry = async (diaryId: string) => {
     await deleteDiary(diaryId);
     await fetchDaily();
   };
 
-  const handleModifyDiaryEntry = async (
-    diaryId: string,
-    currentServing: number,
-    update: FoodObject,
-  ) => {
-    setSelectedFood(update);
-    setSelectedDiaryEntry(diaryId);
-    setSelectedFoodServing(currentServing);
-    setShowAddNewItem(MODES.UPDATE);
+  const handleDeleteFoodEntry = async (foodId: string) => {
+    await deleteFood(foodId);
+    await fetchFoodResults();
   };
 
+  // Modal Open/Close + Header
+  const openSettings = () => {
+    setSettingsOpen(true);
+  };
+  const closeSettings = async () => {
+    await fetchSettings();
+    setSettingsOpen(false);
+  };
   const logout = () => {
     localStorage.removeItem('uid');
     localStorage.removeItem('email');
     router.push('/');
   };
+
   return (
-    <>
+    <SettingsContext.Provider value={userSettings}>
       <div
         style={{
           display: 'flex',
@@ -177,7 +237,7 @@ export default function Home() {
           borderBottom: '1px solid #E0E0E0',
         }}
       >
-        User: {email}
+        <span onClick={() => openSettings()}>User: {email}</span>
         <button onClick={() => logout()}>Log Out</button>
       </div>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
@@ -189,8 +249,8 @@ export default function Home() {
       <AddNewItem
         ref={addNewItemRef}
         date={displayDate}
-        isVisible={!!showAddNewItem}
-        mode={showAddNewItem}
+        isVisible={!!newItemMode}
+        mode={newItemMode}
         name={searchValue}
         selectedFood={selectedFood}
         selectedFoodServing={selectedFoodServing}
@@ -202,11 +262,13 @@ export default function Home() {
         value={searchValue}
         setValue={setSearchValue}
         response={searchResponse}
-        addNewItem={setShowAddNewItem}
+        addNewItem={setNewItemMode}
         setSelectedFood={setSelectedFood}
         deleteFoodItem={handleDeleteFoodEntry}
       />
-      <Summary data={dailyData} />
+      <Summary data={dailyData} plantPoints={weeklyPlantPoints} />
+
+      <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} />
 
       {DEBUGMODE && (
         <div>
@@ -237,11 +299,11 @@ export default function Home() {
             <p>{selectedDiaryEntry}</p>
             <br />
             <h4>searchResponse</h4>
-            <p>{showAddNewItem}</p>
+            <p>{newItemMode}</p>
             <br />
           </div>
         </div>
       )}
-    </>
+    </SettingsContext.Provider>
   );
 }

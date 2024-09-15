@@ -4,13 +4,9 @@ export const NewItemModal = styled.form`
   display: flex;
   align-self: center;
   flex-direction: column;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
+
   background-color: ${theme.colours.white};
   padding: ${theme.layoutPadding};
-  color: ${theme.colours.black};
 `;
 
 export const ItemName = styled.div`
@@ -33,8 +29,12 @@ export const EntryBox = styled.div`
 export const AttributeInput = styled.input`
   height: 36px;
   padding: ${theme.inputPadding};
-  border-radius: 8px;
+  //   border-radius: 8px;
   margin-right: 12px;
+  border: none;
+  border-bottom: 1px solid ${theme.colours.black};
+  background-color: ${theme.colours.white};
+  color: ${theme.colours.black};
 `;
 export const TextDisplay = styled.p``;
 

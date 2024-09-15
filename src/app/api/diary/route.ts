@@ -1,5 +1,6 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import { sql } from '@vercel/postgres';
+import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -13,9 +14,8 @@ export async function POST(request: Request) {
   const foodEntry = JSON.stringify(body.foodEntry);
   const serving = body.serving;
   const isDirectEntry = body.isDirectEntry;
-  const timestamp = Date.now()
-
-  const data = await sql<DiaryData>`
+  const timestamp = Date.now();
+  await sql<DiaryData>`
           INSERT INTO diary(did, uid, date, serving, "foodEntry", "isDirectEntry", timestamp) 
           VALUES (${did}, ${uid}, ${date}, ${serving},${foodEntry}, ${isDirectEntry}, ${timestamp});`;
   return new Response('201');
@@ -33,13 +33,47 @@ export async function GET(request: Request) {
         ORDER BY timestamp ASC
         `;
 
+  const weekStart = moment(date).startOf('isoWeek').toString();
+  const weekEnd = moment(date).endOf('isoWeek').toString();
+  const weeklyData = await sql<DiaryData>`
+    SELECT *
+    FROM diary
+    WHERE uid like ${user}
+   AND date >= ${weekStart}
+    AND date <=  ${weekEnd}
+    ORDER BY timestamp ASC
+        `;
+
+  const plantPointData = {
+    foods: [''],
+    points: 0.0,
+  };
+  weeklyData.rows.forEach((row) => {
+    const hasPlantPoints =
+      row.foodEntry.fid && row.foodEntry.plantPoints && row.foodEntry.plantPoints > 0;
+    if (hasPlantPoints) {
+      if (!plantPointData.foods.includes(row.foodEntry.fid)) {
+        plantPointData.foods.push(row.foodEntry.fid);
+        plantPointData.points += parseFloat(row.foodEntry.plantPoints?.toString() || '');
+      }
+    }
+  });
+
+  // Eventually this can be removed, this is a filter
+  // to handle bad entries in the DB from early testing that
+  // might not have all been removed.
   const filteredJunk: DiaryData[] = [];
   data.rows.forEach((row) => {
     if (row.foodEntry) {
       filteredJunk.push(row);
     }
   });
-  return Response.json(filteredJunk);
+
+  const response = {
+    dailyData: filteredJunk,
+    weeklyPlantPoints: plantPointData.points,
+  };
+  return Response.json(response);
 }
 
 export async function PATCH(request: Request) {
