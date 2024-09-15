@@ -48,7 +48,7 @@ const AddNewItem = forwardRef(
     const [calories, setCalories] = useState<string>();
     const [protein, setProtein] = useState<string>();
     const [fibre, setFibre] = useState<string>();
-    const [plantPoints, setPlantPoints] = useState<string>();
+    const [plantPoints, setPlantPoints] = useState<string>('0');
     const [serving, setServing] = useState<string>();
 
     useEffect(() => {
@@ -56,7 +56,7 @@ const AddNewItem = forwardRef(
         setCalories(selectedFood.calories?.toString());
         setProtein(selectedFood.protein?.toString());
         setFibre(selectedFood.fibre?.toString());
-        setPlantPoints(selectedFood.plantPoints?.toString());
+        setPlantPoints(selectedFood.plantPoints?.toString() || '0');
       }
       if (isUpdateMode) {
         setServing(selectedFoodServing?.toString());
@@ -68,7 +68,7 @@ const AddNewItem = forwardRef(
       setProtein(undefined);
       setFibre(undefined);
       setServing(undefined);
-      setPlantPoints(undefined);
+      setPlantPoints('0');
     };
     const handleDiscard = () => {
       resetForm();
@@ -83,7 +83,7 @@ const AddNewItem = forwardRef(
           parseFloat(calories || ''),
           parseFloat(protein || ''),
           parseFloat(fibre || ''),
-          parseFloat(plantPoints || ''),
+          parseFloat(plantPoints || '0'),
         );
       }
       resetForm();
