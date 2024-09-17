@@ -112,7 +112,7 @@ export default function Home() {
     plantPoints: NullableNumber,
   ) => {
     // Add a new diary item with a food that should be saved to food DB
-    const isCompleteEntry = !!calories && !!protein && !!fibre;
+    const isCompleteEntry = calories !== null && protein !== null && fibre !== null;
     const isManualMode = newItemMode === MODES.MANUAL;
     const isUpdateMode = newItemMode === MODES.UPDATE;
     const isCalculateMode = newItemMode === MODES.CALCULATE && selectedFood;
