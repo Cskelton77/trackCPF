@@ -8,6 +8,7 @@ import {
   SaveAction,
   AttributeInput,
   TextDisplay,
+  EntryLabel,
 } from './AddNewItem.style';
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
 import { Moment } from 'moment';
@@ -16,7 +17,7 @@ import { DEBUGMODE } from '@/config';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
 
-interface AddNewItem {
+export interface AddNewItemInterface {
   name: string;
   selectedFood?: FoodObject;
   selectedFoodServing?: number;
@@ -36,7 +37,15 @@ interface AddNewItem {
 
 const AddNewItem = forwardRef(
   (
-    { name, selectedFood, selectedFoodServing, handleSave, isVisible, mode, close }: AddNewItem,
+    {
+      name,
+      selectedFood,
+      selectedFoodServing,
+      handleSave,
+      isVisible,
+      mode,
+      close,
+    }: AddNewItemInterface,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const context = useContext(SettingsContext);
@@ -106,7 +115,7 @@ const AddNewItem = forwardRef(
       <Modal title={getTitle()} isVisible={isVisible} close={close} ref={ref}>
         <NewItemModal id="foodObjectForm" action={handleSubmit}>
           <ItemAttributes>
-            <EntryBox>Amount Eaten</EntryBox>
+            <EntryLabel htmlFor="serving">Amount Eaten</EntryLabel>
 
             <EntryBox>
               <AttributeInput
@@ -117,7 +126,7 @@ const AddNewItem = forwardRef(
               />
               <TextDisplay>{isManualMode ? 'Serving' : 'grams'}</TextDisplay>
             </EntryBox>
-            <EntryBox>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryBox>
+            <EntryLabel>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryLabel>
             <EntryBox>
               <AttributeInput
                 id="calories"
@@ -125,7 +134,7 @@ const AddNewItem = forwardRef(
                 value={calories || ''}
                 onChange={(e) => setCalories(e.target.value)}
               />
-              <TextDisplay>Calories</TextDisplay>
+              <TextDisplay htmlFor="calories">Calories</TextDisplay>
             </EntryBox>
             <EntryBox>
               <AttributeInput
@@ -134,7 +143,7 @@ const AddNewItem = forwardRef(
                 value={protein || ''}
                 onChange={(e) => setProtein(e.target.value)}
               />
-              <TextDisplay>Protein</TextDisplay>
+              <TextDisplay htmlFor="protein">Protein</TextDisplay>
             </EntryBox>
             <EntryBox>
               <AttributeInput
@@ -143,7 +152,7 @@ const AddNewItem = forwardRef(
                 value={fibre || ''}
                 onChange={(e) => setFibre(e.target.value)}
               />
-              <TextDisplay>Fibre</TextDisplay>
+              <TextDisplay htmlFor="fibre">Fibre</TextDisplay>
             </EntryBox>
             {usePlantPoints && (
               <EntryBox>

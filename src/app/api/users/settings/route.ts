@@ -1,3 +1,4 @@
+import { defaultSettings } from '@/context';
 import { sql } from '@vercel/postgres';
 
 export async function POST(request: Request) {
@@ -39,5 +40,12 @@ export async function GET(request: Request) {
         WHERE uid like ${uid}
         LIMIT 1`;
 
-  return Response.json(data.rows[0].settings);
+  if (data) {
+    return Response.json(data.rows[0].settings);
+  } else {
+    const data = await sql`
+        INSERT INTO settings(uid, settings)
+        VALUES(${uid}, {}
+    `;
+  }
 }

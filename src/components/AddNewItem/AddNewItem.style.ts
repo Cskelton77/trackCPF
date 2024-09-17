@@ -20,6 +20,13 @@ export const ItemAttributes = styled.div`
   padding: ${theme.buttonPadding};
   border: 1px solid grey;
 `;
+export const EntryLabel = styled.label`
+  display: flex;
+  align-items: center;
+  padding: ${theme.inputPadding};
+  color: ${theme.colours.black};
+`;
+
 export const EntryBox = styled.div`
   display: flex;
   align-items: center;
@@ -36,7 +43,7 @@ export const AttributeInput = styled.input`
   background-color: ${theme.colours.white};
   color: ${theme.colours.black};
 `;
-export const TextDisplay = styled.p``;
+export const TextDisplay = styled.label``;
 
 export const Actions = styled.div`
   width: 65%;
