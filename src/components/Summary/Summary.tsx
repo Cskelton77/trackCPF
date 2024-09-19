@@ -54,20 +54,21 @@ const Summary = ({
       0,
     );
   };
-  let servingFlag = false;
 
-  const totalCaloriesOfProtein = data.reduce(
-    (count, { serving, isDirectEntry, foodEntry: { calories, protein } }) => {
-      if (isDirectEntry) {
-        servingFlag = true;
-        return count + 0;
-      } else {
-        const percentageOfServing = (protein || 0 / serving) * (calories || 1);
-        return count + percentageOfServing;
-      }
-    },
-    0,
-  );
+  //   let servingFlag = false;
+
+  //   const totalCaloriesOfProtein = data.reduce(
+  //     (count, { serving, isDirectEntry, foodEntry: { calories, protein } }) => {
+  //       if (isDirectEntry) {
+  //         servingFlag = true;
+  //         return count + 0;
+  //       } else {
+  //         const percentageOfServing = (protein || 0 / serving) * (calories || 1);
+  //         return count + percentageOfServing;
+  //       }
+  //     },
+  //     0,
+  //   );
 
   const currentCalorieTotal = sum('calories');
   const currentProteinTotal = sum('protein');
@@ -77,14 +78,20 @@ const Summary = ({
     const isFibre = type === 'fibre';
 
     const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
-    const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
+    const fibreRemaining =
+      (Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal) / NHS_DAILY_FIBRE) * 100;
 
     const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
-    const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
+    const proteinRemaining =
+      Math.max(0, (dailyProteinGoal - currentProteinTotal) / dailyProteinGoal) * 100;
     const proteinColour =
       currentProteinTotal >= proteinLimit
         ? theme.colours.proteinRingWarning
         : theme.colours.proteinRing;
+
+    console.log('fibrePercentage', fibrePercentage, fibreRemaining);
+    console.log('proteinPercentage', proteinPercentage, proteinRemaining);
+
     return {
       labels: [],
       datasets: [
@@ -113,9 +120,9 @@ const Summary = ({
     : roundDisplay(currentProteinTotal);
   const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
 
-  const caloriesFromProteinDisplay = rounding
-    ? Math.round(totalCaloriesOfProtein / currentCalorieTotal)
-    : roundDisplay(totalCaloriesOfProtein / currentCalorieTotal);
+  //   const caloriesFromProteinDisplay = rounding
+  //     ? Math.round(totalCaloriesOfProtein / currentCalorieTotal)
+  //     : roundDisplay(totalCaloriesOfProtein / currentCalorieTotal);
 
   const weekStart = moment(date).startOf('isoWeek').format('ddd, MMM Do').toString();
   const weekEnd = moment(date).endOf('isoWeek').format('ddd, MMM Do').toString();
@@ -123,14 +130,14 @@ const Summary = ({
   return (
     <SummaryTable>
       <FlatStats>Daily Total: {calorieDisplay} calories</FlatStats>
-      <FlatStats>% calories from protein: {caloriesFromProteinDisplay}%</FlatStats>
-      {servingFlag && (
+      {/* <FlatStats>% calories from protein: {caloriesFromProteinDisplay}%</FlatStats> */}
+      {/* {servingFlag && (
         <span>
           <SkipWarning>
             Note: This percentage excludes at least one item not entered by weight.
           </SkipWarning>
         </span>
-      )}
+      )} */}
       <RingsWrapper>
         <Ring>
           <ChartBinder>
