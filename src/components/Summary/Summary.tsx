@@ -89,9 +89,6 @@ const Summary = ({
         ? theme.colours.proteinRingWarning
         : theme.colours.proteinRing;
 
-    console.log('fibrePercentage', fibrePercentage, fibreRemaining);
-    console.log('proteinPercentage', proteinPercentage, proteinRemaining);
-
     return {
       labels: [],
       datasets: [
