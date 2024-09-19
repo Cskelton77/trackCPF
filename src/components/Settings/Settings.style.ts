@@ -53,6 +53,7 @@ const Action = styled.div`
   text-align: center;
   flex: 1;
 `;
+
 export const DiscardAction = styled(Action)`
   background-color: #ca7068;
 `;

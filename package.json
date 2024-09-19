@@ -17,9 +17,9 @@
     "moment": "^2.30.1",
     "mysql2": "^3.11.0",
     "next": "14.2.6",
-    "react": "^18",
+    "react": "^19.0.0-rc-a99d8e8d-20240916",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "^18",
+    "react-dom": "^19.0.0-rc-a99d8e8d-20240916",
     "styled-components": "^6.1.12",
     "uuid": "^10.0.0"
   },

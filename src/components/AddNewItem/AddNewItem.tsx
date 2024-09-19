@@ -85,16 +85,18 @@ const AddNewItem = forwardRef(
     };
 
     const handleSubmit = () => {
-      if (serving) {
-        handleSave(
-          selectedFood?.name || name,
-          parseFloat(serving),
-          parseFloat(calories || ''),
-          parseFloat(protein || ''),
-          parseFloat(fibre || ''),
-          parseFloat(plantPoints || '0'),
-        );
-      }
+        console.log('HANDLESUBMIT');
+        if (serving) {
+          console.log('serving');
+          handleSave(
+            selectedFood?.name || name,
+            parseFloat(serving),
+            parseFloat(calories || ''),
+            parseFloat(protein || ''),
+            parseFloat(fibre || ''),
+            parseFloat(plantPoints || '0'),
+          );
+        }
       resetForm();
     };
 
@@ -156,8 +158,12 @@ const AddNewItem = forwardRef(
             </EntryBox>
             {usePlantPoints && (
               <EntryBox>
-                <span>Plant Points:</span>
-                <select value={plantPoints} onChange={(e) => setPlantPoints(e.target.value)}>
+                <TextDisplay htmlFor="plantPoints">Plant Points:</TextDisplay>
+                <select
+                  id="plantPoints"
+                  value={plantPoints}
+                  onChange={(e) => setPlantPoints(e.target.value)}
+                >
                   <option value={0}>0 Plant Points</option>
                   <option value={1}>1 Plant Point</option>
                   <option value={0.5}>1/2 Plant Point</option>

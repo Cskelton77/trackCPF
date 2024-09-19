@@ -40,6 +40,7 @@ export default function Home() {
       addNewItemRef.current.scrollIntoView();
     }
   }, [newItemMode]);
+
   useEffect(() => {
     if (searchBarRef.current && !newItemMode) {
       searchBarRef.current.scrollIntoView();
@@ -266,44 +267,9 @@ export default function Home() {
         setSelectedFood={setSelectedFood}
         deleteFoodItem={handleDeleteFoodEntry}
       />
-      <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
+      {/* <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} /> */}
 
-      <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} />
-
-      {DEBUGMODE && (
-        <div>
-          <div style={{ fontSize: '12px', fontFamily: 'monospace' }}>
-            <br />
-            <h4>uid</h4>
-            <p>{uid}</p>
-            <br />
-            <h4>dailyData</h4>
-            <p>{JSON.stringify(dailyData)}</p>
-            <br />
-            <h4>displayDate</h4>
-            <p>{displayDate.toString()}</p>
-            <br />
-            <h4>searchValue</h4>
-            <p>{searchValue}</p>
-            <br />
-            <h4>searchResponse</h4>
-            <p>{JSON.stringify(searchResponse)}</p>
-            <br />
-            <h4>selectedFood</h4>
-            <p>{JSON.stringify(selectedFood)}</p>
-            <br />
-            <h4>selectedFoodServing</h4>
-            <p>{selectedFoodServing}</p>
-            <br />
-            <h4>selectedDiaryEntry</h4>
-            <p>{selectedDiaryEntry}</p>
-            <br />
-            <h4>searchResponse</h4>
-            <p>{newItemMode}</p>
-            <br />
-          </div>
-        </div>
-      )}
+      {/* <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} /> */}
     </SettingsContext.Provider>
   );
 }

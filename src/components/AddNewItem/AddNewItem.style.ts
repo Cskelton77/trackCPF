@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { theme } from '@/theme';
+
 export const NewItemModal = styled.form`
   display: flex;
   align-self: center;
   flex-direction: column;
-
   background-color: ${theme.colours.white};
   padding: ${theme.layoutPadding};
 `;
