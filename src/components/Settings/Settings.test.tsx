@@ -51,6 +51,11 @@ describe('Settings Screen', () => {
     });
     expect(roundingSetting).toHaveProperty('checked', true);
 
+    const fibrePersonalisation = await screen.findByRole('radio', {
+      name: 'Personalise Fibre Goal',
+    });
+    expect(fibrePersonalisation).toHaveProperty('checked', true);
+
     const plantPointsSetting = await screen.findByRole('radio', {
       name: 'Enable plant points feature',
     });
@@ -66,6 +71,7 @@ describe('Settings Screen', () => {
       weight: 148,
       protein: PROTEIN_CALCULATION.AGGRESSIVE,
       rounding: true,
+      personaliseFibre: false,
       usePlantPoints: false,
     };
     await renderSettings();
@@ -110,6 +116,12 @@ describe('Settings Screen', () => {
     });
     await userEvent.click(plantPointsSetting);
     expect(plantPointsSetting).toHaveProperty('checked', true);
+
+    const fibrePersonalisation = await screen.findByRole('radio', {
+      name: 'Use NHS Recommended Fibre',
+    });
+    await userEvent.click(fibrePersonalisation);
+    expect(fibrePersonalisation).toHaveProperty('checked', true);
 
     const saveButton = screen.getByRole('button', { name: 'save settings' });
     await userEvent.click(saveButton);
