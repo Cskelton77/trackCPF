@@ -4,7 +4,12 @@ import '@testing-library/jest-dom';
 import moment from 'moment';
 import { Summary } from '@/components';
 import { v4 as uuidv4 } from 'uuid';
-import { SettingsContext, SettingsContextInterface, defaultSettings } from '@/context';
+import {
+  PROTEIN_CALCULATION,
+  SettingsContext,
+  SettingsContextInterface,
+  defaultSettings,
+} from '@/context';
 import { DiaryData } from '@/interfaces/DailyData';
 import { generateChartData } from './Summary.utils';
 import { theme } from '@/theme';
@@ -125,7 +130,7 @@ describe('Summary component', () => {
   });
 
   it('should display a correct ring calculation', () => {
-    const response = generateChartData('protein', 25, 50);
+    const response = generateChartData('protein', 25, 50, 100);
     expect(response).toStrictEqual({
       labels: [],
       datasets: [
@@ -133,6 +138,8 @@ describe('Summary component', () => {
           label: '',
           data: [50, 50],
           backgroundColor: [theme.colours.proteinRing, theme.colours.white],
+          borderColor: theme.colours.lightGrey,
+          borderWidth: 1,
           cutout: '65%',
           options: {
             responsive: true,
@@ -143,7 +150,49 @@ describe('Summary component', () => {
     });
   });
 
-  it('should warn the user if protein is too high', () => {
+  it('should display a warning colour ring at 175%', () => {
+    const response = generateChartData('protein', 90, 50, 100);
+    expect(response).toStrictEqual({
+      labels: [],
+      datasets: [
+        {
+          label: '',
+          data: [100, 0],
+          backgroundColor: [theme.colours.ringCaution, theme.colours.white],
+          borderColor: theme.colours.lightGrey,
+          borderWidth: 1,
+          cutout: '65%',
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+          },
+        },
+      ],
+    });
+  });
+
+  it('should display a warning colour ring at 200%', () => {
+    const response = generateChartData('protein', 125, 50, 100);
+    expect(response).toStrictEqual({
+      labels: [],
+      datasets: [
+        {
+          label: '',
+          data: [100, 0],
+          backgroundColor: [theme.colours.ringWarning, theme.colours.white],
+          borderColor: theme.colours.lightGrey,
+          borderWidth: 1,
+          cutout: '65%',
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+          },
+        },
+      ],
+    });
+  });
+
+  it('should display warning message to the user if protein is too high', () => {
     const tooMuchProtein = {
       did: uuidv4(),
       uid: uuidv4(),
@@ -190,5 +239,35 @@ describe('Summary component', () => {
       'Note: At least one partially completed item above is excluded from these totals.',
     );
     expect(warning).toBeInTheDocument();
+  });
+
+  it("should calculate 'aggressive' protein goal based on settings", () => {
+    renderSummary({ modifiedSettings: { weight: 100, protein: PROTEIN_CALCULATION.AGGRESSIVE } });
+    const proteinGoal = screen.getByLabelText('Daily Protein Goal');
+    expect(proteinGoal).toHaveTextContent('/45g');
+  });
+
+  it("should calculate 'conservative' protein goal based on settings", () => {
+    renderSummary({ modifiedSettings: { weight: 100, protein: PROTEIN_CALCULATION.CONSERVATIVE } });
+    const proteinGoal = screen.getByLabelText('Daily Protein Goal');
+    expect(proteinGoal).toHaveTextContent('/34g');
+  });
+
+  it('should rely on fallback protein goal when lacking weight data', () => {
+    renderSummary({ modifiedSettings: { protein: PROTEIN_CALCULATION.CONSERVATIVE } });
+    const proteinGoal = screen.getByLabelText('Daily Protein Goal');
+    expect(proteinGoal).toHaveTextContent('/50g');
+  });
+
+  it("should calculate 'personalised' fibre goal based on settings", () => {
+    renderSummary({ modifiedSettings: { personaliseFibre: true } });
+    const proteinGoal = screen.getByLabelText('Daily Fibre Goal');
+    expect(proteinGoal).toHaveTextContent('/4g');
+  });
+
+  it("should calculate 'recommended' fibre goal based on settings", () => {
+    renderSummary({ modifiedSettings: { personaliseFibre: false } });
+    const proteinGoal = screen.getByLabelText('Daily Fibre Goal');
+    expect(proteinGoal).toHaveTextContent('/30g');
   });
 });

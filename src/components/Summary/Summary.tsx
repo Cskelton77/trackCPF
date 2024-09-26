@@ -30,11 +30,8 @@ const Summary = ({
   plantPoints: number;
 }) => {
   const context = useContext(SettingsContext);
-  const { rounding, weight, protein, usePlantPoints } = context;
+  const { rounding, personaliseFibre, weight, protein, usePlantPoints } = context;
 
-  const proteinMultiplier = protein == PROTEIN_CALCULATION.AGGRESSIVE ? 1.0 : 0.75;
-  const dailyProteinGoal = weight > 1 ? proteinMultiplier * (weight / 2.205) : NHS_DAILY_PROTEIN;
-  const proteinLimit = weight > 1 ? 2 * (weight / 2.205) : 2 * NHS_DAILY_PROTEIN;
   let skippedEntry = false;
 
   const sum = (toSum: 'calories' | 'protein' | 'fibre') => {
@@ -56,27 +53,23 @@ const Summary = ({
     );
   };
 
-  //   let servingFlag = false;
-
-  //   const totalCaloriesOfProtein = data.reduce(
-  //     (count, { serving, isDirectEntry, foodEntry: { calories, protein } }) => {
-  //       if (isDirectEntry) {
-  //         servingFlag = true;
-  //         return count + 0;
-  //       } else {
-  //         const percentageOfServing = (protein || 0 / serving) * (calories || 1);
-  //         return count + percentageOfServing;
-  //       }
-  //     },
-  //     0,
-  //   );
-
   const currentCalorieTotal = sum('calories');
   const currentProteinTotal = sum('protein');
   const currentFibreTotal = sum('fibre');
 
-  const fibreData = generateChartData('fibre', currentFibreTotal, NHS_DAILY_FIBRE);
-  const proteinData = generateChartData('protein', currentProteinTotal, dailyProteinGoal);
+  const dailyFibreGoal = personaliseFibre ? (currentCalorieTotal * 14) / 1000 : NHS_DAILY_FIBRE;
+
+  const proteinMultiplier = protein == PROTEIN_CALCULATION.AGGRESSIVE ? 1.0 : 0.75;
+  const dailyProteinGoal = weight > 1 ? proteinMultiplier * (weight / 2.205) : NHS_DAILY_PROTEIN;
+  const proteinLimit = weight > 1 ? 2 * (weight / 2.205) : 2 * NHS_DAILY_PROTEIN;
+
+  const fibreData = generateChartData('fibre', currentFibreTotal, dailyFibreGoal, 70);
+  const proteinData = generateChartData(
+    'protein',
+    currentProteinTotal,
+    dailyProteinGoal,
+    proteinLimit,
+  );
 
   const calorieDisplay = rounding
     ? Math.round(currentCalorieTotal)
@@ -86,38 +79,26 @@ const Summary = ({
     : roundDisplay(currentProteinTotal);
   const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
 
-  //   const caloriesFromProteinDisplay = rounding
-  //     ? Math.round(totalCaloriesOfProtein / currentCalorieTotal)
-  //     : roundDisplay(totalCaloriesOfProtein / currentCalorieTotal);
-
   const weekStart = moment(date).startOf('isoWeek').format('ddd, MMM Do').toString();
   const weekEnd = moment(date).endOf('isoWeek').format('ddd, MMM Do').toString();
 
   return (
     <SummaryTable>
       <FlatStats>Daily Total: {calorieDisplay} calories</FlatStats>
-      {/* <FlatStats>% calories from protein: {caloriesFromProteinDisplay}%</FlatStats> */}
-      {/* {servingFlag && (
-        <span>
-          <SkipWarning>
-            Note: This percentage excludes at least one item not entered by weight.
-          </SkipWarning>
-        </span>
-      )} */}
       <RingsWrapper>
         <Ring>
           <ChartBinder>
             <chart.Doughnut data={proteinData} style={{ flex: 1 }} />
           </ChartBinder>
           <span>{proteinDisplay}g Protein</span>
-          <span>/{Math.round(dailyProteinGoal)}g</span>
+          <span aria-label="Daily Protein Goal">/{Math.round(dailyProteinGoal)}g</span>
         </Ring>
         <Ring>
           <ChartBinder>
             <chart.Doughnut data={fibreData} style={{ flex: 1 }} />
           </ChartBinder>
           <span>{fibreDisplay}g Fibre</span>
-          <span>/30g</span>
+          <span aria-label="Daily Fibre Goal">/{Math.round(dailyFibreGoal)}g</span>
         </Ring>
       </RingsWrapper>
       {currentProteinTotal >= proteinLimit && (

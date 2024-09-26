@@ -31,6 +31,7 @@ const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const [weight, setWeight] = useState<number>(context.weight);
   const [protein, setProtein] = useState<ProteinCalculation>(context.protein);
   const [rounding, setRounding] = useState<boolean>(context.rounding);
+  const [personaliseFibre, setPersonaliseFibre] = useState<boolean>(context.personaliseFibre);
   const [usePlantPoints, setUsePlantPoints] = useState<boolean>(context.usePlantPoints);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ const Settings = ({ title, close, isVisible, uid }: Settings) => {
     setWeight(context.weight);
     setProtein(context.protein);
     setRounding(context.rounding);
+    setPersonaliseFibre(context.personaliseFibre);
     setUsePlantPoints(context.usePlantPoints);
   }, [context]);
 
@@ -53,6 +55,7 @@ const Settings = ({ title, close, isVisible, uid }: Settings) => {
       weight,
       protein,
       rounding,
+      personaliseFibre,
       usePlantPoints,
     };
     await saveSettings({ uid, settings });
@@ -176,6 +179,27 @@ const Settings = ({ title, close, isVisible, uid }: Settings) => {
               aria-label="round to whole numbers"
             />{' '}
             Whole numbers
+          </SettingsSection>
+
+          <SettingsSection>
+            <h4>Personalise Fibre Goal by Calories:</h4>
+            <RadioButton
+              type="radio"
+              value={'true'}
+              checked={personaliseFibre == true}
+              onChange={() => setPersonaliseFibre(true)}
+              aria-label="Personalise Fibre Goal"
+            />{' '}
+            Personalise Fibre (14g/1000kcal) (Default)
+            <br />
+            <RadioButton
+              type="radio"
+              value={'false'}
+              checked={personaliseFibre == false}
+              onChange={() => setPersonaliseFibre(false)}
+              aria-label="Use NHS Recommended Fibre"
+            />{' '}
+            Use NHS Recommendation (30g/day)
           </SettingsSection>
 
           <SettingsSection>
