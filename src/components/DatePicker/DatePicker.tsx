@@ -9,7 +9,6 @@ interface DatePicker {
 }
 
 const DatePicker = ({ date, setDisplayDate }: DatePicker) => {
-  console.log(date);
   const handleDateChange = (dir: string) => {
     if (dir == 'back') {
       const yesterday = date.clone().subtract(1, 'day');

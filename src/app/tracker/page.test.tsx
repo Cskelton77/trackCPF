@@ -9,6 +9,10 @@ import mockLocalStorage from '@/mockLocalStorage';
 import { MODES, NullableNumber } from '@/interfaces/ItemModes';
 import moment from 'moment';
 
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => '0000-1111-2222-3333'),
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {
@@ -314,13 +318,15 @@ describe('Main tracker page', () => {
     };
 
     const expectPostDiary = ({ serving, calories, protein, fibre, plantPoints }: args) => {
+      const isCompleteEntry =
+        !Number.isNaN(calories) && !Number.isNaN(protein) && !Number.isNaN(fibre);
       expect(postDiary).toHaveBeenCalledWith({
         uid: 'TEST_UID',
         date: moment().format('YYYY-MM-DD'),
         serving: serving,
         isDirectEntry: false,
         foodEntry: {
-          fid: '',
+          fid: isCompleteEntry ? '' : '0000-1111-2222-3333',
           name: 'New Item',
           calories: calories,
           protein: protein,
@@ -501,7 +507,7 @@ describe('Main tracker page', () => {
         serving: serving,
         isDirectEntry: true,
         foodEntry: {
-          fid: '',
+          fid: '0000-1111-2222-3333',
           name: 'New Serving Food',
           calories: calories,
           protein: protein,

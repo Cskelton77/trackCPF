@@ -9,6 +9,10 @@ import { DiaryData } from '@/interfaces/DailyData';
 import { generateChartData } from './Summary.utils';
 import { theme } from '@/theme';
 
+jest.mock('react-chartjs-2', () => ({
+  Doughnut: jest.fn(() => <></>),
+}));
+
 describe('Summary component', () => {
   const mockDate = moment('2024-09-21');
   const mockPlantPoints = 23;
@@ -122,7 +126,7 @@ describe('Summary component', () => {
 
   it('should display a correct ring calculation', () => {
     const response = generateChartData('protein', 25, 50);
-    expect(response).toBe({
+    expect(response).toStrictEqual({
       labels: [],
       datasets: [
         {

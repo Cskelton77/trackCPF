@@ -162,7 +162,6 @@ export default function Home() {
           plantPoints: plantPoints as number,
         },
       };
-      console.log('save an update', diaryUpdate);
       await updateDiary(diaryUpdate);
     }
 
@@ -195,7 +194,6 @@ export default function Home() {
     currentServing: number,
     update: DefinedFoodObject,
   ) => {
-    console.log('UPDATE', update);
     setSelectedFood(update);
     setSelectedDiaryEntry(diaryId);
     setSelectedFoodServing(currentServing);
