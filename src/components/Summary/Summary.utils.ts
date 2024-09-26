@@ -4,8 +4,7 @@ export const generateChartData = (type: 'protein' | 'fibre', amount: number, lim
   const isFibre = type === 'fibre';
 
   const percentage = (amount * 100) / limit;
-  const remaining = Math.max(0, limit - amount);
-
+  const remaining = (Math.max(0, limit - amount) / limit) * 100;
   const proteinColour =
     amount >= limit ? theme.colours.proteinRingWarning : theme.colours.proteinRing;
 
