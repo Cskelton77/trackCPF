@@ -55,6 +55,7 @@ const Summary = ({
       0,
     );
   };
+  let servingFlag = false;
 
   //   let servingFlag = false;
 
