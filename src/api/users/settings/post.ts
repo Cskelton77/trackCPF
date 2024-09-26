@@ -1,4 +1,4 @@
-const saveSettings = async (uid: string, settings: any) => {
+export const saveSettings = async ({ uid, settings }: { uid: string; settings: any }) => {
   const res = await fetch(`api/users/settings`, {
     method: 'POST',
     headers: {
@@ -12,5 +12,3 @@ const saveSettings = async (uid: string, settings: any) => {
   const response = await res.json();
   return response;
 };
-
-export default saveSettings;

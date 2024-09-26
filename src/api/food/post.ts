@@ -1,6 +1,10 @@
 import { FoodObject } from "@/interfaces/FoodObject";
 
-const postFood = async (uid: string, food: FoodObject) => {
+interface PostFood extends FoodObject {
+  uid: string;
+}
+
+const postFood = async ({ uid, name, calories, protein, fibre, plantPoints }: PostFood) => {
   const res = await fetch(`api/food`, {
     method: 'POST',
     headers: {
@@ -9,11 +13,11 @@ const postFood = async (uid: string, food: FoodObject) => {
     body: JSON.stringify({
       user: uid,
       food: {
-        name: food.name,
-        calories: food.calories,
-        protein: food.protein,
-        fibre: food.fibre,
-        plantPoints: food.plantPoints,
+        name,
+        calories,
+        protein,
+        fibre,
+        plantPoints,
       },
     }),
   });

@@ -1,4 +1,5 @@
 import { DiaryData } from '@/interfaces/DailyData';
+import { v4 as uuidv4 } from 'uuid';
 
 const updateDiary = async ({ did, uid, serving, foodEntry }: Partial<DiaryData>) => {
   const res = await fetch(`api/diary`, {
@@ -11,6 +12,7 @@ const updateDiary = async ({ did, uid, serving, foodEntry }: Partial<DiaryData>)
       uid,
       serving,
       foodEntry: {
+        fid: foodEntry?.fid || uuidv4(),
         name: foodEntry?.name,
         calories: foodEntry?.calories,
         protein: foodEntry?.protein,

@@ -1,10 +1,12 @@
+import { NullableNumber } from './ItemModes';
+
 export interface DefinedFoodObject {
   fid: string;
   name: string;
-  calories?: number;
-  protein?: number;
-  fibre?: number;
-  plantPoints?: number;
+  calories?: NullableNumber;
+  protein?: NullableNumber;
+  fibre?: NullableNumber;
+  plantPoints?: NullableNumber;
 }
 
-export type FoodObject = Omit<DefinedFoodObject, 'fid'>
+export type FoodObject = Omit<DefinedFoodObject, 'fid'>;

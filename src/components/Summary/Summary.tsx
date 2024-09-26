@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
 import moment, { Moment } from 'moment';
 import PlantPoint from '../Icons/PlantPoint';
+import { generateChartData } from './Summary.utils';
 
 const NHS_DAILY_FIBRE = 30;
 const NHS_DAILY_PROTEIN = 50;
@@ -73,37 +74,8 @@ const Summary = ({
   const currentProteinTotal = sum('protein');
   const currentFibreTotal = sum('fibre');
 
-  const generateChartData = (type: 'protein' | 'fibre') => {
-    const isFibre = type === 'fibre';
-
-    const fibrePercentage = (currentFibreTotal * 100) / NHS_DAILY_FIBRE;
-    const fibreRemaining = Math.max(0, NHS_DAILY_FIBRE - currentFibreTotal);
-
-    const proteinPercentage = (currentProteinTotal * 100) / dailyProteinGoal;
-    const proteinRemaining = Math.max(0, dailyProteinGoal - currentProteinTotal);
-    const proteinColour =
-      currentProteinTotal >= proteinLimit
-        ? theme.colours.proteinRingWarning
-        : theme.colours.proteinRing;
-    return {
-      labels: [],
-      datasets: [
-        {
-          label: '',
-          data: isFibre ? [fibrePercentage, fibreRemaining] : [proteinPercentage, proteinRemaining],
-          backgroundColor: [isFibre ? theme.colours.fibreRing : proteinColour, theme.colours.white],
-          cutout: '65%',
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-          },
-        },
-      ],
-    };
-  };
-
-  const fibreData = generateChartData('fibre');
-  const proteinData = generateChartData('protein');
+  const fibreData = generateChartData('fibre', currentFibreTotal, NHS_DAILY_FIBRE);
+  const proteinData = generateChartData('protein', currentProteinTotal, dailyProteinGoal);
 
   const calorieDisplay = rounding
     ? Math.round(currentCalorieTotal)

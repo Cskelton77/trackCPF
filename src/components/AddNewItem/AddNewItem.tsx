@@ -85,18 +85,16 @@ const AddNewItem = forwardRef(
     };
 
     const handleSubmit = () => {
-        console.log('HANDLESUBMIT');
-        if (serving) {
-          console.log('serving');
-          handleSave(
-            selectedFood?.name || name,
-            parseFloat(serving),
-            parseFloat(calories || ''),
-            parseFloat(protein || ''),
-            parseFloat(fibre || ''),
-            parseFloat(plantPoints || '0'),
-          );
-        }
+      if (serving) {
+        handleSave(
+          selectedFood?.name || name,
+          parseFloat(serving),
+          parseFloat(calories || ''),
+          parseFloat(protein || ''),
+          parseFloat(fibre || ''),
+          parseFloat(plantPoints || '0'),
+        );
+      }
       resetForm();
     };
 

@@ -7,7 +7,7 @@ const postDiary = async ({uid, date, serving, isDirectEntry, foodEntry}: Omit<Di
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      user: uid,
+      uid,
       date,
       serving,
       isDirectEntry,

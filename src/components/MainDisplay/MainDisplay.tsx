@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { SettingsContext } from '@/context';
 import PlantPoint from '../Icons/PlantPoint';
 import { theme } from '@/theme';
+import { NullableNumber } from '@/interfaces/ItemModes';
 
 export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
@@ -46,7 +47,7 @@ const MainDisplay = ({
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
           const denominator = isDirectEntry ? 1 : 100;
-          const calculateDisplay = (metric: number | undefined): string => {
+          const calculateDisplay = (metric: NullableNumber): string => {
             if (metric === null || metric === undefined) {
               return '---';
             }
@@ -86,7 +87,7 @@ const MainDisplay = ({
                   deleteEntry(did);
                 }}
               >
-                <Delete size={24} />
+                <Delete size={24} label={`Delete ${name}`} />
               </TableCell>
             </tr>
           );

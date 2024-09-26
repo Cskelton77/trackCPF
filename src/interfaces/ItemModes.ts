@@ -24,4 +24,4 @@ export enum MODES {
 
 export type ItemMode = MODES.MANUAL | MODES.CALCULATE | MODES.UPDATE | null;
 
-export type NullableNumber = number | null;
+export type NullableNumber = number | null | typeof NaN | undefined;
