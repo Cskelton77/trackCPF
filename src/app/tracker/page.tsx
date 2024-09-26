@@ -202,6 +202,7 @@ export default function Home() {
 
   const handleDeleteDiaryEntry = async (diaryId: string) => {
     await deleteDiary(diaryId);
+    resetSelection();
     await fetchDaily();
   };
 
@@ -252,6 +253,8 @@ export default function Home() {
         selectedFood={selectedFood}
         selectedFoodServing={selectedFoodServing}
         handleSave={handleSaveDiaryEntry}
+        diaryEntryId={selectedDiaryEntry}
+        deleteDiaryEntry={handleDeleteDiaryEntry}
         close={resetSelection}
       />
       <SearchBar
