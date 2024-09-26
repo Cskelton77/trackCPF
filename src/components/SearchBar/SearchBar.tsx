@@ -20,10 +20,10 @@ const SearchBar = forwardRef(
   ) => {
     const [showDropdown, setShowDropdown] = useState(false);
 
-  const addExistingFoodItem = (response: DefinedFoodObject) => {
-    setSelectedFood(response);
-    addNewItem(MODES.CALCULATE);
-  };
+    const addExistingFoodItem = (response: DefinedFoodObject) => {
+      setSelectedFood(response);
+      addNewItem(MODES.CALCULATE);
+    };
 
     const handleBlur = () => {
       setTimeout(() => {
@@ -33,6 +33,7 @@ const SearchBar = forwardRef(
     return (
       <>
         <SearchBarInput
+          id="searchForFood"
           ref={ref}
           value={value}
           placeholder={'Add a new food'}
@@ -43,23 +44,28 @@ const SearchBar = forwardRef(
         {showDropdown && (
           <ResponseDropdown>
             {value && (
-              <ResponseRow onClick={() => addNewItem(MODES.CALCULATE)}>
+              <ResponseRow role="button" onClick={() => addNewItem(MODES.CALCULATE)}>
                 Add {value} (p/100g)
               </ResponseRow>
             )}
             {value && (
-              <ResponseRow onClick={() => addNewItem(MODES.MANUAL)}>
+              <ResponseRow role="button" onClick={() => addNewItem(MODES.MANUAL)}>
                 Add {value} (p/serving)
               </ResponseRow>
             )}
             {response.map((response) => {
               return (
-                <ResponseRow key={response.fid} onClick={() => addExistingFoodItem(response)}>
+                <ResponseRow
+                  role="button"
+                  key={response.fid}
+                  onClick={() => addExistingFoodItem(response)}
+                >
                   {response.name} ({response.calories} cal/100g)
                   <ActionBlock>
                     {/* <Edit size={24} /> */}
                     <Delete
                       size={24}
+                      label="Delete Item from Database"
                       onClick={(e: React.SyntheticEvent) => {
                         e.stopPropagation();
                         deleteFoodItem(response.fid);

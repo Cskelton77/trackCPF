@@ -1,5 +1,3 @@
-import postUser from "./post";
+import postUser from './post';
 
-export {
-    postUser
-}
+export { postUser };

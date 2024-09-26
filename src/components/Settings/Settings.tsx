@@ -10,7 +10,7 @@ import {
   SaveAction,
   SettingsSection,
 } from './Settings.style';
-import saveSettings from '@/api/users/settings/post';
+import { saveSettings } from '@/api/users/settings/post';
 import {
   GENDER,
   Genders,
@@ -22,7 +22,7 @@ import {
 interface Settings extends Omit<ModalInterface, 'children'> {
   uid: string;
 }
-export const Settings = ({ title, close, isVisible, uid }: Settings) => {
+const Settings = ({ title, close, isVisible, uid }: Settings) => {
   const context = useContext(SettingsContext);
   const [gender, setGender] = useState<Genders>(context.gender);
   const [age, setAge] = useState<number>(context.age);
@@ -55,7 +55,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
       rounding,
       usePlantPoints,
     };
-    await saveSettings(uid, settings);
+    await saveSettings({ uid, settings });
     if (close) {
       close();
     }
@@ -69,23 +69,29 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
             <h4>I am :</h4>
             <RadioButton
               type="radio"
+              name="gender"
               checked={gender === GENDER.MALE}
               value={GENDER.MALE}
               onChange={(e) => setGender(GENDER.MALE)}
+              aria-labelledby="male"
             />{' '}
-            Male <br />
+            <label id="male">Male</label> <br />
             <RadioButton
               type="radio"
+              name="gender"
               checked={gender === GENDER.FEMALE}
               value={GENDER.FEMALE}
               onChange={(e) => setGender(GENDER.FEMALE)}
+              aria-labelledby="female"
             />{' '}
-            Female <br />
+            <label id="female">Female</label>
+            <br />
           </SettingsSection>
           <SettingsSection>
             <h4>
-              My age is:
+              <label id="age">My age is:</label>
               <HeightInput
+                aria-labelledby="age"
                 maxLength={2}
                 inputMode="decimal"
                 value={age}
@@ -97,6 +103,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
             <h4>
               My height is:
               <HeightInput
+                aria-label="Height in feet"
                 maxLength={2}
                 inputMode="decimal"
                 value={heightFeet}
@@ -104,6 +111,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               />{' '}
               feet,{' '}
               <HeightInput
+                aria-label="Height in inches"
                 maxLength={2}
                 inputMode="decimal"
                 value={heightInches}
@@ -114,8 +122,9 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
           </SettingsSection>
           <SettingsSection>
             <h4>
-              My weight is:
+              <label id="weight">My weight is:</label>
               <HeightInput
+                aria-labelledby="weight"
                 inputMode="decimal"
                 value={weight}
                 onChange={(e) => setWeight(parseInt(e.target.value) || 0)}
@@ -134,7 +143,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               value={PROTEIN_CALCULATION.CONSERVATIVE}
               checked={protein == PROTEIN_CALCULATION.CONSERVATIVE}
               onChange={(e) => setProtein(PROTEIN_CALCULATION.CONSERVATIVE)}
-              defaultChecked
+              aria-label="conservative protein calculation"
             />{' '}
             Conservative (Default) <br />
             <RadioButton
@@ -143,6 +152,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               value={PROTEIN_CALCULATION.AGGRESSIVE}
               checked={protein == PROTEIN_CALCULATION.AGGRESSIVE}
               onChange={(e) => setProtein(PROTEIN_CALCULATION.AGGRESSIVE)}
+              aria-label="aggressive protein calculation"
             />{' '}
             Aggressive
           </SettingsSection>
@@ -153,7 +163,8 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               value={'false'}
               checked={rounding == false}
               onChange={() => setRounding(false)}
-              defaultChecked
+              aria-label="display numbers to two decimals"
+              //   defaultChecked
             />{' '}
             Two decimal places (Default)
             <br />
@@ -162,6 +173,7 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               value={'true'}
               checked={rounding == true}
               onChange={() => setRounding(true)}
+              aria-label="round to whole numbers"
             />{' '}
             Whole numbers
           </SettingsSection>
@@ -173,7 +185,8 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               value={'true'}
               checked={usePlantPoints == true}
               onChange={() => setUsePlantPoints(true)}
-              defaultChecked
+              aria-label="Enable plant points feature"
+              //   defaultChecked
             />{' '}
             Yes (Default)
             <br />
@@ -182,14 +195,17 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
               value={'false'}
               checked={usePlantPoints == false}
               onChange={() => setUsePlantPoints(false)}
+              aria-label="Disable plant points feature"
             />{' '}
             No
           </SettingsSection>
         </AppSettings>
 
         <Actions>
-          <DiscardAction onClick={close}>{'Discard'}</DiscardAction>
-          <SaveAction type={'submit'} disabled={false}>
+          <DiscardAction aria-label="discard changes" onClick={close}>
+            {'Discard'}
+          </DiscardAction>
+          <SaveAction aria-label="save settings" type={'submit'} disabled={false}>
             {'Save'}
           </SaveAction>
         </Actions>
@@ -197,3 +213,5 @@ export const Settings = ({ title, close, isVisible, uid }: Settings) => {
     </Modal>
   );
 };
+
+export default Settings;

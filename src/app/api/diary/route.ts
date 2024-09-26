@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export async function POST(request: Request) {
   const body = await request.json();
   const did = uuidv4();
-  const uid = body.user;
+  const uid = body.uid;
   const date = body.date;
   const foodEntry = JSON.stringify(body.foodEntry);
   const serving = body.serving;

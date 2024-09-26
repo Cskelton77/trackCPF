@@ -15,10 +15,11 @@ const DatePicker = ({ date, setDisplayDate }: DatePicker) => {
       setDisplayDate(yesterday);
     } else {
       const tomorrow = date.clone().add(1, 'day');
-      const isTomorrowTheFuture = moment(tomorrow).isAfter(moment(), 'day');
-      if (!isTomorrowTheFuture) {
-        setDisplayDate(tomorrow);
-      }
+      // Removing this logic for now, maybe we wanto to go into the future for reasons.
+      //   const isTomorrowTheFuture = moment(tomorrow).isAfter(moment(), 'day');
+      //   if (!isTomorrowTheFuture) {
+      setDisplayDate(tomorrow);
+      //   }
     }
   };
 
@@ -28,9 +29,9 @@ const DatePicker = ({ date, setDisplayDate }: DatePicker) => {
     <DatePickerWrapper>
       <Day>{getDay(date)}</Day>
       <DateSelector>
-        <ChevronLeft size={48} onClick={() => handleDateChange('back')} />
+        <ChevronLeft size={48} onClick={() => handleDateChange('back')} label="Previous Day" />
         {formatDate(date)}
-        <ChevronRight size={48} onClick={() => handleDateChange('fwd')} />
+        <ChevronRight size={48} onClick={() => handleDateChange('fwd')} label="Next Day" />
       </DateSelector>
       <YearWrapper>{moment(date).format('yyyy')}</YearWrapper>
     </DatePickerWrapper>
