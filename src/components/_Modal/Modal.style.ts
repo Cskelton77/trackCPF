@@ -15,8 +15,6 @@ export const ModalWindow = styled.div`
   background-color: ${theme.colours.white};
   padding: ${theme.layoutPadding};
   color: ${theme.colours.black};
-
-  border: 1px solid black;
 `;
 
 export const ModalHeader = styled.div`

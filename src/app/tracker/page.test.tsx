@@ -135,11 +135,11 @@ describe('Main tracker page', () => {
   }: args & { mode: MODES }) => {
     const saveText = mode === MODES.UPDATE ? 'Update Entry' : 'Save';
 
-    const servingInput = await screen.findByRole('textbox', { name: 'Amount Eaten' });
+    const servingInput = await screen.findByRole('textbox', { name: 'Portion:' });
     const caloriesInput = await screen.findByRole('textbox', { name: 'Calories' });
     const proteinInput = await screen.findByRole('textbox', { name: 'Protein' });
     const fiberInput = await screen.findByRole('textbox', { name: 'Fibre' });
-    const plantPointsInput = await screen.findByRole('combobox', { name: 'Plant Points:' });
+    const plantPointsInput = await screen.findByRole('combobox', { name: 'Plant Points' });
     const saveButton = await screen.findByRole('button', { name: saveText });
 
     await userEvent.clear(servingInput);
@@ -459,7 +459,7 @@ describe('Main tracker page', () => {
     };
 
     const enterFoodInfo = async (serving: number) => {
-      const servingInput = await screen.findByRole('textbox', { name: 'Amount Eaten' });
+      const servingInput = await screen.findByRole('textbox', { name: 'Portion:' });
       const saveButton = await screen.findByRole('button', { name: 'Save' });
       await userEvent.type(servingInput, serving.toString());
       await userEvent.click(saveButton);
