@@ -15,6 +15,7 @@ export const ModalWindow = styled.div`
   background-color: ${theme.colours.white};
   padding: ${theme.layoutPadding};
   color: ${theme.colours.black};
+  overflow: scroll;
 `;
 
 export const ModalHeader = styled.div`
