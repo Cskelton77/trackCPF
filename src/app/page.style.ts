@@ -11,8 +11,8 @@ export const LoginForm = styled.form`
 
 export const EmailForm = styled.input`
   height: 36px;
-  padding: ${theme.inputPadding};
-  margin: ${theme.layoutPadding};
+  padding: ${theme.padding.small};
+  margin: ${theme.padding.large};
 `;
 
 export const LoginButton = styled.button`

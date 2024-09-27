@@ -2,19 +2,19 @@ import styled from 'styled-components';
 import { theme } from '@/theme';
 
 export const PersonalInfo = styled.div`
-  padding: ${theme.layoutPadding} 0;
+  padding: ${theme.padding.large} 0;
 `;
 export const SettingsSection = styled.div`
-  padding: ${theme.inputPadding} 0;
+  padding: ${theme.padding.small} 0;
 `;
 
 export const AppSettings = styled.div`
-  padding: ${theme.layoutPadding} 0;
+  padding: ${theme.padding.large} 0;
 `;
 
 export const HeightInput = styled.input`
   width: 35px;
-  padding: ${theme.inputPadding};
+  padding: ${theme.padding.small};
   color: ${theme.colours.black};
   background-color: ${theme.colours.white};
   border-left: none;
@@ -24,7 +24,7 @@ export const HeightInput = styled.input`
 
 export const WeightInput = styled.input`
   width: 50px;
-  padding: ${theme.inputPadding};
+  padding: ${theme.padding.small};
   color: ${theme.colours.darkGrey};
   background-color: ${theme.colours.white};
   border-left: none;
@@ -35,7 +35,7 @@ export const WeightInput = styled.input`
 export const RadioButton = styled.input`
   height: 25px;
   width: 35px;
-  padding: ${theme.inputPadding};
+  padding: ${theme.padding.small};
 `;
 
 export const Actions = styled.div`
@@ -49,7 +49,7 @@ const Action = styled.div`
   width: 100%;
   height: 100%;
   border: 1px solid ${theme.colours.darkGrey};
-  padding: ${theme.inputPadding};
+  padding: ${theme.padding.small};
   text-align: center;
   flex: 1;
 `;

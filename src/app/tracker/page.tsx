@@ -1,7 +1,15 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
-import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary, Settings } from '@/components';
+import {
+  AddNewItem,
+  DatePicker,
+  MainDisplay,
+  SearchBar,
+  Summary,
+  Settings,
+  MenuBar,
+} from '@/components';
 import { DiaryData } from '@/interfaces/DailyData';
 import { ItemMode, MODES, NullableNumber } from '@/interfaces/ItemModes';
 import { deleteFood, getFood, postFood } from '@/api/food';
@@ -12,6 +20,7 @@ import { DEBUGMODE } from '@/config';
 import { getSettings } from '@/api/users/settings';
 import { SettingsContext, SettingsContextInterface, defaultSettings } from '@/context';
 import { v4 as uuidv4 } from 'uuid';
+import { Header, PageWrapper } from './Page.style';
 
 export default function Home() {
   const router = useRouter();
@@ -227,47 +236,42 @@ export default function Home() {
 
   return (
     <SettingsContext.Provider value={userSettings}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          paddingBottom: '6px',
-          borderBottom: '1px solid #E0E0E0',
-        }}
-      >
-        <span onClick={() => openSettings()}>User: {email}</span>
-        <button onClick={() => logout()}>Log Out</button>
-      </div>
-      <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
-      <MainDisplay
-        data={dailyData}
-        modifyEntry={handleModifyDiaryEntry}
-        deleteEntry={handleDeleteDiaryEntry}
-      />
-      <AddNewItem
-        ref={addNewItemRef}
-        date={displayDate}
-        isVisible={!!foodMode}
-        mode={foodMode}
-        name={searchValue}
-        selectedFood={selectedFood}
-        selectedFoodServing={selectedFoodServing}
-        handleSave={handleSaveDiaryEntry}
-        diaryEntryId={selectedDiaryEntry}
-        deleteDiaryEntry={handleDeleteDiaryEntry}
-        close={resetSelection}
-      />
-      <SearchBar
-        ref={searchBarRef}
-        value={searchValue}
-        setValue={setSearchValue}
-        response={searchResponse}
-        addNewItem={setFoodMode}
-        setSelectedFood={setSelectedFood}
-        deleteFoodItem={handleDeleteFoodEntry}
-      />
-      <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
-
+      <PageWrapper>
+        <Header>
+          <span onClick={() => openSettings()}>User: {email}</span>
+          <button onClick={() => logout()}>Log Out</button>
+        </Header>
+        <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
+        <MainDisplay
+          data={dailyData}
+          modifyEntry={handleModifyDiaryEntry}
+          deleteEntry={handleDeleteDiaryEntry}
+        />
+        <AddNewItem
+          ref={addNewItemRef}
+          date={displayDate}
+          isVisible={!!foodMode}
+          mode={foodMode}
+          name={searchValue}
+          selectedFood={selectedFood}
+          selectedFoodServing={selectedFoodServing}
+          handleSave={handleSaveDiaryEntry}
+          diaryEntryId={selectedDiaryEntry}
+          deleteDiaryEntry={handleDeleteDiaryEntry}
+          close={resetSelection}
+        />
+        <SearchBar
+          ref={searchBarRef}
+          value={searchValue}
+          setValue={setSearchValue}
+          response={searchResponse}
+          addNewItem={setFoodMode}
+          setSelectedFood={setSelectedFood}
+          deleteFoodItem={handleDeleteFoodEntry}
+        />
+        <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
+      </PageWrapper>
+      <MenuBar />
       <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} />
     </SettingsContext.Provider>
   );
