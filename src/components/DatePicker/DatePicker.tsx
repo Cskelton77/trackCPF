@@ -1,6 +1,5 @@
 import moment, { Moment } from 'moment';
-import ChevronLeft from '../Icons/Chevron-Left';
-import ChevronRight from '../Icons/Chevron-Right';
+import { ChevronLeft, ChevronRight } from '@/Icons';
 import { DatePickerWrapper, DateSelector, Day, YearWrapper } from './DatePicker.style';
 
 interface DatePicker {

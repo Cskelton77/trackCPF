@@ -14,7 +14,7 @@ import { theme } from '@/theme';
 import { useContext } from 'react';
 import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
 import moment, { Moment } from 'moment';
-import PlantPoint from '../Icons/PlantPoint';
+import { PlantPoint } from '@/Icons';
 import { generateChartData } from './Summary.utils';
 
 const NHS_DAILY_FIBRE = 30;
@@ -79,12 +79,19 @@ const Summary = ({
     : roundDisplay(currentProteinTotal);
   const fibreDisplay = rounding ? Math.round(currentFibreTotal) : roundDisplay(currentFibreTotal);
 
-  const weekStart = moment(date).startOf('isoWeek').format('ddd, MMM Do').toString();
-  const weekEnd = moment(date).endOf('isoWeek').format('ddd, MMM Do').toString();
+  // Turning off week display for now, clutter on the screen.
+  //   const weekStart = moment(date).startOf('isoWeek').format('ddd, MMM Do').toString();
+  //   const weekEnd = moment(date).endOf('isoWeek').format('ddd, MMM Do').toString();
 
   return (
     <SummaryTable>
       <FlatStats>Daily Total: {calorieDisplay} calories</FlatStats>
+      {usePlantPoints && (
+        <FlatStats>
+          <PlantPoint style={{ fill: theme.colours.plantPoint }} /> Weekly Plant Points:{' '}
+          {plantPoints}
+        </FlatStats>
+      )}
       <RingsWrapper>
         <Ring>
           <ChartBinder>
@@ -113,16 +120,6 @@ const Summary = ({
             Note: At least one partially completed item above is excluded from these totals.
           </SkipWarning>
         </span>
-      )}
-      {usePlantPoints && (
-        <>
-          <FlatStats>
-            {weekStart} - {weekEnd}
-          </FlatStats>
-          <FlatStats>
-            <PlantPoint style={{ fill: theme.colours.plantPoint }} /> Plant Points: {plantPoints}
-          </FlatStats>
-        </>
       )}
     </SummaryTable>
   );

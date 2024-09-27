@@ -1,10 +1,9 @@
 import { DiaryData } from '@/interfaces/DailyData';
-import Delete from '../Icons/Delete';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { MainDisplayTable, NumberCell, NumberHeader, TableCell } from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
-import PlantPoint from '../Icons/PlantPoint';
+import { PlantPoint } from '@/Icons';
 import { theme } from '@/theme';
 import { NullableNumber } from '@/interfaces/ItemModes';
 

@@ -15,10 +15,9 @@ import {
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
 import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
-import { DEBUGMODE } from '@/config';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
-import Delete from '../Icons/Delete';
+import { Delete } from '@/Icons';
 
 export interface AddNewItemInterface {
   name: string;

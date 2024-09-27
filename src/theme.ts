@@ -13,12 +13,21 @@ export const theme = {
 
     plantPoint: '#45f248', // '#B0AB80',
   },
-  layoutPadding: '24px',
-  buttonPadding: '12px',
-  inputPadding: '6px',
 
-  largeText: '36px',
-  mediumText: '24px',
-  smallText: '18px',
-  extraSmallText: '12px',
+  //   layoutPadding: '24px',
+  //   buttonPadding: '12px',
+  //   inputPadding: '6px',
+
+  padding: {
+    small: '6px',
+    medium: '12px',
+    large: '24px',
+  },
+
+  fontSize: {
+    xSmall: '12px',
+    small: '18px',
+    medium: '24px',
+    large: '36px',
+  },
 };

@@ -4,9 +4,9 @@ import styled from 'styled-components';
 export const SearchBarInput = styled.input`
   width: 100%;
   height: 36px;
-  font-size: ${theme.mediumText};
+  font-size: ${theme.fontSize.medium};
   border-radius: 12px;
-  padding: ${theme.inputPadding};
+  padding: ${theme.padding.small};
 `;
 
 export const ResponseDropdown = styled.div`
@@ -19,8 +19,8 @@ export const ResponseRow = styled.div`
   justify-content: space-between;
   cursor: 'pointer';
   width: 100%;
-  font-size: ${theme.smallText};
-  padding: ${theme.inputPadding};
+  font-size: ${theme.fontSize.small};
+  padding: ${theme.padding.small};
   color: ${theme.colours.black};
   background-color: ${theme.colours.lightGrey};
   border-left: 1px solid black;

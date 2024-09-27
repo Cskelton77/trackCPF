@@ -167,7 +167,6 @@ const Settings = ({ title, close, isVisible, uid }: Settings) => {
               checked={rounding == false}
               onChange={() => setRounding(false)}
               aria-label="display numbers to two decimals"
-              //   defaultChecked
             />{' '}
             Two decimal places (Default)
             <br />
@@ -199,7 +198,7 @@ const Settings = ({ title, close, isVisible, uid }: Settings) => {
               onChange={() => setPersonaliseFibre(false)}
               aria-label="Use NHS Recommended Fibre"
             />{' '}
-            Use NHS Recommendation (30g/day)
+            Use NHS Fibre Recommendation (30g/day)
           </SettingsSection>
 
           <SettingsSection>
