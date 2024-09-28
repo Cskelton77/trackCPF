@@ -4,7 +4,7 @@ import { ActionBlock, ResponseDropdown, ResponseRow, SearchBarInput } from './Se
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { ForwardedRef, forwardRef, useState } from 'react';
 
-interface SearchBar {
+interface SearchBarInterface {
   value: string;
   setValue: (val: string) => void;
   response: DefinedFoodObject[];
@@ -15,7 +15,7 @@ interface SearchBar {
 
 const SearchBar = forwardRef(
   (
-    { value, setValue, response, addNewItem, setSelectedFood, deleteFoodItem }: SearchBar,
+    { value, setValue, response, addNewItem, setSelectedFood, deleteFoodItem }: SearchBarInterface,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const [showDropdown, setShowDropdown] = useState(false);

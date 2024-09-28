@@ -20,8 +20,9 @@ export enum MODES {
   MANUAL = 'manual',
   CALCULATE = 'calculate',
   UPDATE = 'update',
+  PATCH = 'patch',
 }
 
-export type ItemMode = MODES.MANUAL | MODES.CALCULATE | MODES.UPDATE | null;
+export type ItemMode = MODES.MANUAL | MODES.CALCULATE | MODES.UPDATE | MODES.PATCH | null;
 
 export type NullableNumber = number | null | typeof NaN | undefined;

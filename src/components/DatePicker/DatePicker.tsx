@@ -2,12 +2,12 @@ import moment, { Moment } from 'moment';
 import { ChevronLeft, ChevronRight } from '@/Icons';
 import { DatePickerWrapper, DateSelector, Day, YearWrapper } from './DatePicker.style';
 
-interface DatePicker {
+interface DatePickerInterface {
   date: Moment;
   setDisplayDate: (date: Moment) => void;
 }
 
-const DatePicker = ({ date, setDisplayDate }: DatePicker) => {
+const DatePicker = ({ date, setDisplayDate }: DatePickerInterface) => {
   const handleDateChange = (dir: string) => {
     if (dir == 'back') {
       const yesterday = date.clone().subtract(1, 'day');

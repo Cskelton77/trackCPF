@@ -13,3 +13,13 @@ export const Header = styled.div`
   padding-bottom: ${theme.padding.small};
   border-bottom: 1px solid ${theme.colours.lightGrey};
 `;
+
+export const FoodEntry = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: ${theme.padding.medium};
+`;
+
+export const ActionBlock = styled.div`
+  display: flex;
+`;

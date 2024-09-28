@@ -3,8 +3,6 @@ import '@testing-library/jest-dom';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { AddNewItem } from '@/components';
 import { AddNewItemInterface } from './AddNewItem';
-
-import moment from 'moment';
 import { MODES } from '@/interfaces/ItemModes';
 
 describe('Add New Item modal', () => {
@@ -13,7 +11,6 @@ describe('Add New Item modal', () => {
   const mockDeleteDiaryEntry = jest.fn();
   const defaultProps: AddNewItemInterface = {
     name: 'Food',
-    date: moment('2024-09-11'),
     isVisible: true,
     mode: MODES.CALCULATE,
     handleSave: mockHandleSave,

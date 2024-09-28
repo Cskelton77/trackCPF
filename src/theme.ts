@@ -14,10 +14,6 @@ export const theme = {
     plantPoint: '#45f248', // '#B0AB80',
   },
 
-  //   layoutPadding: '24px',
-  //   buttonPadding: '12px',
-  //   inputPadding: '6px',
-
   padding: {
     small: '6px',
     medium: '12px',
