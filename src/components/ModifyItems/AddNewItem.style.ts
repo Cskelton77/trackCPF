@@ -19,6 +19,7 @@ export const ItemAttributes = styled.div`
   padding: ${theme.padding.medium};
 `;
 export const EntryLabel = styled.label`
+  justify-content: center;
   font-size: 24px;
   display: flex;
   align-items: center;

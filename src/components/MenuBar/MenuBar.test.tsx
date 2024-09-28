@@ -20,4 +20,11 @@ describe('Menu Bar', () => {
     await userEvent.click(homeBtn);
     expect(mockPush).toHaveBeenCalledWith('/tracker/');
   });
+
+  it('should go to the Food List when Food DB is clicked', async () => {
+    render(<MenuBar />);
+    const foodDbBtn = screen.getByRole('button', { name: 'View Food Database' });
+    await userEvent.click(foodDbBtn);
+    expect(mockPush).toHaveBeenCalledWith('/foodlist/');
+  });
 });

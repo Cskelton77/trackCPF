@@ -13,7 +13,6 @@ describe('Add New Item modal', () => {
   const mockDeleteDiaryEntry = jest.fn();
   const defaultProps: AddNewItemInterface = {
     name: 'Food',
-    date: moment('2024-09-11'),
     isVisible: true,
     mode: MODES.CALCULATE,
     handleSave: mockHandleSave,

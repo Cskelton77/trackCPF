@@ -249,7 +249,6 @@ export default function Home() {
         />
         <AddNewItem
           ref={addNewItemRef}
-          date={displayDate}
           isVisible={!!foodMode}
           mode={foodMode}
           name={searchValue}

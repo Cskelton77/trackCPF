@@ -13,7 +13,6 @@ import {
   DeleteAction,
 } from './AddNewItem.style';
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
-import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
@@ -23,7 +22,6 @@ export interface AddNewItemInterface {
   name: string;
   selectedFood?: FoodObject;
   selectedFoodServing?: number;
-  date: Moment;
   isVisible: boolean;
   mode: ItemMode;
   diaryEntryId?: string;

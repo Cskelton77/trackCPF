@@ -15,9 +15,9 @@ const MenuBar = () => {
   };
 
   const handleFoodDatabase = () => {
-    // router.push('/tracker/');
-    // console.log('Database');
+    router.push('/foodlist/');
   };
+
   const menuIconStyle = { color: '#000', cursor: 'pointer' };
   return (
     <MenuBarContainer>
@@ -27,7 +27,7 @@ const MenuBar = () => {
       <MenuItem>
         <AddRecipe size={36} style={menuIconStyle} />
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={handleFoodDatabase}>
         <Database size={36} style={menuIconStyle} />
       </MenuItem>
     </MenuBarContainer>

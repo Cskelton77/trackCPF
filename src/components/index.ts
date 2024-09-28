@@ -1,4 +1,4 @@
-import AddNewItem from './AddNewItem/AddNewItem';
+import AddNewItem from './ModifyItems/AddNewItem';
 import DatePicker from './DatePicker/DatePicker';
 import MainDisplay from './MainDisplay/MainDisplay';
 import MenuBar from './MenuBar/MenuBar';
