@@ -1,4 +1,3 @@
-import { NullableNumber } from '@/interfaces/ItemModes';
 import {
   Actions,
   DiscardAction,
@@ -10,15 +9,13 @@ import {
   TextDisplay,
   EntryLabel,
   PlantPointsSelector,
-  DeleteAction,
 } from './AddNewItem.style';
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
-import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
-import { Delete } from '@/Icons';
 
-export interface ModifyFood {
+export interface ModifyFoodInterface {
   selectedFood?: DefinedFoodObject;
   isVisible: boolean;
   handleSave: (food: DefinedFoodObject) => void;
@@ -27,7 +24,7 @@ export interface ModifyFood {
 
 const ModifyFood = forwardRef(
   (
-    { selectedFood, handleSave, isVisible, close }: ModifyFood,
+    { selectedFood, handleSave, isVisible, close }: ModifyFoodInterface,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const context = useContext(SettingsContext);
@@ -37,7 +34,6 @@ const ModifyFood = forwardRef(
       return <></>;
     }
 
-    const [entryName, setEntryName] = useState<string>();
     const [calories, setCalories] = useState<string>();
     const [protein, setProtein] = useState<string>();
     const [fibre, setFibre] = useState<string>();
@@ -45,7 +41,6 @@ const ModifyFood = forwardRef(
 
     useEffect(() => {
       if (selectedFood) {
-        setEntryName(selectedFood.name.toString());
         setCalories(selectedFood.calories?.toString());
         setProtein(selectedFood.protein?.toString());
         setFibre(selectedFood.fibre?.toString());
@@ -54,12 +49,12 @@ const ModifyFood = forwardRef(
     }, [selectedFood]);
 
     const resetForm = () => {
-      setEntryName(undefined);
       setCalories(undefined);
       setProtein(undefined);
       setFibre(undefined);
       setPlantPoints('0');
     };
+
     const handleDiscard = () => {
       resetForm();
       close();
@@ -87,7 +82,7 @@ const ModifyFood = forwardRef(
             entries, only change what is avaialble to you for future entries.
           </span>
           <ItemAttributes>
-            <EntryLabel>{entryName} per 100g</EntryLabel>
+            <EntryLabel>{selectedFood.name} per 100g</EntryLabel>
             <EntryBox>
               <AttributeInput
                 id="calories"
@@ -136,13 +131,6 @@ const ModifyFood = forwardRef(
             <DiscardAction onClick={handleDiscard}>Discard Changes</DiscardAction>
             <SaveAction type={'submit'}>Update Entry</SaveAction>
           </Actions>
-
-          {/* <Actions>
-            <DeleteAction onClick={() => deleteFood(foodId)}>
-              <Delete size={24} label={`Delete ${name}`} />
-              {'Delete Food from Database'}
-            </DeleteAction>
-          </Actions> */}
         </NewItemModal>
       </Modal>
     );
