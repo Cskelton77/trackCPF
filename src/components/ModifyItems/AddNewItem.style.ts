@@ -67,14 +67,14 @@ const Action = styled.div`
   flex: 1;
 `;
 export const DiscardAction = styled(Action)`
-  background-color: #ca7068;
+  background-color: ${theme.colours.negativeButton};
   flex: 1;
   font-size: ${theme.fontSize.small};
   margin-right: 4px;
 `;
 
 export const DeleteAction = styled(Action)`
-  background-color: #ca7068;
+  background-color: ${theme.colours.negativeButton};
   flex: 1;
   font-size: ${theme.fontSize.small};
 `;
@@ -82,7 +82,7 @@ export const DeleteAction = styled(Action)`
 export const SaveAction = styled.button`
   margin-left: 4px;
   font-size: ${theme.fontSize.small};
-  background-color: #6c824e;
+  background-color: ${theme.colours.positiveButton};
   flex: 2;
   border: 1px solid ${theme.colours.darkGrey};
 `;

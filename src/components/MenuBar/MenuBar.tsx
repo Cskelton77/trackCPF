@@ -10,8 +10,7 @@ const MenuBar = () => {
   };
 
   const handleAddRecipe = () => {
-    // router.push('/tracker/');
-    // console.log('Add');
+    router.push('/recipe/');
   };
 
   const handleFoodDatabase = () => {
@@ -24,7 +23,7 @@ const MenuBar = () => {
       <MenuItem onClick={handleHome}>
         <Home size={36} style={menuIconStyle} />
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={handleAddRecipe}>
         <AddRecipe size={36} style={menuIconStyle} />
       </MenuItem>
       <MenuItem onClick={handleFoodDatabase}>

@@ -6,12 +6,17 @@ export const theme = {
     darkGrey: '#C0C0C0',
     lightGrey: '#E0E0E0',
 
-    fibreRing: '#23541B', // '#B0AB80',
-    proteinRing: '#6D7393', // '#B3B3F1',
+    fibreRing: '#68c2ca', // '#B0AB80',
+    proteinRing: '#644E82', // '#B3B3F1',
     ringCaution: '#F4BB09',
     ringWarning: '#FF0000',
 
     plantPoint: '#45f248', // '#B0AB80',
+
+    negativeButton: '#ca7068',
+    inactiveButton: '#C0C0C0',
+    positiveButton: '#6c824e',
+    neutralButton: '#4e6c82',
   },
 
   padding: {

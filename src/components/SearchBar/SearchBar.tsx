@@ -2,27 +2,60 @@ import { ItemMode, MODES } from '@/interfaces/ItemModes';
 import { Delete } from '@/Icons';
 import { ActionBlock, ResponseDropdown, ResponseRow, SearchBarInput } from './SearchBar.style';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
-import { ForwardedRef, forwardRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
+import { deleteFood, getFood } from '@/api/food';
+import { UserContext } from '@/context';
 
 interface SearchBarInterface {
-  value: string;
-  setValue: (val: string) => void;
-  response: DefinedFoodObject[];
-  addNewItem: (mode: ItemMode) => void;
+  searchDbOnly?: boolean;
+  handleClickResult?: (mode: ItemMode) => void;
   setSelectedFood: (food: DefinedFoodObject) => void;
-  deleteFoodItem: (foodId: string) => void;
 }
 
 const SearchBar = forwardRef(
   (
-    { value, setValue, response, addNewItem, setSelectedFood, deleteFoodItem }: SearchBarInterface,
+    { searchDbOnly = false, handleClickResult, setSelectedFood }: SearchBarInterface,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
+    const uid = useContext(UserContext);
+
+    const [searchValue, setSearchValue] = useState('');
+    const [searchResponse, setSearchResponse] = useState<DefinedFoodObject[]>([]);
+
     const [showDropdown, setShowDropdown] = useState(false);
 
-    const addExistingFoodItem = (response: DefinedFoodObject) => {
+    async function fetchFoodResults() {
+      const response = await getFood(uid, searchValue);
+      setSearchResponse(response);
+    }
+
+    useEffect(() => {
+      if (searchValue !== '') {
+        fetchFoodResults();
+      }
+      if (searchValue == '') {
+        setSearchResponse([]);
+      }
+    }, [searchValue]);
+
+    const handleAddNewItem = (mode: MODES) => {
+      setSearchValue('');
+      setSelectedFood({ fid: '', name: searchValue });
+      if (handleClickResult) {
+        handleClickResult(mode);
+      }
+    };
+
+    const handleAddExistingItem = (response: DefinedFoodObject) => {
       setSelectedFood(response);
-      addNewItem(MODES.CALCULATE);
+      setSearchValue('');
+      if (handleClickResult) {
+        handleClickResult(MODES.CALCULATE);
+      }
+    };
+
+    const deleteFoodItem = async (foodId: string) => {
+      await deleteFood(foodId);
     };
 
     const handleBlur = () => {
@@ -35,34 +68,33 @@ const SearchBar = forwardRef(
         <SearchBarInput
           id="searchForFood"
           ref={ref}
-          value={value}
+          value={searchValue}
           placeholder={'Add a new food'}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => setSearchValue(e.target.value)}
           onFocus={() => setShowDropdown(true)}
           onBlur={() => handleBlur()}
         />
         {showDropdown && (
           <ResponseDropdown>
-            {value && (
-              <ResponseRow role="button" onClick={() => addNewItem(MODES.CALCULATE)}>
-                Add {value} (p/100g)
+            {searchValue && (
+              <ResponseRow role="button" onClick={() => handleAddNewItem(MODES.CALCULATE)}>
+                Add {searchValue} (p/100g)
               </ResponseRow>
             )}
-            {value && (
-              <ResponseRow role="button" onClick={() => addNewItem(MODES.MANUAL)}>
-                Add {value} (p/serving)
+            {searchValue && !searchDbOnly && (
+              <ResponseRow role="button" onClick={() => handleAddNewItem(MODES.MANUAL)}>
+                Add {searchValue} (p/serving)
               </ResponseRow>
             )}
-            {response.map((response) => {
+            {searchResponse.map((response) => {
               return (
                 <ResponseRow
                   role="button"
                   key={response.fid}
-                  onClick={() => addExistingFoodItem(response)}
+                  onClick={() => handleAddExistingItem(response)}
                 >
                   {response.name} ({response.calories} cal/100g)
                   <ActionBlock>
-                    {/* <Edit size={24} /> */}
                     <Delete
                       size={24}
                       label="Delete Item from Database"

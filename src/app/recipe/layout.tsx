@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Tracker - TrackCPF',
+  title: 'Add New Recipe - TrackCPF',
   description: 'Track your Calories, Protein, Fibre',
 };
 export const viewport: Viewport = {

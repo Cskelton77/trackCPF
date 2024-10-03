@@ -22,8 +22,7 @@ const MainDisplay = ({
     update: DefinedFoodObject,
   ) => Promise<void>;
 }) => {
-  const context = useContext(SettingsContext);
-  const { rounding } = context;
+  const { rounding } = useContext(SettingsContext);
 
   return (
     <MainDisplayTable>
