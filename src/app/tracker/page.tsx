@@ -72,7 +72,8 @@ export default function Home() {
     const isManualMode = foodMode === MODES.MANUAL;
     const isUpdateMode = foodMode === MODES.UPDATE;
     const isCalculateMode = foodMode === MODES.CALCULATE;
-    const isCalculateNewFoodMode = foodMode === MODES.CALCULATE && isCompleteEntry && !selectedFood;
+    const isCalculateNewFoodMode =
+      foodMode === MODES.CALCULATE && isCompleteEntry && !selectedFood?.fid;
     if (isCalculateNewFoodMode) {
       // Save full nutritional data per 100g'
       const newFood = JSON.parse(

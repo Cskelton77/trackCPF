@@ -70,7 +70,6 @@ export default function Home() {
     <>
       {data &&
         data.map((foodItem) => {
-          console.log(foodItem);
           return (
             <FoodEntry role="button" key={foodItem.fid}>
               <span onClick={() => handleModifyFoodEntry(foodItem)}>

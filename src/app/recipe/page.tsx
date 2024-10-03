@@ -68,14 +68,11 @@ export default function Home() {
   }, [selectedFood]);
 
   const addIngredient = (ingredient?: RecipeIngredient) => {
-    console.log({ ingredient });
     setIngredients([...ingredients, ingredient || ({} as RecipeIngredient)]);
   };
 
   const modifyIngredient = (value: IngredientProperty, rid: string, amount: string) => {
     const mod = ingredients.findIndex((ingredient) => ingredient.rid == rid);
-    console.log({ rid, amount, mod, ingredients });
-
     const newIngredients = [...ingredients];
     newIngredients[mod][value] = parseFloat(amount) || 0;
     setIngredients(newIngredients);
@@ -116,7 +113,6 @@ export default function Home() {
     // Go through ingredients, save to DB any without a FID
     ingredients.forEach(async (ingredient) => {
       if (!ingredient.fid) {
-        console.log('save to db', { ingredient });
         const { name, calories, protein, fibre, rid } = ingredient;
         const newFood = JSON.parse(
           await postFood({
@@ -135,7 +131,6 @@ export default function Home() {
         newIngredients[mod].fid = newFood;
         setIngredients(newIngredients);
       }
-      console.log({ ingredients });
     });
     // Send completedRecipe to diary DB
     const diaryEntry: Omit<DiaryData, 'did'> = {
