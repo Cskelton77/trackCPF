@@ -26,13 +26,14 @@ export default function Home() {
   }, [selectedFood]);
 
   useEffect(() => {
-    async function fetchAllFoodItems() {
-      setSelectedFood(undefined);
-      const response = await getFood(uid);
-      setAllData(response);
-    }
     fetchAllFoodItems();
   }, []);
+
+  async function fetchAllFoodItems() {
+    setSelectedFood(undefined);
+    const response = await getFood(uid);
+    setAllData(response);
+  }
 
   const handleSaveFoodToDatabase = async ({
     fid,
