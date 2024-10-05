@@ -175,20 +175,23 @@ export default function Home() {
           onChange={(e) => setRecipeName(e.target.value)}
         />
       </Section>
+
       <Table>
-        <thead>
-          <tr>
-            <th colSpan={2}></th>
-            <th colSpan={3}>--- per 100g ----</th>
-          </tr>
-          <tr>
-            <th>Ingredient</th>
-            <th>Portion</th>
-            <th>Calorie</th>
-            <th>Protein</th>
-            <th>Fibre</th>
-          </tr>
-        </thead>
+        {ingredients.length > 0 && (
+          <thead>
+            <tr>
+              <th colSpan={2}></th>
+              <th colSpan={3}>--- per 100g ----</th>
+            </tr>
+            <tr>
+              <th>Ingredient</th>
+              <th>Amount</th>
+              <th>Calorie</th>
+              <th>Protein</th>
+              <th>Fibre</th>
+            </tr>
+          </thead>
+        )}
         <tbody>
           {ingredients.length > 0 &&
             ingredients.map((ingredient) => {
