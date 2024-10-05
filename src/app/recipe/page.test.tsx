@@ -5,6 +5,7 @@ import Home from './page';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { postDiary } from '@/api/diary';
 import { postFood } from '@/api/food';
+import moment from 'moment';
 
 const mockResponse: DefinedFoodObject[] = [
   {
@@ -35,6 +36,8 @@ jest.mock('../../api/food', () => ({
 jest.mock('../../api/diary', () => ({
   postDiary: jest.fn(() => '{}'),
 }));
+
+Date.now = jest.fn(() => new Date('2024-10-05').getTime());
 
 describe('Add a Recipe Page', () => {
   const searchFor = async (text: string = 'D') => {
