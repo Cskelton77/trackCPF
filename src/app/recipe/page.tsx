@@ -50,7 +50,7 @@ export default function Home() {
   const [selectedFood, setSelectedFood] = useState<DefinedFoodObject>();
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [servingDivisor, setServingDivisor] = useState<1 | 100>(1);
-  const [servingAmount, setServingAmount] = useState<string>('1');
+  const [servingAmount, setServingAmount] = useState<string>();
   const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: 1 | 100 }>();
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function Home() {
       },
       { cal: 0, pro: 0, fib: 0 },
     );
-    const servings = parseFloat(servingAmount) / servingDivisor;
+    const servings = parseFloat(servingAmount || '0') / servingDivisor;
     setCalculatedRecipe({
       fid: '',
       name: recipeName || 'Custom Recipe',
