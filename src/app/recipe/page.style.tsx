@@ -21,7 +21,7 @@ export const InputCell = styled.td`
 `;
 
 export const InputField = styled.input`
-  width: 70%;
+  width: 80%;
   height: 32px;
   font-size: ${theme.fontSize.small};
   border-radius: 12px;

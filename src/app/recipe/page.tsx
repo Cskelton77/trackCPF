@@ -60,9 +60,9 @@ export default function Home() {
         rid: uuidv4(),
         fid,
         name,
-        calories: calories?.toString() || '0',
-        protein: protein?.toString() || '0',
-        fibre: fibre?.toString() || '0',
+        calories: calories?.toString() || undefined,
+        protein: protein?.toString() || undefined,
+        fibre: fibre?.toString() || undefined,
       };
       setIngredients([...ingredients, newIngredient]);
     }
@@ -275,6 +275,7 @@ export default function Home() {
         <InputField
           style={{ textAlign: 'left', width: '25%' }}
           type="text"
+          inputMode="decimal"
           aria-label={`Recipe ${servingDivisor == 1 ? 'Servings' : 'Total Cooked Weight'}`}
           name="serving"
           value={servingAmount}
