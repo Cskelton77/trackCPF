@@ -27,10 +27,10 @@ export interface RecipeIngredient {
   rid: string;
   fid?: string;
   name: string;
-  amount?: number;
-  calories?: number;
-  protein?: number;
-  fibre?: number;
+  amount?: string;
+  calories?: string;
+  protein?: string;
+  fibre?: string;
 }
 
 enum IngredientProperty {
@@ -56,42 +56,39 @@ export default function Home() {
   useEffect(() => {
     if (selectedFood) {
       const { fid, name, calories, protein, fibre } = selectedFood;
-      addIngredient({
+      const newIngredient = {
         rid: uuidv4(),
         fid,
         name,
-        calories: calories || 0,
-        protein: protein || 0,
-        fibre: fibre || 0,
-      });
+        calories: calories?.toString() || '0',
+        protein: protein?.toString() || '0',
+        fibre: fibre?.toString() || '0',
+      };
+      setIngredients([...ingredients, newIngredient]);
     }
   }, [selectedFood]);
-
-  const addIngredient = (ingredient?: RecipeIngredient) => {
-    setIngredients([...ingredients, ingredient || ({} as RecipeIngredient)]);
-  };
 
   const modifyIngredient = (value: IngredientProperty, rid: string, amount: string) => {
     const mod = ingredients.findIndex((ingredient) => ingredient.rid == rid);
     const newIngredients = [...ingredients];
-    newIngredients[mod][value] = parseFloat(amount) || 0;
+    newIngredients[mod][value] = amount;
     setIngredients(newIngredients);
   };
 
   const calculateRecipe = () => {
     const { cal, pro, fib } = ingredients.reduce(
       ({ cal, pro, fib }, { calories, protein, fibre, amount }) => {
-        const isCompleteEntry =
-          typeof calories == 'number' &&
-          typeof protein == 'number' &&
-          typeof fibre == 'number' &&
-          typeof amount == 'number';
+        const nCalories = parseFloat(calories || '0');
+        const nProtein = parseFloat(protein || '0');
+        const nFibre = parseFloat(fibre || '0');
+        const nAmount = parseFloat(amount || '0');
 
+        const isCompleteEntry = calories && protein && fibre && amount;
         if (isCompleteEntry) {
           return {
-            cal: cal + calories * (amount / 100),
-            pro: pro + protein * (amount / 100),
-            fib: fib + fibre * (amount / 100),
+            cal: cal + nCalories * (nAmount / 100),
+            pro: pro + nProtein * (nAmount / 100),
+            fib: fib + nFibre * (nAmount / 100),
           };
         }
         return { cal, pro, fib };
@@ -118,9 +115,9 @@ export default function Home() {
           await postFood({
             uid,
             name,
-            calories,
-            protein,
-            fibre,
+            calories: parseFloat(calories || '0'),
+            protein: parseFloat(protein || '0'),
+            fibre: parseFloat(fibre || '0'),
             plantPoints: 0,
           }),
         );
@@ -145,7 +142,7 @@ export default function Home() {
         calories: calculatedRecipe?.calories as number,
         protein: calculatedRecipe?.protein as number,
         fibre: calculatedRecipe?.fibre as number,
-        plantPoints: calculatedRecipe?.plantPoints as number,
+        plantPoints: calculatedRecipe?.plantPoints || 0,
       },
       ingredients,
     };
@@ -196,11 +193,12 @@ export default function Home() {
           {ingredients.length > 0 &&
             ingredients.map((ingredient) => {
               return (
-                <InputRow>
+                <InputRow key={ingredient.rid}>
                   <InputCell>{ingredient.name}</InputCell>
                   <InputCell>
                     <InputField
                       id="ingredient amount"
+                      aria-label={`${ingredient.name} Amount`}
                       value={ingredient.amount}
                       inputMode="decimal"
                       onChange={(e) =>
@@ -211,6 +209,7 @@ export default function Home() {
                   <InputCell>
                     <InputField
                       id="ingredient calories"
+                      aria-label={`${ingredient.name} Calories`}
                       value={ingredient.calories}
                       inputMode="decimal"
                       onChange={(e) =>
@@ -221,6 +220,7 @@ export default function Home() {
                   <InputCell>
                     <InputField
                       id="ingredient protein"
+                      aria-label={`${ingredient.name} Protein`}
                       value={ingredient.protein}
                       inputMode="decimal"
                       onChange={(e) =>
@@ -231,6 +231,7 @@ export default function Home() {
                   <InputCell>
                     <InputField
                       id="ingredient fibre"
+                      aria-label={`${ingredient.name} Fibre`}
                       value={ingredient.fibre}
                       inputMode="decimal"
                       onChange={(e) =>
@@ -271,6 +272,7 @@ export default function Home() {
         <InputField
           style={{ textAlign: 'left', width: '25%' }}
           type="text"
+          aria-label={`Recipe ${servingDivisor == 1 ? 'Servings' : 'Total Cooked Weight'}`}
           name="serving"
           value={servingAmount}
           onChange={(e) => setServingAmount(e.target.value)}
@@ -301,7 +303,9 @@ export default function Home() {
               </InputRow>
             </tbody>
           </Table>
-          <Save onClick={() => saveRecipe()}>Save Recipe to Diary</Save>
+          <Save role="button" onClick={() => saveRecipe()}>
+            Save Recipe to Diary
+          </Save>
         </>
       )}
     </>
