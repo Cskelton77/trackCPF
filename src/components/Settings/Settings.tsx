@@ -9,6 +9,7 @@ import {
   PersonalInfo,
   SaveAction,
   SettingsSection,
+  VersionNumber,
 } from './Settings.style';
 import { saveSettings } from '@/api/users/settings/post';
 import {
@@ -18,6 +19,7 @@ import {
   ProteinCalculation,
   SettingsContext,
 } from '@/context';
+import { VERSION } from '@/config';
 
 interface SettingsInterface extends Omit<ModalInterface, 'children'> {
   uid: string;
@@ -67,173 +69,176 @@ const Settings = ({ title, close, isVisible, uid }: SettingsInterface) => {
 
   return (
     <Modal title={title} isVisible={isVisible} close={close}>
-      <form action={handleSubmit}>
-        <PersonalInfo>
-          <SettingsSection>
-            <h4>I am :</h4>
-            <RadioButton
-              type="radio"
-              name="gender"
-              checked={gender === GENDER.MALE}
-              value={GENDER.MALE}
-              onChange={(e) => setGender(GENDER.MALE)}
-              aria-labelledby="male"
-            />{' '}
-            <label id="male">Male</label> <br />
-            <RadioButton
-              type="radio"
-              name="gender"
-              checked={gender === GENDER.FEMALE}
-              value={GENDER.FEMALE}
-              onChange={(e) => setGender(GENDER.FEMALE)}
-              aria-labelledby="female"
-            />{' '}
-            <label id="female">Female</label>
-            <br />
-          </SettingsSection>
-          <SettingsSection>
-            <h4>
-              <label id="age">My age is:</label>
-              <HeightInput
-                aria-labelledby="age"
-                maxLength={2}
-                inputMode="decimal"
-                value={age}
-                onChange={(e) => setAge(parseInt(e.target.value) || 0)}
-              />
-            </h4>
-          </SettingsSection>
-          <SettingsSection>
-            <h4>
-              My height is:
-              <HeightInput
-                aria-label="Height in feet"
-                maxLength={2}
-                inputMode="decimal"
-                value={heightFeet}
-                onChange={(e) => setHeightFeet(parseInt(e.target.value) || 0)}
+      <>
+        <form action={handleSubmit}>
+          <PersonalInfo>
+            <SettingsSection>
+              <h4>I am :</h4>
+              <RadioButton
+                type="radio"
+                name="gender"
+                checked={gender === GENDER.MALE}
+                value={GENDER.MALE}
+                onChange={(e) => setGender(GENDER.MALE)}
+                aria-labelledby="male"
               />{' '}
-              feet,{' '}
-              <HeightInput
-                aria-label="Height in inches"
-                maxLength={2}
-                inputMode="decimal"
-                value={heightInches}
-                onChange={(e) => setHeightInches(parseInt(e.target.value) || 0)}
+              <label id="male">Male</label> <br />
+              <RadioButton
+                type="radio"
+                name="gender"
+                checked={gender === GENDER.FEMALE}
+                value={GENDER.FEMALE}
+                onChange={(e) => setGender(GENDER.FEMALE)}
+                aria-labelledby="female"
               />{' '}
-              inches.
-            </h4>
-          </SettingsSection>
-          <SettingsSection>
-            <h4>
-              <label id="weight">My weight is:</label>
-              <HeightInput
-                aria-labelledby="weight"
-                inputMode="decimal"
-                value={weight}
-                onChange={(e) => setWeight(parseInt(e.target.value) || 0)}
+              <label id="female">Female</label>
+              <br />
+            </SettingsSection>
+            <SettingsSection>
+              <h4>
+                <label id="age">My age is:</label>
+                <HeightInput
+                  aria-labelledby="age"
+                  maxLength={2}
+                  inputMode="decimal"
+                  value={age}
+                  onChange={(e) => setAge(parseInt(e.target.value) || 0)}
+                />
+              </h4>
+            </SettingsSection>
+            <SettingsSection>
+              <h4>
+                My height is:
+                <HeightInput
+                  aria-label="Height in feet"
+                  maxLength={2}
+                  inputMode="decimal"
+                  value={heightFeet}
+                  onChange={(e) => setHeightFeet(parseInt(e.target.value) || 0)}
+                />{' '}
+                feet,{' '}
+                <HeightInput
+                  aria-label="Height in inches"
+                  maxLength={2}
+                  inputMode="decimal"
+                  value={heightInches}
+                  onChange={(e) => setHeightInches(parseInt(e.target.value) || 0)}
+                />{' '}
+                inches.
+              </h4>
+            </SettingsSection>
+            <SettingsSection>
+              <h4>
+                <label id="weight">My weight is:</label>
+                <HeightInput
+                  aria-labelledby="weight"
+                  inputMode="decimal"
+                  value={weight}
+                  onChange={(e) => setWeight(parseInt(e.target.value) || 0)}
+                />{' '}
+                lbs.
+              </h4>
+            </SettingsSection>
+          </PersonalInfo>
+
+          <AppSettings>
+            <SettingsSection>
+              <h4>Protein Calculation Settings:</h4>
+              <RadioButton
+                type="radio"
+                name="protein"
+                value={PROTEIN_CALCULATION.CONSERVATIVE}
+                checked={protein == PROTEIN_CALCULATION.CONSERVATIVE}
+                onChange={(e) => setProtein(PROTEIN_CALCULATION.CONSERVATIVE)}
+                aria-label="conservative protein calculation"
               />{' '}
-              lbs.
-            </h4>
-          </SettingsSection>
-        </PersonalInfo>
+              Conservative (Default) <br />
+              <RadioButton
+                type="radio"
+                name="protein"
+                value={PROTEIN_CALCULATION.AGGRESSIVE}
+                checked={protein == PROTEIN_CALCULATION.AGGRESSIVE}
+                onChange={(e) => setProtein(PROTEIN_CALCULATION.AGGRESSIVE)}
+                aria-label="aggressive protein calculation"
+              />{' '}
+              Aggressive
+            </SettingsSection>
+            <SettingsSection>
+              <h4>Round my numbers:</h4>
+              <RadioButton
+                type="radio"
+                value={'false'}
+                checked={rounding == false}
+                onChange={() => setRounding(false)}
+                aria-label="display numbers to two decimals"
+              />{' '}
+              Two decimal places (Default)
+              <br />
+              <RadioButton
+                type="radio"
+                value={'true'}
+                checked={rounding == true}
+                onChange={() => setRounding(true)}
+                aria-label="round to whole numbers"
+              />{' '}
+              Whole numbers
+            </SettingsSection>
 
-        <AppSettings>
-          <SettingsSection>
-            <h4>Protein Calculation Settings:</h4>
-            <RadioButton
-              type="radio"
-              name="protein"
-              value={PROTEIN_CALCULATION.CONSERVATIVE}
-              checked={protein == PROTEIN_CALCULATION.CONSERVATIVE}
-              onChange={(e) => setProtein(PROTEIN_CALCULATION.CONSERVATIVE)}
-              aria-label="conservative protein calculation"
-            />{' '}
-            Conservative (Default) <br />
-            <RadioButton
-              type="radio"
-              name="protein"
-              value={PROTEIN_CALCULATION.AGGRESSIVE}
-              checked={protein == PROTEIN_CALCULATION.AGGRESSIVE}
-              onChange={(e) => setProtein(PROTEIN_CALCULATION.AGGRESSIVE)}
-              aria-label="aggressive protein calculation"
-            />{' '}
-            Aggressive
-          </SettingsSection>
-          <SettingsSection>
-            <h4>Round my numbers:</h4>
-            <RadioButton
-              type="radio"
-              value={'false'}
-              checked={rounding == false}
-              onChange={() => setRounding(false)}
-              aria-label="display numbers to two decimals"
-            />{' '}
-            Two decimal places (Default)
-            <br />
-            <RadioButton
-              type="radio"
-              value={'true'}
-              checked={rounding == true}
-              onChange={() => setRounding(true)}
-              aria-label="round to whole numbers"
-            />{' '}
-            Whole numbers
-          </SettingsSection>
+            <SettingsSection>
+              <h4>Personalise Fibre Goal by Calories:</h4>
+              <RadioButton
+                type="radio"
+                value={'true'}
+                checked={personaliseFibre == true}
+                onChange={() => setPersonaliseFibre(true)}
+                aria-label="Personalise Fibre Goal"
+              />{' '}
+              Personalise Fibre (14g/1000kcal) (Default)
+              <br />
+              <RadioButton
+                type="radio"
+                value={'false'}
+                checked={personaliseFibre == false}
+                onChange={() => setPersonaliseFibre(false)}
+                aria-label="Use NHS Recommended Fibre"
+              />{' '}
+              Use NHS Fibre Recommendation (30g/day)
+            </SettingsSection>
 
-          <SettingsSection>
-            <h4>Personalise Fibre Goal by Calories:</h4>
-            <RadioButton
-              type="radio"
-              value={'true'}
-              checked={personaliseFibre == true}
-              onChange={() => setPersonaliseFibre(true)}
-              aria-label="Personalise Fibre Goal"
-            />{' '}
-            Personalise Fibre (14g/1000kcal) (Default)
-            <br />
-            <RadioButton
-              type="radio"
-              value={'false'}
-              checked={personaliseFibre == false}
-              onChange={() => setPersonaliseFibre(false)}
-              aria-label="Use NHS Recommended Fibre"
-            />{' '}
-            Use NHS Fibre Recommendation (30g/day)
-          </SettingsSection>
+            <SettingsSection>
+              <h4>Enable Plant Points Feature:</h4>
+              <RadioButton
+                type="radio"
+                value={'true'}
+                checked={usePlantPoints == true}
+                onChange={() => setUsePlantPoints(true)}
+                aria-label="Enable plant points feature"
+                //   defaultChecked
+              />{' '}
+              Yes (Default)
+              <br />
+              <RadioButton
+                type="radio"
+                value={'false'}
+                checked={usePlantPoints == false}
+                onChange={() => setUsePlantPoints(false)}
+                aria-label="Disable plant points feature"
+              />{' '}
+              No
+            </SettingsSection>
+          </AppSettings>
 
-          <SettingsSection>
-            <h4>Enable Plant Points Feature:</h4>
-            <RadioButton
-              type="radio"
-              value={'true'}
-              checked={usePlantPoints == true}
-              onChange={() => setUsePlantPoints(true)}
-              aria-label="Enable plant points feature"
-              //   defaultChecked
-            />{' '}
-            Yes (Default)
-            <br />
-            <RadioButton
-              type="radio"
-              value={'false'}
-              checked={usePlantPoints == false}
-              onChange={() => setUsePlantPoints(false)}
-              aria-label="Disable plant points feature"
-            />{' '}
-            No
-          </SettingsSection>
-        </AppSettings>
-
-        <Actions>
-          <DiscardAction aria-label="discard changes" onClick={close}>
-            {'Discard'}
-          </DiscardAction>
-          <SaveAction aria-label="save settings" type={'submit'} disabled={false}>
-            {'Save'}
-          </SaveAction>
-        </Actions>
-      </form>
+          <Actions>
+            <DiscardAction aria-label="discard changes" onClick={close}>
+              {'Discard'}
+            </DiscardAction>
+            <SaveAction aria-label="save settings" type={'submit'} disabled={false}>
+              {'Save'}
+            </SaveAction>
+          </Actions>
+        </form>
+        <VersionNumber>CPF Tracker Version {VERSION}</VersionNumber>
+      </>
     </Modal>
   );
 };
