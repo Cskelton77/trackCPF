@@ -3,32 +3,31 @@ import '@testing-library/jest-dom';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { AddNewItem } from '@/components';
 import { AddNewItemInterface } from './AddNewItem';
-
-import moment from 'moment';
 import { MODES } from '@/interfaces/ItemModes';
 
 describe('Add New Item modal', () => {
   const mockHandleSave = jest.fn((name, serving, calories, protein, fibre, plantPoints) => null);
   const shouldNotBeClicked = { pointerEventsCheck: PointerEventsCheckLevel.Never };
-
+  const mockDeleteDiaryEntry = jest.fn();
   const defaultProps: AddNewItemInterface = {
     name: 'Food',
-    date: moment('2024-09-11'),
     isVisible: true,
     mode: MODES.CALCULATE,
     handleSave: mockHandleSave,
     close: jest.fn(),
+    diaryEntryId: 'did_001',
+    deleteDiaryEntry: mockDeleteDiaryEntry,
   };
 
   const renderAddNewItem = async () => {
     render(<AddNewItem {...defaultProps} />);
     const user = userEvent.setup();
 
-    const servingInput = await screen.findByRole('textbox', { name: 'Amount Eaten' });
+    const servingInput = await screen.findByRole('textbox', { name: 'Portion:' });
     const caloriesInput = await screen.findByRole('textbox', { name: 'Calories' });
     const proteinInput = await screen.findByRole('textbox', { name: 'Protein' });
     const fiberInput = await screen.findByRole('textbox', { name: 'Fibre' });
-    const plantPointsInput = await screen.findByRole('combobox', { name: 'Plant Points:' });
+    const plantPointsInput = await screen.findByRole('combobox', { name: 'Plant Points' });
     const saveButton = await screen.findByRole('button', { name: 'Save' });
     return {
       user,
@@ -116,5 +115,12 @@ describe('Add New Item modal', () => {
     await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
     expect(mockHandleSave).toHaveBeenCalledWith(defaultProps.name, 100, 100, 100, 100, 1);
+  });
+
+  it('Should allow an entry to be deleted in Update mode', async () => {
+    render(<AddNewItem {...defaultProps} mode={MODES.UPDATE} />);
+    const row = await screen.findByRole('button', { name: 'Delete Food' });
+    await userEvent.click(row);
+    expect(mockDeleteDiaryEntry).toHaveBeenCalled();
   });
 });

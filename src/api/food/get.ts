@@ -1,5 +1,6 @@
-const getFood = async (uid: string, query: string) => {
-  const res = await fetch(`api/food?user=${uid}&q=${query}`, {
+const getFood = async (uid: string, query?: string) => {
+  const url = `api/food?user=${uid}${query ? `&q=${query}` : ''}`;
+  const res = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

@@ -9,21 +9,23 @@ import {
   AttributeInput,
   TextDisplay,
   EntryLabel,
+  PlantPointsSelector,
+  DeleteAction,
 } from './AddNewItem.style';
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
-import { Moment } from 'moment';
 import { FoodObject } from '@/interfaces/FoodObject';
-import { DEBUGMODE } from '@/config';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
+import { Delete } from '@/Icons';
 
 export interface AddNewItemInterface {
   name: string;
   selectedFood?: FoodObject;
   selectedFoodServing?: number;
-  date: Moment;
   isVisible: boolean;
   mode: ItemMode;
+  diaryEntryId?: string;
+  deleteDiaryEntry: (diaryId: string) => Promise<void>;
   handleSave: (
     name: string,
     serving: number,
@@ -45,12 +47,13 @@ const AddNewItem = forwardRef(
       isVisible,
       mode,
       close,
+      diaryEntryId,
+      deleteDiaryEntry,
     }: AddNewItemInterface,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const context = useContext(SettingsContext);
     const { usePlantPoints } = context;
-
     const isManualMode = mode === MODES.MANUAL;
     const isUpdateMode = mode === MODES.UPDATE;
 
@@ -115,9 +118,8 @@ const AddNewItem = forwardRef(
       <Modal title={getTitle()} isVisible={isVisible} close={close} ref={ref}>
         <NewItemModal id="foodObjectForm" action={handleSubmit}>
           <ItemAttributes>
-            <EntryLabel htmlFor="serving">Amount Eaten</EntryLabel>
-
             <EntryBox>
+              <EntryLabel htmlFor="serving">Portion:</EntryLabel>
               <AttributeInput
                 id="serving"
                 inputMode="decimal"
@@ -126,6 +128,9 @@ const AddNewItem = forwardRef(
               />
               <TextDisplay>{isManualMode ? 'Serving' : 'grams'}</TextDisplay>
             </EntryBox>
+            <br />
+            <hr />
+            <br />
             <EntryLabel>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryLabel>
             <EntryBox>
               <AttributeInput
@@ -156,8 +161,8 @@ const AddNewItem = forwardRef(
             </EntryBox>
             {usePlantPoints && (
               <EntryBox>
-                <TextDisplay htmlFor="plantPoints">Plant Points:</TextDisplay>
-                <select
+                <PlantPointsSelector
+                  aria-label="Plant Points"
                   id="plantPoints"
                   value={plantPoints}
                   onChange={(e) => setPlantPoints(e.target.value)}
@@ -166,7 +171,7 @@ const AddNewItem = forwardRef(
                   <option value={1}>1 Plant Point</option>
                   <option value={0.5}>1/2 Plant Point</option>
                   <option value={0.25}>1/4 Plant Point</option>
-                </select>
+                </PlantPointsSelector>
               </EntryBox>
             )}
           </ItemAttributes>
@@ -178,21 +183,19 @@ const AddNewItem = forwardRef(
             <SaveAction
               type={'submit'}
               disabled={serving == null || Number.isNaN(parseInt(serving))}
+              $disabled={serving == null || Number.isNaN(parseInt(serving))}
             >
               {isUpdateMode ? 'Update Entry' : 'Save'}
             </SaveAction>
           </Actions>
-          {DEBUGMODE && (
-            <div style={{ color: '#000', fontSize: '12px', fontFamily: 'monospace' }}>
-              <h4>name</h4>
-              <p>{name}</p>
-              <h4>selectedFood</h4>
-              <p>{JSON.stringify(selectedFood)}</p>
-              <h4>selectedFoodServing</h4>
-              <p>{selectedFoodServing}</p>
-              <h4>mode</h4>
-              <p>{mode}</p>
-            </div>
+
+          {isUpdateMode && diaryEntryId && (
+            <Actions>
+              <DeleteAction onClick={() => deleteDiaryEntry(diaryEntryId)}>
+                <Delete size={24} label={`Delete ${name}`} />
+                {'Delete Entry from Diary'}
+              </DeleteAction>
+            </Actions>
           )}
         </NewItemModal>
       </Modal>

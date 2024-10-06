@@ -2,10 +2,9 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import Home from './page';
-import { GENDER, PROTEIN_CALCULATION } from '@/context';
-import { postFood } from '../../api/food';
-import { postDiary, updateDiary } from '../../api/diary';
-import mockLocalStorage from '@/mockLocalStorage';
+import { GENDER, PROTEIN_CALCULATION, UserContext } from '@/context';
+import { postFood } from '../../../api/food';
+import { postDiary, updateDiary } from '../../../api/diary';
 import { MODES, NullableNumber } from '@/interfaces/ItemModes';
 import moment from 'moment';
 
@@ -22,7 +21,7 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
-jest.mock('../../api/food', () => ({
+jest.mock('../../../api/food', () => ({
   deleteFood: jest.fn(),
   getFood: jest.fn(() => [
     {
@@ -37,7 +36,7 @@ jest.mock('../../api/food', () => ({
   postFood: jest.fn(() => '{}'),
 }));
 
-jest.mock('../../api/diary', () => ({
+jest.mock('../../../api/diary', () => ({
   deleteDiary: jest.fn(),
   getDiary: jest.fn(() => {
     return new Promise((resolve) => {
@@ -81,7 +80,7 @@ jest.mock('../../api/diary', () => ({
   updateDiary: jest.fn(() => '{}'),
 }));
 
-jest.mock('../../api/users/settings', () => ({
+jest.mock('../../../api/users/settings', () => ({
   getSettings: jest.fn(() => {
     return new Promise((resolve) => {
       resolve({
@@ -99,8 +98,8 @@ jest.mock('../../api/users/settings', () => ({
   default: () => jest.fn(),
 }));
 
-jest.mock('../../components', () => ({
-  ...jest.requireActual('../../components'),
+jest.mock('../../../components', () => ({
+  ...jest.requireActual('../../../components'),
   DatePicker: jest.fn(() => '{}'),
   Summary: jest.fn(() => '{}'),
   Settings: jest.fn(() => '{}'),
@@ -118,13 +117,6 @@ describe('Main tracker page', () => {
   // Mock scrollTo
   window.HTMLElement.prototype.scrollIntoView = function () {};
 
-  // Mock Local Storage
-  const UID = 'TEST_UID';
-  Object.defineProperty(window, 'localStorage', {
-    value: mockLocalStorage,
-  });
-  mockLocalStorage.setItem('uid', UID);
-
   const fillOutForm = async ({
     serving,
     calories,
@@ -135,11 +127,11 @@ describe('Main tracker page', () => {
   }: args & { mode: MODES }) => {
     const saveText = mode === MODES.UPDATE ? 'Update Entry' : 'Save';
 
-    const servingInput = await screen.findByRole('textbox', { name: 'Amount Eaten' });
+    const servingInput = await screen.findByRole('textbox', { name: 'Portion:' });
     const caloriesInput = await screen.findByRole('textbox', { name: 'Calories' });
     const proteinInput = await screen.findByRole('textbox', { name: 'Protein' });
     const fiberInput = await screen.findByRole('textbox', { name: 'Fibre' });
-    const plantPointsInput = await screen.findByRole('combobox', { name: 'Plant Points:' });
+    const plantPointsInput = await screen.findByRole('combobox', { name: 'Plant Points' });
     const saveButton = await screen.findByRole('button', { name: saveText });
 
     await userEvent.clear(servingInput);
@@ -165,7 +157,11 @@ describe('Main tracker page', () => {
 
   describe('Update an item in the food diary (Update Mode)', () => {
     const renderAndOpenUpdateWindow = async () => {
-      render(<Home />);
+      render(
+        <UserContext.Provider value={'TEST_UID'}>
+          <Home />
+        </UserContext.Provider>,
+      );
       const foodDiaryItem = await screen.findByText('New Food Item', { exact: false });
       await userEvent.click(foodDiaryItem);
     };
@@ -222,10 +218,6 @@ describe('Main tracker page', () => {
 
       await fillOutUpdateForm({ serving, calories, protein, fibre, plantPoints });
       await assertCorrectCalls({ serving, calories, protein, fibre, plantPoints });
-      //   const skippedCalories = screen.findByText('---');
-      //   const skippedValues = screen.findAllByText('---g');
-      //   expect(skippedCalories).toBeInTheDocument();
-      //   expect(skippedValues).toHaveLength(2);
     });
 
     it('With no calories information', async () => {
@@ -295,8 +287,12 @@ describe('Main tracker page', () => {
 
   describe('Add a new food to the diary (Calculate Mode [New])', () => {
     const renderAndSearchNewFood = async () => {
-      render(<Home />);
-      const searchFood = screen.getByPlaceholderText('Add a new food');
+      render(
+        <UserContext.Provider value={'TEST_UID'}>
+          <Home />
+        </UserContext.Provider>,
+      );
+      const searchFood = await screen.findByPlaceholderText('Add a new food');
       await userEvent.type(searchFood, 'New Item');
     };
 
@@ -308,7 +304,7 @@ describe('Main tracker page', () => {
 
     const expectPostFood = ({ serving, calories, protein, fibre, plantPoints }: args) => {
       expect(postFood).toHaveBeenCalledWith({
-        uid: UID,
+        uid: 'TEST_UID',
         name: 'New Item',
         calories: calories,
         protein: protein,
@@ -451,15 +447,19 @@ describe('Main tracker page', () => {
 
   describe('Add an existing food to the diary (Calculate Mode [Existing]}', () => {
     const renderAndFindExistingFood = async () => {
-      render(<Home />);
-      const searchFood = screen.getByPlaceholderText('Add a new food');
+      render(
+        <UserContext.Provider value={'TEST_UID'}>
+          <Home />
+        </UserContext.Provider>,
+      );
+      const searchFood = await screen.findByPlaceholderText('Add a new food');
       await userEvent.type(searchFood, 'New Item');
       const existingFood = screen.getByText('TEST EXISTING FOOD', { exact: false });
       await userEvent.click(existingFood);
     };
 
     const enterFoodInfo = async (serving: number) => {
-      const servingInput = await screen.findByRole('textbox', { name: 'Amount Eaten' });
+      const servingInput = await screen.findByRole('textbox', { name: 'Portion:' });
       const saveButton = await screen.findByRole('button', { name: 'Save' });
       await userEvent.type(servingInput, serving.toString());
       await userEvent.click(saveButton);
@@ -495,8 +495,12 @@ describe('Main tracker page', () => {
 
   describe('Add a one-off food per serving (Manual Mode)', () => {
     const renderAndSearchNewFood = async () => {
-      render(<Home />);
-      const searchFood = screen.getByPlaceholderText('Add a new food');
+      render(
+        <UserContext.Provider value={'TEST_UID'}>
+          <Home />
+        </UserContext.Provider>,
+      );
+      const searchFood = await screen.findByPlaceholderText('Add a new food');
       await userEvent.type(searchFood, 'New Serving Food');
     };
 
@@ -536,7 +540,11 @@ describe('Main tracker page', () => {
 
     it('should not let a per-serving food be edited', async () => {
       const shouldNotBeClicked = { pointerEventsCheck: PointerEventsCheckLevel.Never };
-      render(<Home />);
+      render(
+        <UserContext.Provider value={'TEST_UID'}>
+          <Home />
+        </UserContext.Provider>,
+      );
       const foodDiaryItem = await screen.findByText('Serving Food Item', { exact: false });
       await userEvent.click(foodDiaryItem, shouldNotBeClicked);
     });

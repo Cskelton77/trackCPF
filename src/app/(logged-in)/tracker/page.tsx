@@ -1,39 +1,36 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
-import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary, Settings } from '@/components';
+import { AddNewItem, DatePicker, MainDisplay, SearchBar, Summary } from '@/components';
 import { DiaryData } from '@/interfaces/DailyData';
 import { ItemMode, MODES, NullableNumber } from '@/interfaces/ItemModes';
-import { deleteFood, getFood, postFood } from '@/api/food';
+import { postFood } from '@/api/food';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
-import { useRouter } from 'next/navigation';
-import { DEBUGMODE } from '@/config';
-import { getSettings } from '@/api/users/settings';
-import { SettingsContext, SettingsContextInterface, defaultSettings } from '@/context';
+import { UserContext } from '@/context';
 import { v4 as uuidv4 } from 'uuid';
+import { Spinner } from '@/Icons';
 
 export default function Home() {
-  const router = useRouter();
-
-  const [uid, setUid] = useState<string>('');
-  const [userSettings, setUserSettings] = useState<SettingsContextInterface>(defaultSettings);
-  const [email, setEmail] = useState<string>('');
+  const uid = useContext(UserContext);
+  const [loadingData, setLoadingData] = useState(true);
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
   const [weeklyPlantPoints, setWeeklyPlantPoints] = useState(0);
   const [displayDate, setDisplayDate] = useState(moment());
   const [searchValue, setSearchValue] = useState('');
-  const [searchResponse, setSearchResponse] = useState<DefinedFoodObject[]>([]);
 
   const [selectedFood, setSelectedFood] = useState<DefinedFoodObject>();
   const [selectedFoodServing, setSelectedFoodServing] = useState<number>();
   const [selectedDiaryEntry, setSelectedDiaryEntry] = useState<string>();
 
   const [foodMode, setFoodMode] = useState<ItemMode>(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const addNewItemRef = useRef<HTMLDivElement>(null);
   const searchBarRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchDaily();
+  }, [displayDate]);
 
   useEffect(() => {
     if (addNewItemRef.current && foodMode) {
@@ -55,53 +52,13 @@ export default function Home() {
     setFoodMode(null);
   };
 
-  async function fetchFoodResults() {
-    const response = await getFood(uid, searchValue);
-    setSearchResponse(response);
-  }
-
   async function fetchDaily() {
+    setLoadingData(true);
     const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
+    setLoadingData(false);
     setDailyData(response.dailyData);
     setWeeklyPlantPoints(response.weeklyPlantPoints);
   }
-
-  async function fetchSettings() {
-    const settings = await getSettings(uid);
-    setUserSettings(settings);
-    await fetchDaily();
-  }
-
-  // Initial Load to retreive UID & Email
-  useEffect(() => {
-    if (uid !== 'ERROR') {
-      setUid(localStorage.getItem('uid') || 'ERROR');
-      setEmail(localStorage.getItem('email') || 'ERROR');
-    } else {
-      logout();
-    }
-  }, []);
-
-  // Use UID to pull user data
-  useEffect(() => {
-    if (uid == 'ERROR') {
-      logout();
-    } else {
-      if (uid != '') {
-        fetchSettings();
-      }
-    }
-  }, [uid, displayDate]);
-
-  // Search as typing happens
-  useEffect(() => {
-    if (searchValue !== '') {
-      fetchFoodResults();
-    }
-    if (searchValue == '') {
-      setSearchResponse([]);
-    }
-  }, [searchValue]);
 
   // Diary API Calls
   const handleSaveDiaryEntry = async (
@@ -118,7 +75,8 @@ export default function Home() {
     const isManualMode = foodMode === MODES.MANUAL;
     const isUpdateMode = foodMode === MODES.UPDATE;
     const isCalculateMode = foodMode === MODES.CALCULATE;
-    const isCalculateNewFoodMode = foodMode === MODES.CALCULATE && isCompleteEntry && !selectedFood;
+    const isCalculateNewFoodMode =
+      foodMode === MODES.CALCULATE && isCompleteEntry && !selectedFood?.fid;
     if (isCalculateNewFoodMode) {
       // Save full nutritional data per 100g'
       const newFood = JSON.parse(
@@ -202,70 +160,42 @@ export default function Home() {
 
   const handleDeleteDiaryEntry = async (diaryId: string) => {
     await deleteDiary(diaryId);
+    resetSelection();
     await fetchDaily();
   };
 
-  const handleDeleteFoodEntry = async (foodId: string) => {
-    await deleteFood(foodId);
-    await fetchFoodResults();
-  };
-
-  // Modal Open/Close + Header
-  const openSettings = () => {
-    setSettingsOpen(true);
-  };
-  const closeSettings = async () => {
-    await fetchSettings();
-    setSettingsOpen(false);
-  };
-  const logout = () => {
-    localStorage.removeItem('uid');
-    localStorage.removeItem('email');
-    router.push('/');
-  };
-
   return (
-    <SettingsContext.Provider value={userSettings}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          paddingBottom: '6px',
-          borderBottom: '1px solid #E0E0E0',
-        }}
-      >
-        <span onClick={() => openSettings()}>User: {email}</span>
-        <button onClick={() => logout()}>Log Out</button>
-      </div>
+    <>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
-      <MainDisplay
-        data={dailyData}
-        modifyEntry={handleModifyDiaryEntry}
-        deleteEntry={handleDeleteDiaryEntry}
-      />
+      {loadingData && <Spinner />}
+      {!loadingData && (
+        <>
+          <MainDisplay
+            data={dailyData}
+            modifyEntry={handleModifyDiaryEntry}
+            deleteEntry={handleDeleteDiaryEntry}
+          />
+          <SearchBar
+            ref={searchBarRef}
+            handleClickResult={setFoodMode}
+            setSelectedFood={setSelectedFood}
+          />
+          <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
+        </>
+      )}
+
       <AddNewItem
         ref={addNewItemRef}
-        date={displayDate}
         isVisible={!!foodMode}
         mode={foodMode}
         name={searchValue}
         selectedFood={selectedFood}
         selectedFoodServing={selectedFoodServing}
         handleSave={handleSaveDiaryEntry}
+        diaryEntryId={selectedDiaryEntry}
+        deleteDiaryEntry={handleDeleteDiaryEntry}
         close={resetSelection}
       />
-      <SearchBar
-        ref={searchBarRef}
-        value={searchValue}
-        setValue={setSearchValue}
-        response={searchResponse}
-        addNewItem={setFoodMode}
-        setSelectedFood={setSelectedFood}
-        deleteFoodItem={handleDeleteFoodEntry}
-      />
-      <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
-
-      <Settings title="User Settings" isVisible={settingsOpen} close={closeSettings} uid={uid} />
-    </SettingsContext.Provider>
+    </>
   );
 }

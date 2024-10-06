@@ -1,10 +1,9 @@
 import { DiaryData } from '@/interfaces/DailyData';
-import Delete from '../Icons/Delete';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
-import { MainDisplayTable, TableCell } from './MainDisplay.style';
+import { MainDisplayTable, NumberCell, NumberHeader, TableCell } from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
-import PlantPoint from '../Icons/PlantPoint';
+import { PlantPoint } from '@/Icons';
 import { theme } from '@/theme';
 import { NullableNumber } from '@/interfaces/ItemModes';
 
@@ -23,18 +22,17 @@ const MainDisplay = ({
     update: DefinedFoodObject,
   ) => Promise<void>;
 }) => {
-  const context = useContext(SettingsContext);
-  const { rounding } = context;
+  const { rounding } = useContext(SettingsContext);
 
   return (
     <MainDisplayTable>
       <thead>
         <tr>
           <th>Item</th>
-          <th>Serving</th>
-          <th>Cal</th>
-          <th>Protein</th>
-          <th>Fibre</th>
+          <NumberHeader>Serving</NumberHeader>
+          <NumberHeader>Cal</NumberHeader>
+          <NumberHeader>Protein</NumberHeader>
+          <NumberHeader>Fibre</NumberHeader>
         </tr>
       </thead>
       <tbody>
@@ -60,7 +58,7 @@ const MainDisplay = ({
           };
 
           const { fid, name, calories, protein, fibre } = foodEntry;
-          const unit = isDirectEntry ? (serving > 1 ? 'servings' : 'serving') : 'g';
+          const unit = isDirectEntry ? (serving > 1 ? ' servings' : ' serving') : 'g';
 
           return (
             <tr
@@ -75,20 +73,21 @@ const MainDisplay = ({
                   ''
                 )}
               </TableCell>
-              <TableCell>
-                {serving} {unit}
-              </TableCell>
-              <TableCell>{calculateDisplay(calories)}</TableCell>
-              <TableCell>{calculateDisplay(protein)}g</TableCell>
-              <TableCell>{calculateDisplay(fibre)}g</TableCell>
-              <TableCell
+              <NumberCell>
+                {serving}
+                {unit}
+              </NumberCell>
+              <NumberCell>{calculateDisplay(calories)}</NumberCell>
+              <NumberCell>{calculateDisplay(protein)}g</NumberCell>
+              <NumberCell>{calculateDisplay(fibre)}g</NumberCell>
+              {/* <TableCell
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteEntry(did);
                 }}
               >
                 <Delete size={24} label={`Delete ${name}`} />
-              </TableCell>
+              </TableCell> */}
             </tr>
           );
         })}

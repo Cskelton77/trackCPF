@@ -13,10 +13,9 @@ export const ModalWindow = styled.div`
   flex-direction: column;
 
   background-color: ${theme.colours.white};
-  padding: ${theme.layoutPadding};
+  padding: ${theme.padding.large};
   color: ${theme.colours.black};
-
-  border: 1px solid black;
+  overflow: scroll;
 `;
 
 export const ModalHeader = styled.div`

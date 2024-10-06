@@ -4,31 +4,32 @@ import '@testing-library/jest-dom';
 import { SearchBar } from '@/components';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { MODES } from '@/interfaces/ItemModes';
+import { deleteFood } from '@/api/food';
+
+const mockResponse: DefinedFoodObject[] = [
+  {
+    fid: 'MOCK_FID',
+    name: 'Dropdown Food',
+    calories: 150,
+    protein: 1.5,
+    fibre: 0,
+    plantPoints: 1,
+  },
+];
+
+jest.mock('../../api/food', () => ({
+  deleteFood: jest.fn(),
+  getFood: jest.fn(() => mockResponse),
+  postFood: jest.fn(() => '{}'),
+}));
 
 describe('Search Bar', () => {
-  const mockSetValue = jest.fn();
   const mockAddNewItem = jest.fn();
   const mockSetSelectedFood = jest.fn();
-  const mockDeleteFoodItem = jest.fn();
-
-  const mockResponse: DefinedFoodObject[] = [
-    {
-      fid: 'MOCK_FID',
-      name: 'Dropdown Food',
-      calories: 150,
-      protein: 1.5,
-      fibre: 0,
-      plantPoints: 1,
-    },
-  ];
 
   const defaultProps = {
-    value: 'D',
-    setValue: mockSetValue,
-    response: mockResponse,
-    addNewItem: mockAddNewItem,
+    handleClickResult: mockAddNewItem,
     setSelectedFood: mockSetSelectedFood,
-    deleteFoodItem: mockDeleteFoodItem,
   };
 
   const openDropdown = async () => {
@@ -92,6 +93,6 @@ describe('Search Bar', () => {
     await openDropdown();
     const deleteButton = await screen.findByRole('button', { name: 'Delete Item from Database' });
     await userEvent.click(deleteButton);
-    expect(mockDeleteFoodItem).toHaveBeenCalledWith(mockResponse[0].fid);
+    expect(deleteFood).toHaveBeenCalledWith(mockResponse[0].fid);
   });
 });

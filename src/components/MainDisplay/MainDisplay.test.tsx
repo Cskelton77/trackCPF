@@ -127,19 +127,6 @@ describe('Main Display Table', () => {
     expect(mockModifyEntry).not.toHaveBeenCalled();
   });
 
-  it('Should allow a row to be deleted', async () => {
-    render(
-      <MainDisplay
-        data={mockDataDirectEntry}
-        deleteEntry={mockDeleteEntry}
-        modifyEntry={mockModifyEntry}
-      />,
-    );
-    const row = await screen.findByRole('button', { name: 'Delete Editable Food' });
-    await userEvent.click(row);
-    expect(mockDeleteEntry).toHaveBeenCalled();
-  });
-
   it('Should respect rounding preference', async () => {
     render(
       <SettingsContext.Provider value={{ ...mockSettings, rounding: true }}>

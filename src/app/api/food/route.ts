@@ -33,10 +33,22 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const user = searchParams.get('user');
   const query = searchParams.get('q');
+
   const data = await sql`
     SELECT foodobject
     FROM fooddatabase
     WHERE uid like ${user}`;
+  if (!query) {
+    const listOfFoods: DefinedFoodObject[] = [];
+    data.rows.forEach((row) => listOfFoods.push(row.foodobject));
+    listOfFoods.sort((a, b) => {
+      const itemA = a.name.toLowerCase();
+      const itemB = b.name.toLowerCase();
+      return itemA < itemB ? -1 : 1;
+    });
+    return Response.json(listOfFoods);
+  }
+
   const listOfFoods: DefinedFoodObject[] = [];
   data.rows.forEach((row) => {
     const rowName = row.foodobject.name.toLowerCase();
@@ -45,6 +57,7 @@ export async function GET(request: Request) {
       listOfFoods.push(row.foodobject);
     }
   });
+
   return Response.json(listOfFoods);
 }
 
@@ -57,7 +70,20 @@ type Patch = {
   update: Partial<FoodObject>;
 };
 export async function PATCH(request: Request, context: { params: Patch }) {
-  // const team = context.params.team // '1'
+  const body = await request.json();
+  const uid = body.uid;
+  const fid = body.food.fid;
+  const foodobject = JSON.stringify({ ...body.food });
+  const response = await sql<FoodDatabase>`
+   UPDATE fooddatabase
+   SET foodobject = ${foodobject}
+   WHERE uid = ${uid}
+   AND fid = ${fid}`;
+
+  if (response.rowCount == 1) {
+    return Response.json(foodobject);
+  }
+
   return new Response('200');
 }
 
