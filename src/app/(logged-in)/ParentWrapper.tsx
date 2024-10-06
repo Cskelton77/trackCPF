@@ -3,14 +3,22 @@ import React, { useEffect, useState } from 'react';
 
 import { SettingsContext, SettingsContextInterface, UserContext, defaultSettings } from '@/context';
 import { MenuBar, Settings } from '@/components';
-import useLogin, { logout, useSettings } from '@/hooks';
+import { useLogin, useSettings } from '@/hooks';
 
 import { PageWrapper, Header } from './tracker/Page.style';
+import { useRouter } from 'next/navigation';
 
 export default function ParentProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const { uid, email } = useLogin();
   const [userSettings, setUserSettings] = useState<SettingsContextInterface>(defaultSettings);
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const logout = () => {
+    localStorage.removeItem('uid');
+    localStorage.removeItem('email');
+    router.push('/');
+  };
 
   useEffect(() => {
     async () => {

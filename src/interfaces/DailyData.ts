@@ -1,4 +1,4 @@
-import { RecipeIngredient } from '@/app/recipe/page';
+import { RecipeIngredient } from '@/app/(logged-in)/recipe/page';
 import { DefinedFoodObject, FoodObject } from './FoodObject';
 
 export interface DiaryData {
