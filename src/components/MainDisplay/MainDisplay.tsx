@@ -58,7 +58,7 @@ const MainDisplay = ({
           };
 
           const { fid, name, calories, protein, fibre } = foodEntry;
-          const unit = isDirectEntry ? (serving > 1 ? ' servings' : ' serving') : 'g';
+          const unit = isDirectEntry ? ' serv' : 'g';
 
           return (
             <tr

@@ -30,7 +30,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchDaily();
-  }, [displayDate]);
+  }, [displayDate, uid]);
 
   useEffect(() => {
     if (addNewItemRef.current && foodMode) {
