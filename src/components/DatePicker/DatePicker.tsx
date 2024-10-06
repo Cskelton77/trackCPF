@@ -5,9 +5,10 @@ import { DatePickerWrapper, DateSelector, Day, YearWrapper } from './DatePicker.
 interface DatePickerInterface {
   date: Moment;
   setDisplayDate: (date: Moment) => void;
+  compact?: boolean;
 }
 
-const DatePicker = ({ date, setDisplayDate }: DatePickerInterface) => {
+const DatePicker = ({ date, setDisplayDate, compact = false }: DatePickerInterface) => {
   const handleDateChange = (dir: string) => {
     if (dir == 'back') {
       const yesterday = date.clone().subtract(1, 'day');
@@ -24,15 +25,21 @@ const DatePicker = ({ date, setDisplayDate }: DatePickerInterface) => {
 
   const formatDate = (date: Moment) => moment(date).format('MMM Do');
   const getDay = (date: Moment) => moment(date).format('dddd');
+
+  const iconSize = compact ? 36 : 48;
   return (
     <DatePickerWrapper>
-      <Day>{getDay(date)}</Day>
-      <DateSelector>
-        <ChevronLeft size={48} onClick={() => handleDateChange('back')} label="Previous Day" />
+      {!compact && <Day>{getDay(date)}</Day>}
+      <DateSelector $compact={compact}>
+        <ChevronLeft
+          size={iconSize}
+          onClick={() => handleDateChange('back')}
+          label="Previous Day"
+        />
         {formatDate(date)}
-        <ChevronRight size={48} onClick={() => handleDateChange('fwd')} label="Next Day" />
+        <ChevronRight size={iconSize} onClick={() => handleDateChange('fwd')} label="Next Day" />
       </DateSelector>
-      <YearWrapper>{moment(date).format('yyyy')}</YearWrapper>
+      {!compact && <YearWrapper>{moment(date).format('yyyy')}</YearWrapper>}
     </DatePickerWrapper>
   );
 };

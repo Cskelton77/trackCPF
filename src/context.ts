@@ -38,3 +38,5 @@ export const defaultSettings: SettingsContextInterface = {
 };
 
 export const SettingsContext = createContext<SettingsContextInterface>(defaultSettings);
+
+export const UserContext = createContext<string>('error');

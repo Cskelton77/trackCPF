@@ -21,3 +21,12 @@ const mockLocalStorage = (() => {
 })();
 
 export default mockLocalStorage;
+
+
+
+  // Mock Local Storage
+  //   const UID = 'TEST_UID';
+  //   Object.defineProperty(window, 'localStorage', {
+  //     value: mockLocalStorage,
+  //   });
+  //   mockLocalStorage.setItem('uid', UID);

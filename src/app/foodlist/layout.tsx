@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
-import StyledComponentsRegistry from '@/registry';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Tracker - TrackCPF',
+  title: 'Edit Food Database - TrackCPF',
   description: 'Track your Calories, Protein, Fibre',
 };
 export const viewport: Viewport = {
@@ -20,11 +16,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
-      </body>
-    </html>
-  );
+  return <>{children}</>;
 }

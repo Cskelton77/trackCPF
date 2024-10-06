@@ -183,6 +183,7 @@ const AddNewItem = forwardRef(
             <SaveAction
               type={'submit'}
               disabled={serving == null || Number.isNaN(parseInt(serving))}
+              $disabled={serving == null || Number.isNaN(parseInt(serving))}
             >
               {isUpdateMode ? 'Update Entry' : 'Save'}
             </SaveAction>

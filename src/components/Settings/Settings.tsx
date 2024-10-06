@@ -24,6 +24,7 @@ interface SettingsInterface extends Omit<ModalInterface, 'children'> {
 }
 const Settings = ({ title, close, isVisible, uid }: SettingsInterface) => {
   const context = useContext(SettingsContext);
+
   const [gender, setGender] = useState<Genders>(context.gender);
   const [age, setAge] = useState<number>(context.age);
   const [heightFeet, setHeightFeet] = useState<number>(context.heightFeet);

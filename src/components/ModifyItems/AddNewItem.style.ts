@@ -60,31 +60,34 @@ export const Actions = styled.div`
 const Action = styled.div`
   width: 100%;
   height: 100%;
-
+  color: ${theme.colours.lightGrey};
   border: 1px solid ${theme.colours.darkGrey};
   padding: ${theme.padding.medium};
   text-align: center;
   flex: 1;
 `;
 export const DiscardAction = styled(Action)`
-  background-color: #ca7068;
+  background-color: ${theme.colours.negativeButton};
+  color: ${theme.colours.black};
   flex: 1;
   font-size: ${theme.fontSize.small};
   margin-right: 4px;
 `;
 
 export const DeleteAction = styled(Action)`
-  background-color: #ca7068;
+  background-color: ${theme.colours.negativeButton};
   flex: 1;
   font-size: ${theme.fontSize.small};
 `;
 
-export const SaveAction = styled.button`
+export const SaveAction = styled.button<{ $disabled: boolean }>`
   margin-left: 4px;
   font-size: ${theme.fontSize.small};
-  background-color: #6c824e;
+  color: ${theme.colours.white};
   flex: 2;
   border: 1px solid ${theme.colours.darkGrey};
+  background: ${({ $disabled }) =>
+    $disabled ? theme.colours.inactiveButton : theme.colours.positiveButton};
 `;
 
 export const PlantPointsSelector = styled.select`
