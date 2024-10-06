@@ -129,7 +129,9 @@ const ModifyFood = forwardRef(
 
           <Actions>
             <DiscardAction onClick={handleDiscard}>Discard Changes</DiscardAction>
-            <SaveAction type={'submit'}>Update Entry</SaveAction>
+            <SaveAction type={'submit'} $disabled={false}>
+              Update Entry
+            </SaveAction>
           </Actions>
         </NewItemModal>
       </Modal>

@@ -254,7 +254,11 @@ export default function Home() {
 
           <InputRow>
             <InputCell colSpan={5}>
-              <SearchBar searchDbOnly={true} setSelectedFood={setSelectedFood} />
+              <SearchBar
+                searchDbOnly={true}
+                setSelectedFood={setSelectedFood}
+                placeholder={'Add an ingredient'}
+              />
             </InputCell>
           </InputRow>
         </tbody>

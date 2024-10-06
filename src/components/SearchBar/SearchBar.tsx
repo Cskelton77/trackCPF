@@ -10,11 +10,12 @@ interface SearchBarInterface {
   searchDbOnly?: boolean;
   handleClickResult?: (mode: ItemMode) => void;
   setSelectedFood: (food: DefinedFoodObject) => void;
+  placeholder?: string;
 }
 
 const SearchBar = forwardRef(
   (
-    { searchDbOnly = false, handleClickResult, setSelectedFood }: SearchBarInterface,
+    { searchDbOnly = false, handleClickResult, setSelectedFood, placeholder }: SearchBarInterface,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const uid = useContext(UserContext);
@@ -69,7 +70,7 @@ const SearchBar = forwardRef(
           id="searchForFood"
           ref={ref}
           value={searchValue}
-          placeholder={'Add a new food'}
+          placeholder={placeholder || 'Add a new food'}
           onChange={(e) => setSearchValue(e.target.value)}
           onFocus={() => setShowDropdown(true)}
           onBlur={() => handleBlur()}

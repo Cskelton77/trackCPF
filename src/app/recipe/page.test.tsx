@@ -41,7 +41,7 @@ Date.now = jest.fn(() => new Date('2024-10-05').getTime());
 
 describe('Add a Recipe Page', () => {
   const searchFor = async (text: string = 'D') => {
-    const searchInput = screen.getByPlaceholderText('Add a new food');
+    const searchInput = screen.getByPlaceholderText('Add an ingredient');
     await userEvent.clear(searchInput);
     await userEvent.type(searchInput, text);
   };
