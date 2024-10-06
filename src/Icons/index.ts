@@ -8,6 +8,7 @@ import Edit from './Edit';
 import Home from './Home';
 import PlantPoint from './PlantPoint';
 import Settings from './Settings';
+import Spinner from './Spinner';
 
 export {
   AddRecipe,
@@ -20,4 +21,5 @@ export {
   Home,
   PlantPoint,
   Settings,
+  Spinner,
 };
