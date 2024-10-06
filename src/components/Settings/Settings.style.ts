@@ -63,3 +63,10 @@ export const SaveAction = styled.button`
   flex: 1;
   border: 1px solid ${theme.colours.darkGrey};
 `;
+
+export const VersionNumber = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  font-size: ${theme.fontSize.xSmall};
+`;
