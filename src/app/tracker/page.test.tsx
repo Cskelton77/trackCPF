@@ -292,7 +292,7 @@ describe('Main tracker page', () => {
           <Home />
         </UserContext.Provider>,
       );
-      const searchFood = screen.getByPlaceholderText('Add a new food');
+      const searchFood = await screen.findByPlaceholderText('Add a new food');
       await userEvent.type(searchFood, 'New Item');
     };
 
@@ -452,7 +452,7 @@ describe('Main tracker page', () => {
           <Home />
         </UserContext.Provider>,
       );
-      const searchFood = screen.getByPlaceholderText('Add a new food');
+      const searchFood = await screen.findByPlaceholderText('Add a new food');
       await userEvent.type(searchFood, 'New Item');
       const existingFood = screen.getByText('TEST EXISTING FOOD', { exact: false });
       await userEvent.click(existingFood);
@@ -500,7 +500,7 @@ describe('Main tracker page', () => {
           <Home />
         </UserContext.Provider>,
       );
-      const searchFood = screen.getByPlaceholderText('Add a new food');
+      const searchFood = await screen.findByPlaceholderText('Add a new food');
       await userEvent.type(searchFood, 'New Serving Food');
     };
 

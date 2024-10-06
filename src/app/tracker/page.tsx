@@ -9,10 +9,11 @@ import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { UserContext } from '@/context';
 import { v4 as uuidv4 } from 'uuid';
+import { Spinner } from '@/Icons';
 
 export default function Home() {
   const uid = useContext(UserContext);
-
+  const [loadingData, setLoadingData] = useState(true);
   const [dailyData, setDailyData] = useState<DiaryData[]>([]);
   const [weeklyPlantPoints, setWeeklyPlantPoints] = useState(0);
   const [displayDate, setDisplayDate] = useState(moment());
@@ -52,7 +53,9 @@ export default function Home() {
   };
 
   async function fetchDaily() {
+    setLoadingData(true);
     const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
+    setLoadingData(false);
     setDailyData(response.dailyData);
     setWeeklyPlantPoints(response.weeklyPlantPoints);
   }
@@ -164,11 +167,23 @@ export default function Home() {
   return (
     <>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />
-      <MainDisplay
-        data={dailyData}
-        modifyEntry={handleModifyDiaryEntry}
-        deleteEntry={handleDeleteDiaryEntry}
-      />
+      {loadingData && <Spinner />}
+      {!loadingData && (
+        <>
+          <MainDisplay
+            data={dailyData}
+            modifyEntry={handleModifyDiaryEntry}
+            deleteEntry={handleDeleteDiaryEntry}
+          />
+          <SearchBar
+            ref={searchBarRef}
+            handleClickResult={setFoodMode}
+            setSelectedFood={setSelectedFood}
+          />
+          <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
+        </>
+      )}
+
       <AddNewItem
         ref={addNewItemRef}
         isVisible={!!foodMode}
@@ -181,12 +196,6 @@ export default function Home() {
         deleteDiaryEntry={handleDeleteDiaryEntry}
         close={resetSelection}
       />
-      <SearchBar
-        ref={searchBarRef}
-        handleClickResult={setFoodMode}
-        setSelectedFood={setSelectedFood}
-      />
-      <Summary date={displayDate} data={dailyData} plantPoints={weeklyPlantPoints} />
     </>
   );
 }
