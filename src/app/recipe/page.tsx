@@ -56,7 +56,6 @@ export default function Home() {
   const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: 1 | 100 }>();
 
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
-  console.log({ readyToCalculate });
   useEffect(() => {
     if (selectedFood) {
       const { fid, name, calories, protein, fibre } = selectedFood;
@@ -187,11 +186,11 @@ export default function Home() {
           <thead>
             <tr>
               <th colSpan={2}></th>
-              <th colSpan={3}>--- per 100g ----</th>
+              <th colSpan={3}>----- per 100g ------</th>
             </tr>
             <tr>
-              <th>Ingredient</th>
-              <th>Amount</th>
+              <th></th>
+              <th>Grams</th>
               <th>Calorie</th>
               <th>Protein</th>
               <th>Fibre</th>
@@ -282,7 +281,9 @@ export default function Home() {
         </ServingToggle>
       </FlexSection>
       <FlexSection>
-        <ServingLabel>{servingDivisor == 1 ? 'Servings: ' : 'Total Cooked Weight: '}</ServingLabel>
+        <ServingLabel>
+          {servingDivisor == 1 ? 'Servings: ' : 'Total Cooked Weight (g): '}
+        </ServingLabel>
         <FlexInputField
           style={{ textAlign: 'left', width: '25%' }}
           type="text"

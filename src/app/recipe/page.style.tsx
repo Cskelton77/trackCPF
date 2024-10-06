@@ -55,14 +55,17 @@ export const ServingLabel = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex: 1;
+  flex: 2;
   padding: ${theme.padding.medium};
+  text-align: right;
 `;
 export const FlexInputField = styled(InputField)`
   flex: 1;
   height: auto;
 `;
 export const ServingToggle = styled(Action)<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
   flex: 1;
   background: ${(props) => (props.$active ? theme.colours.neutralButton : 'auto')};
   color: ${(props) => (props.$active ? theme.colours.white : theme.colours.darkGrey)};
