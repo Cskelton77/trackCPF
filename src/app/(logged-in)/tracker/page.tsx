@@ -55,9 +55,9 @@ export default function Home() {
   async function fetchDaily() {
     setLoadingData(true);
     const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
-    setLoadingData(false);
     setDailyData(response.dailyData);
     setWeeklyPlantPoints(response.weeklyPlantPoints);
+    setLoadingData(false);
   }
 
   // Diary API Calls
