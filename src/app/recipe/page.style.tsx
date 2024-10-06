@@ -31,6 +31,7 @@ export const InputField = styled.input`
 
 const Action = styled.div`
   cursor: pointer;
+  color: ${theme.colours.white};
   width: 100%;
   border: 1px solid ${theme.colours.darkGrey};
   padding: ${theme.padding.medium};
@@ -39,13 +40,30 @@ const Action = styled.div`
   font-size: ${theme.fontSize.small};
 `;
 
-export const Calculate = styled(Action)``;
+export const Calculate = styled(Action)<{ $disabled: boolean }>`
+  cursor: ${({ $disabled }) => ($disabled ? 'auto' : 'pointer')};
+  background: ${({ $disabled }) =>
+    $disabled ? theme.colours.inactiveButton : theme.colours.neutralButton};
+  color: ${({ $disabled }) => ($disabled ? theme.colours.lightGrey : theme.colours.white)};
+`;
+
 export const Save = styled(Action)`
   background-color: ${theme.colours.positiveButton};
 `;
 
+export const ServingLabel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  padding: ${theme.padding.medium};
+`;
+export const FlexInputField = styled(InputField)`
+  flex: 1;
+  height: auto;
+`;
 export const ServingToggle = styled(Action)<{ $active: boolean }>`
   flex: 1;
-  background: ${(props) =>
-    props.$active ? theme.colours.neutralButton : theme.colours.inactiveButton};
+  background: ${(props) => (props.$active ? theme.colours.neutralButton : 'auto')};
+  color: ${(props) => (props.$active ? theme.colours.white : theme.colours.darkGrey)};
 `;

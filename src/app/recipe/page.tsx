@@ -12,6 +12,8 @@ import {
   Calculate,
   FlexSection,
   ServingToggle,
+  ServingLabel,
+  FlexInputField,
 } from './page.style';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,6 +55,8 @@ export default function Home() {
   const [servingAmount, setServingAmount] = useState<string>();
   const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: 1 | 100 }>();
 
+  const readyToCalculate = !!servingAmount && ingredients.length > 0;
+  console.log({ readyToCalculate });
   useEffect(() => {
     if (selectedFood) {
       const { fid, name, calories, protein, fibre } = selectedFood;
@@ -76,34 +80,36 @@ export default function Home() {
   };
 
   const calculateRecipe = () => {
-    const { cal, pro, fib } = ingredients.reduce(
-      ({ cal, pro, fib }, { calories, protein, fibre, amount }) => {
-        const nCalories = parseFloat(calories || '0');
-        const nProtein = parseFloat(protein || '0');
-        const nFibre = parseFloat(fibre || '0');
-        const nAmount = parseFloat(amount || '0');
+    if (readyToCalculate) {
+      const { cal, pro, fib } = ingredients.reduce(
+        ({ cal, pro, fib }, { calories, protein, fibre, amount }) => {
+          const nCalories = parseFloat(calories || '0');
+          const nProtein = parseFloat(protein || '0');
+          const nFibre = parseFloat(fibre || '0');
+          const nAmount = parseFloat(amount || '0');
 
-        const isCompleteEntry = calories && protein && fibre && amount;
-        if (isCompleteEntry) {
-          return {
-            cal: cal + nCalories * (nAmount / 100),
-            pro: pro + nProtein * (nAmount / 100),
-            fib: fib + nFibre * (nAmount / 100),
-          };
-        }
-        return { cal, pro, fib };
-      },
-      { cal: 0, pro: 0, fib: 0 },
-    );
-    const servings = parseFloat(servingAmount || '0') / servingDivisor;
-    setCalculatedRecipe({
-      fid: '',
-      name: recipeName || 'Custom Recipe',
-      calories: Math.round(cal / servings),
-      protein: pro / servings,
-      fibre: fib / servings,
-      mode: servingDivisor,
-    });
+          const isCompleteEntry = calories && protein && fibre && amount;
+          if (isCompleteEntry) {
+            return {
+              cal: cal + nCalories * (nAmount / 100),
+              pro: pro + nProtein * (nAmount / 100),
+              fib: fib + nFibre * (nAmount / 100),
+            };
+          }
+          return { cal, pro, fib };
+        },
+        { cal: 0, pro: 0, fib: 0 },
+      );
+      const servings = parseFloat(servingAmount || '0') / servingDivisor;
+      setCalculatedRecipe({
+        fid: '',
+        name: recipeName || 'Custom Recipe',
+        calories: Math.round(cal / servings),
+        protein: pro / servings,
+        fibre: fib / servings,
+        mode: servingDivisor,
+      });
+    }
   };
 
   const saveRecipe = async () => {
@@ -255,6 +261,7 @@ export default function Home() {
       </Table>
 
       <FlexSection>
+        <ServingLabel>Calculation Mode:</ServingLabel>
         <ServingToggle
           role="button"
           onClick={() => setServingDivisor(1)}
@@ -270,9 +277,9 @@ export default function Home() {
           Per 100g
         </ServingToggle>
       </FlexSection>
-      <Section>
-        {servingDivisor == 1 ? 'Servings: ' : 'Total Cooked Weight: '}
-        <InputField
+      <FlexSection>
+        <ServingLabel>{servingDivisor == 1 ? 'Servings: ' : 'Total Cooked Weight: '}</ServingLabel>
+        <FlexInputField
           style={{ textAlign: 'left', width: '25%' }}
           type="text"
           inputMode="decimal"
@@ -281,12 +288,15 @@ export default function Home() {
           value={servingAmount}
           onChange={(e) => setServingAmount(e.target.value)}
         />
-      </Section>
-      <Section>
-        <Calculate role="button" onClick={() => calculateRecipe()}>
-          {calculatedRecipe ? 'Recalculate' : 'Calculate'} Recipe
-        </Calculate>
-      </Section>
+      </FlexSection>
+      {readyToCalculate && (
+        <Section>
+          <Calculate role="button" onClick={() => calculateRecipe()} $disabled={!readyToCalculate}>
+            {calculatedRecipe ? 'Recalculate' : 'Calculate'} Recipe
+          </Calculate>
+        </Section>
+      )}
+
       {calculatedRecipe && (
         <>
           <Table>
