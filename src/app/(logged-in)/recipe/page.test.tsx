@@ -5,7 +5,6 @@ import Home from './page';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { postDiary } from '@/api/diary';
 import { postFood } from '@/api/food';
-import moment from 'moment';
 
 const mockResponse: DefinedFoodObject[] = [
   {
@@ -27,13 +26,13 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
-jest.mock('../../api/food', () => ({
+jest.mock('../../../api/food', () => ({
   deleteFood: jest.fn(),
   getFood: jest.fn(() => mockResponse),
   postFood: jest.fn(() => JSON.stringify('RETURNED_FID')),
 }));
 
-jest.mock('../../api/diary', () => ({
+jest.mock('../../../api/diary', () => ({
   postDiary: jest.fn(() => '{}'),
 }));
 

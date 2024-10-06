@@ -21,7 +21,7 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
-jest.mock('../../api/food', () => ({
+jest.mock('../../../api/food', () => ({
   deleteFood: jest.fn(),
   getFood: jest.fn(() => [
     {
@@ -36,7 +36,7 @@ jest.mock('../../api/food', () => ({
   postFood: jest.fn(() => '{}'),
 }));
 
-jest.mock('../../api/diary', () => ({
+jest.mock('../../../api/diary', () => ({
   deleteDiary: jest.fn(),
   getDiary: jest.fn(() => {
     return new Promise((resolve) => {
@@ -80,7 +80,7 @@ jest.mock('../../api/diary', () => ({
   updateDiary: jest.fn(() => '{}'),
 }));
 
-jest.mock('../../api/users/settings', () => ({
+jest.mock('../../../api/users/settings', () => ({
   getSettings: jest.fn(() => {
     return new Promise((resolve) => {
       resolve({
@@ -98,8 +98,8 @@ jest.mock('../../api/users/settings', () => ({
   default: () => jest.fn(),
 }));
 
-jest.mock('../../components', () => ({
-  ...jest.requireActual('../../components'),
+jest.mock('../../../components', () => ({
+  ...jest.requireActual('../../../components'),
   DatePicker: jest.fn(() => '{}'),
   Summary: jest.fn(() => '{}'),
   Settings: jest.fn(() => '{}'),
