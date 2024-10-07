@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export const MenuBarContainer = styled.div`
   position: sticky;
-  //   height: 60px;
+  position: -webkit-sticky;
   height: 6vh;
   border-top: 1px solid ${theme.colours.lightGrey};
   display: flex;
