@@ -1,10 +1,15 @@
 import { theme } from '@/theme';
 import styled from 'styled-components';
 
-export const MenuBarContainer = styled.div`
+export const StickyMenu = styled.div`
   position: sticky;
   position: -webkit-sticky;
-  height: 6vh;
+  display: block;
+`;
+
+export const MenuBarContainer = styled.div`
+  height: 8vh;
+  //   padding: ${theme.padding.small} 0;
   border-top: 1px solid ${theme.colours.lightGrey};
   display: flex;
   justify-content: space-around;
