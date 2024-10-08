@@ -16,6 +16,7 @@ export default function Home() {
   const [selectedFood, setSelectedFood] = useState<DefinedFoodObject>();
 
   const addNewItemRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (addNewItemRef.current && selectedFood) {
       addNewItemRef.current.scrollIntoView();

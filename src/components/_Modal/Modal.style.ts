@@ -27,7 +27,10 @@ export const ModalHeader = styled.div`
 `;
 
 export const ModalClose = styled.div`
+  display: flex;
+  justify-content: center;
   border: 1px solid black;
   height: 25px;
   width: 25px;
+  cursor: pointer;
 `;

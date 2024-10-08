@@ -19,9 +19,10 @@ export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) *
 const MainDisplay = ({
   data,
   modifyEntry,
+  deleteEntry,
 }: {
   data: DiaryData[];
-  deleteEntry: (diaryId: string) => Promise<void>;
+  deleteEntry: (diaryId: string, item: DefinedFoodObject) => void;
   modifyEntry: (
     diaryId: string,
     currentServing: number,
@@ -70,7 +71,11 @@ const MainDisplay = ({
             <>
               <tr
                 key={`${fid}+${serving}`}
-                onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
+                onClick={
+                  isDirectEntry
+                    ? () => deleteEntry(did, foodEntry)
+                    : () => modifyEntry(did, serving, foodEntry)
+                }
               >
                 <TableCell>
                   {name}{' '}
@@ -91,31 +96,34 @@ const MainDisplay = ({
               </tr>
               {isRecipe &&
                 ingredients &&
-                ingredients.map(({ rid, fid, name, amount, calories, protein, fibre }) => {
-                  const displayCal =
-                    (parseFloat(calories || '0') * parseFloat(amount || '0')) / 100;
-                  const displayProtein =
-                    (parseFloat(protein || '0') * parseFloat(amount || '0')) / 100;
+                ingredients.map(
+                  ({ rid, fid, name, amount, calories, protein, fibre, plantPoints }) => {
+                    const displayCal =
+                      (parseFloat(calories || '0') * parseFloat(amount || '0')) / 100;
+                    const displayProtein =
+                      (parseFloat(protein || '0') * parseFloat(amount || '0')) / 100;
 
-                  const displayFibre = (parseFloat(fibre || '0') * parseFloat(amount || '0')) / 100;
+                    const displayFibre =
+                      (parseFloat(fibre || '0') * parseFloat(amount || '0')) / 100;
 
-                  return (
-                    <IngredientRow key={`${fid}+${rid}+${amount}`}>
-                      <IndentedTableCell>
-                        {name}{' '}
-                        {foodEntry.plantPoints ? (
-                          <PlantPoint style={{ fill: theme.colours.plantPoint }} />
-                        ) : (
-                          ''
-                        )}
-                      </IndentedTableCell>
-                      <NumberCell>{amount}g</NumberCell>
-                      <NumberCell>{calculateDisplay(displayCal)}</NumberCell>
-                      <NumberCell>{calculateDisplay(displayProtein)}g</NumberCell>
-                      <NumberCell>{calculateDisplay(displayFibre)}g</NumberCell>
-                    </IngredientRow>
-                  );
-                })}
+                    return (
+                      <IngredientRow key={`${fid}+${rid}+${amount}`}>
+                        <IndentedTableCell>
+                          {name}{' '}
+                          {parseFloat(plantPoints || '0') > 0 ? (
+                            <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                          ) : (
+                            ''
+                          )}
+                        </IndentedTableCell>
+                        <NumberCell>{amount}g</NumberCell>
+                        <NumberCell>{calculateDisplay(displayCal)}</NumberCell>
+                        <NumberCell>{calculateDisplay(displayProtein)}g</NumberCell>
+                        <NumberCell>{calculateDisplay(displayFibre)}g</NumberCell>
+                      </IngredientRow>
+                    );
+                  },
+                )}
             </>
           );
         })}
