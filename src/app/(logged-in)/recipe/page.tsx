@@ -209,7 +209,7 @@ export default function Home() {
               return (
                 <InputRow key={ingredient.rid}>
                   <InputCell>
-                    <div style={{ textWrap: 'nowrap' }}>
+                    <div>
                       {ingredient.name}{' '}
                       {ingredient.plantPoints ? (
                         <PlantPoint style={{ fill: theme.colours.plantPoint }} />

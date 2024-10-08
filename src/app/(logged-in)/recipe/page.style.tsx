@@ -18,10 +18,12 @@ export const InputRow = styled.tr``;
 export const InputCell = styled.td`
   text-align: center;
   padding: ${theme.padding.small} 0;
+  font-size: ${theme.fontSize.xSmall};
+  width: 20%;
 `;
 
 export const InputField = styled.input`
-  width: 80%;
+  width: 85%;
   height: 32px;
   font-size: ${theme.fontSize.small};
   border-radius: 12px;
