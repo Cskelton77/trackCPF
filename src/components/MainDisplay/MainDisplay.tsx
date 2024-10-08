@@ -1,9 +1,16 @@
 import { DiaryData } from '@/interfaces/DailyData';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
-import { MainDisplayTable, NumberCell, NumberHeader, TableCell } from './MainDisplay.style';
+import {
+  IndentedTableCell,
+  IngredientRow,
+  MainDisplayTable,
+  NumberCell,
+  NumberHeader,
+  TableCell,
+} from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
-import { PlantPoint } from '@/Icons';
+import { PlantPoint, Recipe } from '@/Icons';
 import { theme } from '@/theme';
 import { NullableNumber } from '@/interfaces/ItemModes';
 
@@ -11,7 +18,6 @@ export const roundDisplay = (num: number) => Math.round((num + Number.EPSILON) *
 
 const MainDisplay = ({
   data,
-  deleteEntry,
   modifyEntry,
 }: {
   data: DiaryData[];
@@ -23,7 +29,7 @@ const MainDisplay = ({
   ) => Promise<void>;
 }) => {
   const { rounding } = useContext(SettingsContext);
-
+  console.log({ data });
   return (
     <MainDisplayTable>
       <thead>
@@ -43,13 +49,15 @@ const MainDisplay = ({
             </TableCell>
           </tr>
         )}
-        {data.map(({ did, serving, isDirectEntry, foodEntry }) => {
+        {data.map(({ did, serving, isDirectEntry, foodEntry, isRecipe, ingredients }) => {
           const denominator = isDirectEntry ? 1 : 100;
-          const calculateDisplay = (metric: NullableNumber): string => {
-            if (metric === null || metric === undefined) {
+          const calculateDisplay = (metric: NullableNumber | string): string => {
+            const adjustedMetric = typeof metric == 'string' ? parseFloat(metric || '0') : metric;
+
+            if (adjustedMetric === null || adjustedMetric === undefined) {
               return '---';
             }
-            const calculation = (serving * metric) / denominator;
+            const calculation = (serving * adjustedMetric) / denominator;
             if (rounding) {
               return Math.round(calculation).toString();
             } else {
@@ -58,37 +66,52 @@ const MainDisplay = ({
           };
 
           const { fid, name, calories, protein, fibre } = foodEntry;
-          const unit = isDirectEntry ? ' serv' : 'g';
+          const unit = isDirectEntry ? '' : 'g';
 
           return (
-            <tr
-              key={`${fid}+${serving}`}
-              onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
-            >
-              <TableCell>
-                {name}{' '}
-                {foodEntry.plantPoints ? (
-                  <PlantPoint style={{ fill: theme.colours.plantPoint }} />
-                ) : (
-                  ''
-                )}
-              </TableCell>
-              <NumberCell>
-                {serving}
-                {unit}
-              </NumberCell>
-              <NumberCell>{calculateDisplay(calories)}</NumberCell>
-              <NumberCell>{calculateDisplay(protein)}g</NumberCell>
-              <NumberCell>{calculateDisplay(fibre)}g</NumberCell>
-              {/* <TableCell
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteEntry(did);
-                }}
+            <>
+              <tr
+                key={`${fid}+${serving}`}
+                onClick={isDirectEntry ? undefined : () => modifyEntry(did, serving, foodEntry)}
               >
-                <Delete size={24} label={`Delete ${name}`} />
-              </TableCell> */}
-            </tr>
+                <TableCell>
+                  {name}{' '}
+                  {foodEntry.plantPoints ? (
+                    <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                  ) : (
+                    ''
+                  )}
+                  {isRecipe ? <Recipe /> : ''}
+                </TableCell>
+                <NumberCell>
+                  {serving}
+                  {unit}
+                </NumberCell>
+                <NumberCell>{calculateDisplay(calories)}</NumberCell>
+                <NumberCell>{calculateDisplay(protein)}g</NumberCell>
+                <NumberCell>{calculateDisplay(fibre)}g</NumberCell>
+              </tr>
+              {isRecipe &&
+                ingredients &&
+                ingredients.map(({ rid, fid, name, amount, calories, protein, fibre }) => {
+                  return (
+                    <IngredientRow key={`${fid}+${rid}+${amount}`}>
+                      <IndentedTableCell>
+                        {name}{' '}
+                        {foodEntry.plantPoints ? (
+                          <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                        ) : (
+                          ''
+                        )}
+                      </IndentedTableCell>
+                      <NumberCell>{amount}g</NumberCell>
+                      <NumberCell>{calculateDisplay(calories)}</NumberCell>
+                      <NumberCell>{calculateDisplay(protein)}g</NumberCell>
+                      <NumberCell>{calculateDisplay(fibre)}g</NumberCell>
+                    </IngredientRow>
+                  );
+                })}
+            </>
           );
         })}
       </tbody>

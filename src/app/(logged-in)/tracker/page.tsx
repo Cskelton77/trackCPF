@@ -53,11 +53,13 @@ export default function Home() {
   };
 
   async function fetchDaily() {
-    setLoadingData(true);
-    const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
-    setLoadingData(false);
-    setDailyData(response.dailyData);
-    setWeeklyPlantPoints(response.weeklyPlantPoints);
+    if (uid) {
+      setLoadingData(true);
+      const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
+      setLoadingData(false);
+      setDailyData(response.dailyData);
+      setWeeklyPlantPoints(response.weeklyPlantPoints);
+    }
   }
 
   // Diary API Calls
@@ -163,6 +165,8 @@ export default function Home() {
     resetSelection();
     await fetchDaily();
   };
+
+  console.log({ loadingData, dailyData });
 
   return (
     <>

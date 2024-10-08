@@ -14,10 +14,12 @@ export async function POST(request: Request) {
   const foodEntry = JSON.stringify(body.foodEntry);
   const serving = body.serving;
   const isDirectEntry = body.isDirectEntry;
+  const isRecipe = body.isRecipe;
+  const ingredients = JSON.stringify(body.ingredients);
   const timestamp = Date.now();
   await sql<DiaryData>`
-          INSERT INTO diary(did, uid, date, serving, "foodEntry", "isDirectEntry", timestamp) 
-          VALUES (${did}, ${uid}, ${date}, ${serving},${foodEntry}, ${isDirectEntry}, ${timestamp});`;
+          INSERT INTO diary(did, uid, date, serving, "foodEntry", "isDirectEntry", "isRecipe", ingredients, timestamp) 
+          VALUES (${did}, ${uid}, ${date}, ${serving},${foodEntry}, ${isDirectEntry}, ${isRecipe}, ${ingredients}, ${timestamp});`;
   return new Response('201');
 }
 
