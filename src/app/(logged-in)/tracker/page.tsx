@@ -166,8 +166,6 @@ export default function Home() {
     await fetchDaily();
   };
 
-  console.log({ loadingData, dailyData });
-
   return (
     <>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} />

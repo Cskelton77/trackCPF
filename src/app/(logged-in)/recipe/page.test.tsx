@@ -186,7 +186,7 @@ describe('Add a Recipe Page', () => {
 
     await enterServingAndCalculate(400);
 
-    const recipeCalories = await screen.findByText('93');
+    const recipeCalories = await screen.findByText('92.5');
     const recipeProtein = await screen.findByText('2.1');
     const recipeFibre = await screen.findByText('1.25');
     expect(recipeCalories).toBeInTheDocument();

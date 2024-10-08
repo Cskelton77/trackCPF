@@ -29,7 +29,7 @@ const MainDisplay = ({
   ) => Promise<void>;
 }) => {
   const { rounding } = useContext(SettingsContext);
-  console.log({ data });
+
   return (
     <MainDisplayTable>
       <thead>
@@ -51,13 +51,11 @@ const MainDisplay = ({
         )}
         {data.map(({ did, serving, isDirectEntry, foodEntry, isRecipe, ingredients }) => {
           const denominator = isDirectEntry ? 1 : 100;
-          const calculateDisplay = (metric: NullableNumber | string): string => {
-            const adjustedMetric = typeof metric == 'string' ? parseFloat(metric || '0') : metric;
-
-            if (adjustedMetric === null || adjustedMetric === undefined) {
+          const calculateDisplay = (metric: NullableNumber): string => {
+            if (metric === null || metric === undefined) {
               return '---';
             }
-            const calculation = (serving * adjustedMetric) / denominator;
+            const calculation = (serving * metric) / denominator;
             if (rounding) {
               return Math.round(calculation).toString();
             } else {
@@ -94,6 +92,13 @@ const MainDisplay = ({
               {isRecipe &&
                 ingredients &&
                 ingredients.map(({ rid, fid, name, amount, calories, protein, fibre }) => {
+                  const displayCal =
+                    (parseFloat(calories || '0') * parseFloat(amount || '0')) / 100;
+                  const displayProtein =
+                    (parseFloat(protein || '0') * parseFloat(amount || '0')) / 100;
+
+                  const displayFibre = (parseFloat(fibre || '0') * parseFloat(amount || '0')) / 100;
+
                   return (
                     <IngredientRow key={`${fid}+${rid}+${amount}`}>
                       <IndentedTableCell>
@@ -105,9 +110,9 @@ const MainDisplay = ({
                         )}
                       </IndentedTableCell>
                       <NumberCell>{amount}g</NumberCell>
-                      <NumberCell>{calculateDisplay(calories)}</NumberCell>
-                      <NumberCell>{calculateDisplay(protein)}g</NumberCell>
-                      <NumberCell>{calculateDisplay(fibre)}g</NumberCell>
+                      <NumberCell>{calculateDisplay(displayCal)}</NumberCell>
+                      <NumberCell>{calculateDisplay(displayProtein)}g</NumberCell>
+                      <NumberCell>{calculateDisplay(displayFibre)}g</NumberCell>
                     </IngredientRow>
                   );
                 })}

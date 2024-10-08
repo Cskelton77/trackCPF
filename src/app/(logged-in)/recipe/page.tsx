@@ -103,7 +103,7 @@ export default function Home() {
       setCalculatedRecipe({
         fid: '',
         name: recipeName || 'Custom Recipe',
-        calories: Math.round(cal / servings),
+        calories: cal / servings,
         protein: pro / servings,
         fibre: fib / servings,
         mode: servingDivisor,
