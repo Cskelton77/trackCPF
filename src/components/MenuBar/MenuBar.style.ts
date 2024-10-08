@@ -2,7 +2,7 @@ import { theme } from '@/theme';
 import styled from 'styled-components';
 
 export const MenuBarContainer = styled.div`
-  height: 8vh;
+  height: 8dvh;
   border-top: 1px solid ${theme.colours.lightGrey};
   display: flex;
   background-color: lightgray;
