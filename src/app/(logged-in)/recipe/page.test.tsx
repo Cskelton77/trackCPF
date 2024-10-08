@@ -13,7 +13,7 @@ const mockResponse: DefinedFoodObject[] = [
     calories: 150,
     protein: 1.5,
     fibre: 0,
-    plantPoints: 1,
+    plantPoints: 0,
   },
 ];
 
@@ -51,7 +51,9 @@ describe('Add a Recipe Page', () => {
   };
   const searchForAndAddExistingFood = async () => {
     await searchFor('D');
-    const existingFood = await screen.findByText('Dropdown Food (150 cal/100g)');
+    const existingFood = await screen.findByText('Dropdown Food (150 cal/100g)', {
+      exact: false,
+    });
     await userEvent.click(existingFood);
   };
 
@@ -186,7 +188,7 @@ describe('Add a Recipe Page', () => {
 
     await enterServingAndCalculate(400);
 
-    const recipeCalories = await screen.findByText('93');
+    const recipeCalories = await screen.findByText('92.5');
     const recipeProtein = await screen.findByText('2.1');
     const recipeFibre = await screen.findByText('1.25');
     expect(recipeCalories).toBeInTheDocument();
@@ -270,6 +272,7 @@ describe('Add a Recipe Page', () => {
           fid: 'MOCK_FID',
           name: 'Dropdown Food',
           protein: '1.5',
+          plantPoints: '0',
           rid: expect.any(String),
         },
       ],
@@ -322,6 +325,7 @@ describe('Add a Recipe Page', () => {
           name: 'Dropdown Food',
           protein: '1.5',
           rid: expect.any(String),
+          plantPoints: '0',
         },
         {
           amount: '100',
@@ -331,6 +335,7 @@ describe('Add a Recipe Page', () => {
           name: 'Banana',
           protein: '4',
           rid: expect.any(String),
+          plantPoints: '0',
         },
       ],
     });

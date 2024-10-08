@@ -24,6 +24,8 @@ import { postDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { roundDisplay } from '@/components/MainDisplay/MainDisplay';
 import { NullableNumber } from '@/interfaces/ItemModes';
+import { PlantPoint } from '@/Icons';
+import { theme } from '@/theme';
 
 export interface RecipeIngredient {
   rid: string;
@@ -33,6 +35,7 @@ export interface RecipeIngredient {
   calories?: string;
   protein?: string;
   fibre?: string;
+  plantPoints?: string;
 }
 
 enum IngredientProperty {
@@ -58,7 +61,7 @@ export default function Home() {
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
   useEffect(() => {
     if (selectedFood) {
-      const { fid, name, calories, protein, fibre } = selectedFood;
+      const { fid, name, calories, protein, fibre, plantPoints } = selectedFood;
       const newIngredient = {
         rid: uuidv4(),
         fid,
@@ -66,6 +69,7 @@ export default function Home() {
         calories: calories?.toString() || undefined,
         protein: protein?.toString() || undefined,
         fibre: fibre?.toString() || undefined,
+        plantPoints: plantPoints?.toString() || '0',
       };
       setIngredients([...ingredients, newIngredient]);
     }
@@ -80,8 +84,8 @@ export default function Home() {
 
   const calculateRecipe = () => {
     if (readyToCalculate) {
-      const { cal, pro, fib } = ingredients.reduce(
-        ({ cal, pro, fib }, { calories, protein, fibre, amount }) => {
+      const { cal, pro, fib, pp } = ingredients.reduce(
+        ({ cal, pro, fib, pp }, { calories, protein, fibre, plantPoints, amount }) => {
           const nCalories = parseFloat(calories || '0');
           const nProtein = parseFloat(protein || '0');
           const nFibre = parseFloat(fibre || '0');
@@ -93,20 +97,22 @@ export default function Home() {
               cal: cal + nCalories * (nAmount / 100),
               pro: pro + nProtein * (nAmount / 100),
               fib: fib + nFibre * (nAmount / 100),
+              pp: pp + parseFloat(plantPoints || '0'),
             };
           }
-          return { cal, pro, fib };
+          return { cal, pro, fib, pp };
         },
-        { cal: 0, pro: 0, fib: 0 },
+        { cal: 0, pro: 0, fib: 0, pp: 0 },
       );
       const servings = parseFloat(servingAmount || '0') / servingDivisor;
       setCalculatedRecipe({
         fid: '',
         name: recipeName || 'Custom Recipe',
-        calories: Math.round(cal / servings),
+        calories: cal / servings,
         protein: pro / servings,
         fibre: fib / servings,
         mode: servingDivisor,
+        plantPoints: pp,
       });
     }
   };
@@ -115,7 +121,7 @@ export default function Home() {
     // Go through ingredients, save to DB any without a FID
     ingredients.forEach(async (ingredient) => {
       if (!ingredient.fid) {
-        const { name, calories, protein, fibre, rid } = ingredient;
+        const { name, calories, protein, fibre, rid, plantPoints } = ingredient;
         const newFood = JSON.parse(
           await postFood({
             uid,
@@ -123,7 +129,7 @@ export default function Home() {
             calories: parseFloat(calories || '0'),
             protein: parseFloat(protein || '0'),
             fibre: parseFloat(fibre || '0'),
-            plantPoints: 0,
+            plantPoints: parseInt(plantPoints || ''),
           }),
         );
 
@@ -202,7 +208,16 @@ export default function Home() {
             ingredients.map((ingredient) => {
               return (
                 <InputRow key={ingredient.rid}>
-                  <InputCell>{ingredient.name}</InputCell>
+                  <InputCell>
+                    <div style={{ textWrap: 'nowrap' }}>
+                      {ingredient.name}{' '}
+                      {ingredient.plantPoints ? (
+                        <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </InputCell>
                   <InputCell>
                     <InputField
                       id="ingredient amount"

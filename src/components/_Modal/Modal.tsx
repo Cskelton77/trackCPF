@@ -13,7 +13,7 @@ const Modal = forwardRef(
       <ModalWindow ref={ref}>
         <ModalHeader>
           <span>{title || `Modal`}</span>
-          <ModalClose onClick={close ? () => close() : undefined} />
+          <ModalClose onClick={close ? () => close() : undefined}>X</ModalClose>
         </ModalHeader>
         {children}
       </ModalWindow>

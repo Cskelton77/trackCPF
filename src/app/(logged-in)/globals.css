@@ -85,7 +85,9 @@ body {
   overflow-x: hidden;
 }
 
-
+body {
+    display: block;
+}
 
 a {
   color: inherit;

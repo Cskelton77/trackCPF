@@ -1,10 +1,11 @@
 import { ItemMode, MODES } from '@/interfaces/ItemModes';
-import { Delete } from '@/Icons';
+import { Delete, PlantPoint } from '@/Icons';
 import { ActionBlock, ResponseDropdown, ResponseRow, SearchBarInput } from './SearchBar.style';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';
 import { deleteFood, getFood } from '@/api/food';
 import { UserContext } from '@/context';
+import { theme } from '@/theme';
 
 interface SearchBarInterface {
   searchDbOnly?: boolean;
@@ -95,6 +96,12 @@ const SearchBar = forwardRef(
                   onClick={() => handleAddExistingItem(response)}
                 >
                   {response.name} ({response.calories} cal/100g)
+                  {/* {' '}
+                    {response.plantPoints ? (
+                      <PlantPoint style={{ fill: theme.colours.plantPoint }} />
+                    ) : (
+                      ''
+                    )}{' '} */}
                   <ActionBlock>
                     <Delete
                       size={24}

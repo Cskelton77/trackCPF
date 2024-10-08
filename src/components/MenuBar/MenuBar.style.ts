@@ -2,12 +2,9 @@ import { theme } from '@/theme';
 import styled from 'styled-components';
 
 export const MenuBarContainer = styled.div`
-  position: sticky;
-  //   height: 60px;
-  height: 6vh;
+  height: 8dvh;
   border-top: 1px solid ${theme.colours.lightGrey};
   display: flex;
-  justify-content: space-around;
   background-color: lightgray;
 `;
 

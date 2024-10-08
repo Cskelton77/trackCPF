@@ -10,6 +10,7 @@ import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { UserContext } from '@/context';
 import { v4 as uuidv4 } from 'uuid';
 import { Spinner } from '@/Icons';
+import DeleteFood from '@/components/ModifyItems/DeleteFood';
 
 export default function Home() {
   const uid = useContext(UserContext);
@@ -24,8 +25,10 @@ export default function Home() {
   const [selectedDiaryEntry, setSelectedDiaryEntry] = useState<string>();
 
   const [foodMode, setFoodMode] = useState<ItemMode>(null);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
 
   const addNewItemRef = useRef<HTMLDivElement>(null);
+  const deleteItemRef = useRef<HTMLDivElement>(null);
   const searchBarRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -39,6 +42,12 @@ export default function Home() {
   }, [foodMode]);
 
   useEffect(() => {
+    if (deleteItemRef.current && showDelete) {
+      deleteItemRef.current.scrollIntoView();
+    }
+  }, [showDelete]);
+
+  useEffect(() => {
     if (searchBarRef.current && !foodMode) {
       searchBarRef.current.scrollIntoView();
     }
@@ -50,14 +59,17 @@ export default function Home() {
     setSelectedDiaryEntry(undefined);
     setSearchValue('');
     setFoodMode(null);
+    setShowDelete(false);
   };
 
   async function fetchDaily() {
-    setLoadingData(true);
-    const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
-    setLoadingData(false);
-    setDailyData(response.dailyData);
-    setWeeklyPlantPoints(response.weeklyPlantPoints);
+    if (uid) {
+      setLoadingData(true);
+      const response = await getDiary(uid, moment(displayDate).format('YYYY-MM-DD'));
+      setLoadingData(false);
+      setDailyData(response.dailyData);
+      setWeeklyPlantPoints(response.weeklyPlantPoints);
+    }
   }
 
   // Diary API Calls
@@ -158,6 +170,12 @@ export default function Home() {
     setFoodMode(MODES.UPDATE);
   };
 
+  const handleDeleteUnmodifiableEntry = (diaryId: string, item: DefinedFoodObject) => {
+    setSelectedFood(item);
+    setSelectedDiaryEntry(diaryId);
+    setShowDelete(true);
+  };
+
   const handleDeleteDiaryEntry = async (diaryId: string) => {
     await deleteDiary(diaryId);
     resetSelection();
@@ -173,7 +191,7 @@ export default function Home() {
           <MainDisplay
             data={dailyData}
             modifyEntry={handleModifyDiaryEntry}
-            deleteEntry={handleDeleteDiaryEntry}
+            deleteEntry={handleDeleteUnmodifiableEntry}
           />
           <SearchBar
             ref={searchBarRef}
@@ -193,6 +211,15 @@ export default function Home() {
         selectedFoodServing={selectedFoodServing}
         handleSave={handleSaveDiaryEntry}
         diaryEntryId={selectedDiaryEntry}
+        deleteDiaryEntry={handleDeleteDiaryEntry}
+        close={resetSelection}
+      />
+
+      <DeleteFood
+        ref={deleteItemRef}
+        isVisible={showDelete}
+        selectedFood={selectedFood}
+        diaryEntryId={selectedDiaryEntry || ''}
         deleteDiaryEntry={handleDeleteDiaryEntry}
         close={resetSelection}
       />
