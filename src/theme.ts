@@ -23,6 +23,7 @@ export const theme = {
     small: '6px',
     medium: '12px',
     large: '24px',
+    xlarge: '36px',
   },
 
   fontSize: {

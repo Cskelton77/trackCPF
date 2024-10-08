@@ -7,7 +7,7 @@ import ParentWrapper from './ParentWrapper';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Login - TrackCPF',
+  title: 'TrackCPF',
   description: 'Track your Calories, Protein, Fibre',
 };
 
