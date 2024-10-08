@@ -1,12 +1,9 @@
 'use client';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Settings, MenuBar } from '@/components';
-import { useRouter } from 'next/navigation';
-import { SettingsContext, SettingsContextInterface, UserContext, defaultSettings } from '@/context';
-import { getSettings } from '@/api/users/settings';
-import { PageWrapper, Header, FoodEntry, ActionBlock } from './page.style';
+import { UserContext } from '@/context';
+import { FoodEntry, ActionBlock } from './page.style';
 import { deleteFood, getFood } from '@/api/food';
-import { DefinedFoodObject, FoodObject } from '@/interfaces/FoodObject';
+import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { Delete, PlantPoint } from '@/Icons';
 import { theme } from '@/theme';
 import ModifyFood from '@/components/ModifyItems/ModifyFood';
