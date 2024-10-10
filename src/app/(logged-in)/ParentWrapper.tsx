@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 
 import { SettingsContext, SettingsContextInterface, UserContext, defaultSettings } from '@/context';
 import { MenuBar, Settings } from '@/components';
-import { useLogin, useSettings } from '@/hooks';
+import { useLogin } from '@/hooks';
 
 import { PageWrapper, Header } from './tracker/Page.style';
 import { useRouter } from 'next/navigation';
+import { getSettings } from '@/api/users/settings';
 
 export default function ParentProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -20,11 +21,22 @@ export default function ParentProvider({ children }: { children: React.ReactNode
     router.push('/');
   };
 
+  async function fetchSettings() {
+    const settings = await getSettings(uid);
+    setUserSettings(settings);
+    return settings;
+  }
+
   useEffect(() => {
-    async () => {
-      const { settings } = await useSettings(uid);
-      setUserSettings(settings);
-    };
+    if (uid == 'ERROR') {
+      localStorage.removeItem('uid');
+      localStorage.removeItem('email');
+      router.push('/');
+    } else {
+      if (uid != '') {
+        fetchSettings();
+      }
+    }
   }, [uid]);
 
   return (

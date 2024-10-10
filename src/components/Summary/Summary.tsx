@@ -13,7 +13,7 @@ import * as chart from 'react-chartjs-2';
 import { theme } from '@/theme';
 import { useContext } from 'react';
 import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
-import moment, { Moment } from 'moment';
+import { Moment } from 'moment';
 import { PlantPoint } from '@/Icons';
 import { generateChartData } from './Summary.utils';
 
@@ -21,7 +21,6 @@ const NHS_DAILY_FIBRE = 30;
 const NHS_DAILY_PROTEIN = 50;
 
 const Summary = ({
-  date,
   data,
   plantPoints,
 }: {
