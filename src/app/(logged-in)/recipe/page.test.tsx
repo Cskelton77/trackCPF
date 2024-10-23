@@ -100,7 +100,7 @@ describe('Add a Recipe Page', () => {
       await userEvent.click(perServing);
     }
 
-    const buttonText = `Recipe ${isServing ? 'Servings' : 'Total Cooked Weight'}`;
+    const buttonText = `Recipe ${isServing ? 'Servings' : 'Cooked Weight'}`;
 
     const servingInput = await screen.findByRole('textbox', { name: buttonText });
     await userEvent.clear(servingInput);

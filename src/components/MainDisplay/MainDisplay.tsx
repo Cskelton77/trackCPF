@@ -30,7 +30,6 @@ const MainDisplay = ({
   ) => Promise<void>;
 }) => {
   const { rounding } = useContext(SettingsContext);
-
   return (
     <MainDisplayTable>
       <thead>
@@ -64,7 +63,7 @@ const MainDisplay = ({
             }
           };
 
-          const { fid, name, calories, protein, fibre } = foodEntry;
+          const { fid, name, calories, protein, fibre, recipeWeight } = foodEntry;
           const unit = isDirectEntry ? '' : 'g';
 
           return (
@@ -94,17 +93,25 @@ const MainDisplay = ({
                 <NumberCell>{calculateDisplay(protein)}g</NumberCell>
                 <NumberCell>{calculateDisplay(fibre)}g</NumberCell>
               </tr>
-              {isRecipe &&
-                ingredients &&
+              {ingredients &&
                 ingredients.map(
                   ({ rid, fid, name, amount, calories, protein, fibre, plantPoints }) => {
-                    const displayCal =
-                      (parseFloat(calories || '0') * parseFloat(amount || '0')) / 100;
-                    const displayProtein =
-                      (parseFloat(protein || '0') * parseFloat(amount || '0')) / 100;
+                    const parseDirect = (num: string | undefined) =>
+                      (parseFloat(num || '0') * parseFloat(amount || '0')) / 100;
+                    const parseForRecipe = (num: string | undefined) =>
+                      parseInt(num || '100') * (parseInt(num || '100') / (recipeWeight || 100));
 
-                    const displayFibre =
-                      (parseFloat(fibre || '0') * parseFloat(amount || '0')) / 100;
+                    const displayCal = isDirectEntry
+                      ? parseDirect(calories)
+                      : parseForRecipe(calories);
+                    const displayProtein = isDirectEntry
+                      ? parseDirect(protein)
+                      : parseForRecipe(protein);
+                    const displayFibre = isDirectEntry ? parseDirect(fibre) : parseForRecipe(fibre);
+
+                    const displayAmount = isDirectEntry
+                      ? parseFloat(amount || '0')
+                      : parseInt(amount || '100') * (serving / (recipeWeight || 100));
 
                     return (
                       <IngredientRow key={`${fid}+${rid}+${amount}`}>
@@ -116,7 +123,7 @@ const MainDisplay = ({
                             ''
                           )}
                         </IndentedTableCell>
-                        <NumberCell>{amount}g</NumberCell>
+                        <NumberCell>{calculateDisplay(displayAmount)}g</NumberCell>
                         <NumberCell>{calculateDisplay(displayCal)}</NumberCell>
                         <NumberCell>{calculateDisplay(displayProtein)}g</NumberCell>
                         <NumberCell>{calculateDisplay(displayFibre)}g</NumberCell>

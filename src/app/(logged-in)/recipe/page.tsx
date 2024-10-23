@@ -56,6 +56,7 @@ export default function Home() {
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [servingDivisor, setServingDivisor] = useState<1 | 100>(1);
   const [servingAmount, setServingAmount] = useState<string>();
+  const [portion, setPortion] = useState<string>();
   const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: 1 | 100 }>();
 
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
@@ -144,12 +145,13 @@ export default function Home() {
     const diaryEntry: Omit<DiaryData, 'did'> = {
       uid,
       date: moment(displayDate).format('YYYY-MM-DD'),
-      serving: servingDivisor == 1 ? 1 : 0,
-      isDirectEntry: true,
-      isRecipe: servingDivisor == 1,
+      serving: servingDivisor == 1 ? 1 : parseInt(portion || '100'),
+      isDirectEntry: servingDivisor == 1,
+      isRecipe: true,
       foodEntry: {
         fid: uuidv4(),
         name: recipeName || 'Custom Recipe',
+        ...(portion && { recipeWeight: parseFloat(servingAmount || '100') }),
         calories: calculatedRecipe?.calories as number,
         protein: calculatedRecipe?.protein as number,
         fibre: calculatedRecipe?.fibre as number,
@@ -211,7 +213,7 @@ export default function Home() {
                   <InputCell>
                     <div>
                       {ingredient.name}{' '}
-                      {ingredient.plantPoints ? (
+                      {parseInt(ingredient.plantPoints || '') > 0 ? (
                         <PlantPoint style={{ fill: theme.colours.plantPoint }} />
                       ) : (
                         ''
@@ -303,11 +305,25 @@ export default function Home() {
           style={{ textAlign: 'left', width: '25%' }}
           type="text"
           inputMode="decimal"
-          aria-label={`Recipe ${servingDivisor == 1 ? 'Servings' : 'Total Cooked Weight'}`}
+          aria-label={`Recipe ${servingDivisor == 1 ? 'Servings' : 'Cooked Weight'}`}
           name="serving"
           value={servingAmount}
           onChange={(e) => setServingAmount(e.target.value)}
         />
+        {servingDivisor === 100 && (
+          <>
+            <ServingLabel>Serving Size (g):</ServingLabel>
+            <FlexInputField
+              style={{ textAlign: 'left', width: '25%' }}
+              type="text"
+              inputMode="decimal"
+              aria-label={'Portion'}
+              name="recipePortion"
+              value={portion}
+              onChange={(e) => setPortion(e.target.value)}
+            />
+          </>
+        )}
       </FlexSection>
       {readyToCalculate && (
         <Section>
@@ -338,7 +354,7 @@ export default function Home() {
             </tbody>
           </Table>
           <Save role="button" onClick={() => saveRecipe()}>
-            Save Recipe to Diary
+            Save to Diary on {moment(displayDate).format('MMM Do')}
           </Save>
         </>
       )}
