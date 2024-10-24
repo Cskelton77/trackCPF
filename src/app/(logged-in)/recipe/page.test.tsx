@@ -5,6 +5,7 @@ import Home from './page';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { postDiary } from '@/api/diary';
 import { postFood } from '@/api/food';
+import mockLocalStorage from '@/mockLocalStorage';
 
 const mockResponse: DefinedFoodObject[] = [
   {
@@ -40,6 +41,13 @@ Date.now = jest.fn(() => new Date('2024-10-05').getTime());
 
 describe('Add a Recipe Page', () => {
   window.HTMLElement.prototype.scrollIntoView = function () {};
+
+  beforeEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: mockLocalStorage,
+    });
+    mockLocalStorage.removeItem('ingredients');
+  });
 
   const searchFor = async (text: string = 'D') => {
     const searchInput = screen.getByPlaceholderText('Add an ingredient');
