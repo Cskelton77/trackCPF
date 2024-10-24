@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { DatePicker, SearchBar } from '@/components';
 import { SettingsContext, UserContext } from '@/context';
 import {
@@ -14,6 +14,7 @@ import {
   ServingToggle,
   ServingLabel,
   FlexInputField,
+  Clear,
 } from './page.style';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { v4 as uuidv4 } from 'uuid';
@@ -45,19 +46,27 @@ enum IngredientProperty {
   FIB = 'fibre',
 }
 
+enum Mode {
+  SERVING = 1,
+  GRAMS = 100,
+}
+
 export default function Home() {
   const uid = useContext(UserContext);
   const { rounding } = useContext(SettingsContext);
   const router = useRouter();
 
+  const calculateButtonRef = useRef<HTMLDivElement>(null);
+  const saveButtonRef = useRef<HTMLDivElement>(null);
+
   const [displayDate, setDisplayDate] = useState(moment());
   const [recipeName, setRecipeName] = useState<string>();
   const [selectedFood, setSelectedFood] = useState<DefinedFoodObject>();
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
-  const [servingDivisor, setServingDivisor] = useState<1 | 100>(1);
+  const [servingDivisor, setServingDivisor] = useState<Mode>(Mode.SERVING);
   const [servingAmount, setServingAmount] = useState<string>();
   const [portion, setPortion] = useState<string>();
-  const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: 1 | 100 }>();
+  const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: Mode }>();
 
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
   useEffect(() => {
@@ -81,6 +90,18 @@ export default function Home() {
     const newIngredients = [...ingredients];
     newIngredients[mod][value] = amount;
     setIngredients(newIngredients);
+  };
+
+  const setCalculationMode = (mode: Mode) => {
+    if (calculateButtonRef.current) {
+      calculateButtonRef.current.scrollIntoView();
+    }
+    setServingDivisor(mode);
+  };
+  const clearRecipe = () => {
+    // clear localstorage
+    // clear state
+    // refresh page?
   };
 
   const calculateRecipe = () => {
@@ -115,6 +136,9 @@ export default function Home() {
         mode: servingDivisor,
         plantPoints: pp,
       });
+      if (saveButtonRef.current) {
+        saveButtonRef.current.scrollIntoView();
+      }
     }
   };
 
@@ -284,7 +308,7 @@ export default function Home() {
         <ServingLabel>Calculation Mode:</ServingLabel>
         <ServingToggle
           role="button"
-          onClick={() => setServingDivisor(1)}
+          onClick={() => setCalculationMode(Mode.SERVING)}
           $active={servingDivisor == 1}
         >
           Per Serving
@@ -292,7 +316,7 @@ export default function Home() {
         <ServingToggle
           role="button"
           $active={servingDivisor == 100}
-          onClick={() => setServingDivisor(100)}
+          onClick={() => setCalculationMode(Mode.GRAMS)}
         >
           Per 100g
         </ServingToggle>
@@ -310,27 +334,32 @@ export default function Home() {
           value={servingAmount}
           onChange={(e) => setServingAmount(e.target.value)}
         />
-        {servingDivisor === 100 && (
-          <>
-            <ServingLabel>Serving Size (g):</ServingLabel>
-            <FlexInputField
-              style={{ textAlign: 'left', width: '25%' }}
-              type="text"
-              inputMode="decimal"
-              aria-label={'Portion'}
-              name="recipePortion"
-              value={portion}
-              onChange={(e) => setPortion(e.target.value)}
-            />
-          </>
-        )}
       </FlexSection>
+
+      {servingDivisor === 100 && (
+        <FlexSection>
+          <ServingLabel>Serving Size (g):</ServingLabel>
+          <FlexInputField
+            style={{ textAlign: 'left', width: '25%' }}
+            type="text"
+            inputMode="decimal"
+            aria-label={'Portion'}
+            name="recipePortion"
+            value={portion}
+            onChange={(e) => setPortion(e.target.value)}
+          />
+        </FlexSection>
+      )}
+
       {readyToCalculate && (
-        <Section>
+        <FlexSection ref={calculateButtonRef}>
+          <Clear role="button" onClick={() => clearRecipe()}>
+            Clear Recipe
+          </Clear>
           <Calculate role="button" onClick={() => calculateRecipe()} $disabled={!readyToCalculate}>
             {calculatedRecipe ? 'Recalculate' : 'Calculate'} Recipe
           </Calculate>
-        </Section>
+        </FlexSection>
       )}
 
       {calculatedRecipe && (
@@ -353,7 +382,7 @@ export default function Home() {
               </InputRow>
             </tbody>
           </Table>
-          <Save role="button" onClick={() => saveRecipe()}>
+          <Save role="button" onClick={() => saveRecipe()} ref={saveButtonRef}>
             Save to Diary on {moment(displayDate).format('MMM Do')}
           </Save>
         </>
