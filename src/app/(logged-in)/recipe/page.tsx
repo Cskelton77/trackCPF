@@ -71,6 +71,22 @@ export default function Home() {
   const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: Mode }>();
 
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
+
+  useEffect(() => {
+    const loadingData = localStorage.getItem('ingredients');
+    if (loadingData) {
+      const parsedData = JSON.parse(loadingData);
+      setRecipeName(parsedData.recipeName);
+      setIngredients(parsedData.ingredients);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (ingredients.length > 0) {
+      localStorage.setItem('ingredients', JSON.stringify({ recipeName, ingredients }));
+    }
+  }, [recipeName, ingredients]);
+
   useEffect(() => {
     if (selectedFood) {
       const { fid, name, calories, protein, fibre, plantPoints } = selectedFood;
@@ -100,10 +116,11 @@ export default function Home() {
     }
     setServingDivisor(mode);
   };
+
   const clearRecipe = () => {
-    // clear localstorage
-    // clear state
-    // refresh page?
+    localStorage.removeItem('ingredients');
+    setIngredients([]);
+    setRecipeName('');
   };
 
   const calculateRecipe = () => {
