@@ -205,6 +205,7 @@ export default function Home() {
     await postDiary(diaryEntry);
 
     // Return to diary page
+    clearRecipe();
     router.push('/tracker/');
   };
 
