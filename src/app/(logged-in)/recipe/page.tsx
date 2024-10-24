@@ -108,6 +108,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
     }
   }, [recipeName, ingredients, servingDivisor, servingAmount]);
 
+
   useEffect(() => {
     if (selectedFood) {
       const { fid, name, calories, protein, fibre, plantPoints } = selectedFood;
