@@ -23,6 +23,7 @@ jest.mock('next/navigation', () => ({
     return {
       push: jest.fn(),
       prefetch: () => null,
+      replace: jest.fn(),
     };
   },
 }));
@@ -121,14 +122,14 @@ describe('Add a Recipe Page', () => {
   };
 
   it('Should add an ingredient from the database to the recipe', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     const enteredFood = await screen.findByText('Dropdown Food');
     expect(enteredFood).toBeInTheDocument();
   });
 
   it('Should add a new ingredient to the recipe', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('New Item');
     const enteredFood = await screen.findByText('New Item');
     expect(enteredFood).toBeInTheDocument();
@@ -137,7 +138,7 @@ describe('Add a Recipe Page', () => {
   it('Should add two ingredients to a recipe', async () => {
     // This is more of a unit-test-test since this functionality is
     // covered by the previous two tests separately
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     const existingFood = await screen.findByText('Dropdown Food');
     expect(existingFood).toBeInTheDocument();
@@ -164,7 +165,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should calculate the recipe per serving', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('Apples');
 
     await fillRow({
@@ -186,7 +187,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should calculate recipe per 100g', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('New Item');
     await fillRow({
       name: 'New Item',
@@ -207,7 +208,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should be able to recalculate', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('New Item');
     await fillRow({
       name: 'New Item',
@@ -246,7 +247,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should save recipe to diary', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     await fillRow({
       name: 'Dropdown Food',
@@ -290,7 +291,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should save new recipe ingredients to food DB', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     await searchForAndAddNewFood('Banana');
     await fillRow({
