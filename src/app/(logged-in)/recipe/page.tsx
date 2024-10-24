@@ -51,7 +51,7 @@ enum Mode {
   GRAMS = 100,
 }
 
-export default function Home() {
+export default function Home(props: { searchParams: { shared?: string } }) {
   const uid = useContext(UserContext);
   const { rounding } = useContext(SettingsContext);
   const router = useRouter();
@@ -70,22 +70,43 @@ export default function Home() {
   const [portion, setPortion] = useState<string>();
   const [calculatedRecipe, setCalculatedRecipe] = useState<DefinedFoodObject & { mode: Mode }>();
 
+  const [copyText, setCopyText] = useState('Share Recipe');
+
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
 
   useEffect(() => {
-    const loadingData = localStorage.getItem('ingredients');
-    if (loadingData) {
-      const parsedData = JSON.parse(loadingData);
-      setRecipeName(parsedData.recipeName);
-      setIngredients(parsedData.ingredients);
+    const { shared } = props.searchParams;
+    if (shared) {
+      try {
+        const decryptedData = Buffer.from(shared, 'base64').toString();
+        const jsonifiedData = JSON.parse(decryptedData);
+        setRecipeName(jsonifiedData.recipeName);
+        setIngredients(jsonifiedData.ingredients);
+        setServingDivisor(jsonifiedData.servingDivisor);
+        setServingAmount(jsonifiedData.servingAmount);
+      } catch (e) {
+        console.log('error decoding', e);
+      }
+    } else {
+      const loadingData = localStorage.getItem('ingredients');
+      if (loadingData) {
+        const parsedData = JSON.parse(loadingData);
+        setRecipeName(parsedData.recipeName);
+        setIngredients(parsedData.ingredients);
+        setServingDivisor(parsedData.servingDivisor);
+        setServingAmount(parsedData.servingAmount);
+      }
     }
   }, []);
 
   useEffect(() => {
     if (ingredients.length > 0) {
-      localStorage.setItem('ingredients', JSON.stringify({ recipeName, ingredients }));
+      localStorage.setItem(
+        'ingredients',
+        JSON.stringify({ recipeName, ingredients, servingDivisor, servingAmount }),
+      );
     }
-  }, [recipeName, ingredients]);
+  }, [recipeName, ingredients, servingDivisor, servingAmount]);
 
   useEffect(() => {
     if (selectedFood) {
@@ -121,6 +142,7 @@ export default function Home() {
     localStorage.removeItem('ingredients');
     setIngredients([]);
     setRecipeName('');
+    router.replace('/recipe');
   };
 
   const calculateRecipe = () => {
@@ -207,6 +229,28 @@ export default function Home() {
     // Return to diary page
     clearRecipe();
     router.push('/tracker/');
+  };
+
+  const shareRecipe = () => {
+    try {
+      const stringifiedData = JSON.stringify({
+        recipeName,
+        ingredients,
+        servingDivisor,
+        servingAmount,
+      });
+      const encodedData = Buffer.from(stringifiedData).toString('base64');
+      console.log({ encodedData });
+      const url = `${window.location.origin}${window.location.pathname}`;
+      console.log(`${url}?shared=${encodedData}`);
+      navigator.clipboard.writeText(`${url}?shared=${encodedData}`);
+      setCopyText('Copied to Clipboard...');
+      setTimeout(() => {
+        setCopyText('Share Recipe');
+      }, 1500);
+    } catch (e) {
+      //
+    }
   };
 
   const calculateDisplay = (metric: NullableNumber): string => {
@@ -409,6 +453,10 @@ export default function Home() {
           </Table>
           <Save role="button" onClick={() => saveRecipe()} ref={saveButtonRef}>
             Save to Diary on {moment(displayDate).format('MMM Do')}
+          </Save>
+
+          <Save role="button" onClick={() => shareRecipe()}>
+            {copyText}
           </Save>
         </>
       )}
