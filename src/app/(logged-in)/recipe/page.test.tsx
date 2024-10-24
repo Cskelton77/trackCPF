@@ -39,6 +39,8 @@ jest.mock('../../../api/diary', () => ({
 Date.now = jest.fn(() => new Date('2024-10-05').getTime());
 
 describe('Add a Recipe Page', () => {
+  window.HTMLElement.prototype.scrollIntoView = function () {};
+
   const searchFor = async (text: string = 'D') => {
     const searchInput = screen.getByPlaceholderText('Add an ingredient');
     await userEvent.clear(searchInput);
@@ -100,7 +102,7 @@ describe('Add a Recipe Page', () => {
       await userEvent.click(perServing);
     }
 
-    const buttonText = `Recipe ${isServing ? 'Servings' : 'Total Cooked Weight'}`;
+    const buttonText = `Recipe ${isServing ? 'Servings' : 'Cooked Weight'}`;
 
     const servingInput = await screen.findByRole('textbox', { name: buttonText });
     await userEvent.clear(servingInput);
@@ -247,15 +249,15 @@ describe('Add a Recipe Page', () => {
     });
 
     await enterServingAndCalculate(100);
-    const saveButton = await screen.findByRole('button', { name: 'Save Recipe to Diary' });
+    const saveButton = await screen.findByRole('button', { name: 'Save to Diary on Oct 5th' });
     await userEvent.click(saveButton);
 
     expect(postDiary).toHaveBeenCalledWith({
       uid: 'error',
       date: '2024-10-05',
-      serving: 0,
-      isDirectEntry: true,
-      isRecipe: false,
+      serving: 100,
+      isDirectEntry: false,
+      isRecipe: true,
       foodEntry: {
         fid: expect.any(String),
         name: 'Custom Recipe',
@@ -299,15 +301,15 @@ describe('Add a Recipe Page', () => {
     });
 
     await enterServingAndCalculate(100);
-    const saveButton = await screen.findByRole('button', { name: 'Save Recipe to Diary' });
+    const saveButton = await screen.findByRole('button', { name: 'Save to Diary on Oct 5th' });
     await userEvent.click(saveButton);
 
     expect(postDiary).toHaveBeenCalledWith({
       uid: 'error',
       date: '2024-10-05',
-      serving: 0,
-      isDirectEntry: true,
-      isRecipe: false,
+      serving: 100,
+      isDirectEntry: false,
+      isRecipe: true,
       foodEntry: {
         fid: expect.any(String),
         name: 'Custom Recipe',
