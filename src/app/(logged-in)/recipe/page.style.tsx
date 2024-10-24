@@ -38,7 +38,7 @@ const Action = styled.div`
   border: 1px solid ${theme.colours.darkGrey};
   padding: ${theme.padding.medium};
   text-align: center;
-
+  align-content: center;
   font-size: ${theme.fontSize.small};
 `;
 
@@ -47,6 +47,14 @@ export const Calculate = styled(Action)<{ $disabled: boolean }>`
   background: ${({ $disabled }) =>
     $disabled ? theme.colours.inactiveButton : theme.colours.neutralButton};
   color: ${({ $disabled }) => ($disabled ? theme.colours.lightGrey : theme.colours.white)};
+  flex: 8;
+`;
+
+export const Clear = styled(Action)`
+  cursor: 'pointer';
+  background: ${theme.colours.negativeButton};
+  color: ${theme.colours.white};
+  flex: 2;
 `;
 
 export const Save = styled(Action)`

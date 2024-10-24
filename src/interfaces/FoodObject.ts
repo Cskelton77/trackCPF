@@ -7,6 +7,7 @@ export interface DefinedFoodObject {
   protein?: NullableNumber;
   fibre?: NullableNumber;
   plantPoints?: NullableNumber;
+  recipeWeight?: NullableNumber;
 }
 
 export type FoodObject = Omit<DefinedFoodObject, 'fid'>;

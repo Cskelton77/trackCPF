@@ -26,6 +26,7 @@ const postDiary = async ({
         protein: foodEntry.protein,
         fibre: foodEntry.fibre,
         plantPoints: foodEntry.plantPoints,
+        ...(foodEntry.recipeWeight && { recipeWeight: foodEntry.recipeWeight }),
       },
       isRecipe,
       ingredients,

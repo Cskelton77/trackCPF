@@ -80,6 +80,7 @@ export default function Home() {
     protein: NullableNumber,
     fibre: NullableNumber,
     plantPoints: NullableNumber,
+    recipeWeight?: NullableNumber,
   ) => {
     // Add a new diary item with a food that should be saved to food DB
     const isCompleteEntry =
@@ -130,6 +131,7 @@ export default function Home() {
           protein: protein as number,
           fibre: fibre as number,
           plantPoints: plantPoints as number,
+          ...(recipeWeight && { recipeWeight }),
         },
       };
       await updateDiary(diaryUpdate);

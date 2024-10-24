@@ -5,6 +5,7 @@ import Home from './page';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { postDiary } from '@/api/diary';
 import { postFood } from '@/api/food';
+import mockLocalStorage from '@/mockLocalStorage';
 
 const mockResponse: DefinedFoodObject[] = [
   {
@@ -22,6 +23,7 @@ jest.mock('next/navigation', () => ({
     return {
       push: jest.fn(),
       prefetch: () => null,
+      replace: jest.fn(),
     };
   },
 }));
@@ -39,6 +41,15 @@ jest.mock('../../../api/diary', () => ({
 Date.now = jest.fn(() => new Date('2024-10-05').getTime());
 
 describe('Add a Recipe Page', () => {
+  window.HTMLElement.prototype.scrollIntoView = function () {};
+
+  beforeEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: mockLocalStorage,
+    });
+    mockLocalStorage.removeItem('ingredients');
+  });
+
   const searchFor = async (text: string = 'D') => {
     const searchInput = screen.getByPlaceholderText('Add an ingredient');
     await userEvent.clear(searchInput);
@@ -100,7 +111,7 @@ describe('Add a Recipe Page', () => {
       await userEvent.click(perServing);
     }
 
-    const buttonText = `Recipe ${isServing ? 'Servings' : 'Total Cooked Weight'}`;
+    const buttonText = `Recipe ${isServing ? 'Servings' : 'Cooked Weight'}`;
 
     const servingInput = await screen.findByRole('textbox', { name: buttonText });
     await userEvent.clear(servingInput);
@@ -111,14 +122,14 @@ describe('Add a Recipe Page', () => {
   };
 
   it('Should add an ingredient from the database to the recipe', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     const enteredFood = await screen.findByText('Dropdown Food');
     expect(enteredFood).toBeInTheDocument();
   });
 
   it('Should add a new ingredient to the recipe', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('New Item');
     const enteredFood = await screen.findByText('New Item');
     expect(enteredFood).toBeInTheDocument();
@@ -127,7 +138,7 @@ describe('Add a Recipe Page', () => {
   it('Should add two ingredients to a recipe', async () => {
     // This is more of a unit-test-test since this functionality is
     // covered by the previous two tests separately
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     const existingFood = await screen.findByText('Dropdown Food');
     expect(existingFood).toBeInTheDocument();
@@ -154,7 +165,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should calculate the recipe per serving', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('Apples');
 
     await fillRow({
@@ -176,7 +187,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should calculate recipe per 100g', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('New Item');
     await fillRow({
       name: 'New Item',
@@ -197,7 +208,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should be able to recalculate', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddNewFood('New Item');
     await fillRow({
       name: 'New Item',
@@ -236,7 +247,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should save recipe to diary', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     await fillRow({
       name: 'Dropdown Food',
@@ -247,15 +258,15 @@ describe('Add a Recipe Page', () => {
     });
 
     await enterServingAndCalculate(100);
-    const saveButton = await screen.findByRole('button', { name: 'Save Recipe to Diary' });
+    const saveButton = await screen.findByRole('button', { name: 'Save to Diary on Oct 5th' });
     await userEvent.click(saveButton);
 
     expect(postDiary).toHaveBeenCalledWith({
       uid: 'error',
       date: '2024-10-05',
-      serving: 0,
-      isDirectEntry: true,
-      isRecipe: false,
+      serving: 100,
+      isDirectEntry: false,
+      isRecipe: true,
       foodEntry: {
         fid: expect.any(String),
         name: 'Custom Recipe',
@@ -280,7 +291,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should save new recipe ingredients to food DB', async () => {
-    render(<Home />);
+    render(<Home searchParams={{}} />);
     await searchForAndAddExistingFood();
     await searchForAndAddNewFood('Banana');
     await fillRow({
@@ -299,15 +310,15 @@ describe('Add a Recipe Page', () => {
     });
 
     await enterServingAndCalculate(100);
-    const saveButton = await screen.findByRole('button', { name: 'Save Recipe to Diary' });
+    const saveButton = await screen.findByRole('button', { name: 'Save to Diary on Oct 5th' });
     await userEvent.click(saveButton);
 
     expect(postDiary).toHaveBeenCalledWith({
       uid: 'error',
       date: '2024-10-05',
-      serving: 0,
-      isDirectEntry: true,
-      isRecipe: false,
+      serving: 100,
+      isDirectEntry: false,
+      isRecipe: true,
       foodEntry: {
         fid: expect.any(String),
         name: 'Custom Recipe',

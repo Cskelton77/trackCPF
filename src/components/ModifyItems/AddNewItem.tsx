@@ -33,6 +33,7 @@ export interface AddNewItemInterface {
     protein: NullableNumber,
     fibre: NullableNumber,
     plantPoints: NullableNumber,
+    recipeWeight?: NullableNumber,
   ) => void;
   close: () => void;
 }
@@ -96,6 +97,7 @@ const AddNewItem = forwardRef(
           parseFloat(protein || ''),
           parseFloat(fibre || ''),
           parseFloat(plantPoints || '0'),
+          selectedFood?.recipeWeight,
         );
       }
       resetForm();
@@ -129,50 +131,54 @@ const AddNewItem = forwardRef(
               <TextDisplay>{isManualMode ? 'Serving' : 'grams'}</TextDisplay>
             </EntryBox>
             <br />
-            <hr />
-            <br />
-            <EntryLabel>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryLabel>
-            <EntryBox>
-              <AttributeInput
-                id="calories"
-                inputMode="decimal"
-                value={calories || ''}
-                onChange={(e) => setCalories(e.target.value)}
-              />
-              <TextDisplay htmlFor="calories">Calories</TextDisplay>
-            </EntryBox>
-            <EntryBox>
-              <AttributeInput
-                id="protein"
-                inputMode="decimal"
-                value={protein || ''}
-                onChange={(e) => setProtein(e.target.value)}
-              />
-              <TextDisplay htmlFor="protein">Protein</TextDisplay>
-            </EntryBox>
-            <EntryBox>
-              <AttributeInput
-                id="fibre"
-                inputMode="decimal"
-                value={fibre || ''}
-                onChange={(e) => setFibre(e.target.value)}
-              />
-              <TextDisplay htmlFor="fibre">Fibre</TextDisplay>
-            </EntryBox>
-            {usePlantPoints && (
-              <EntryBox>
-                <PlantPointsSelector
-                  aria-label="Plant Points"
-                  id="plantPoints"
-                  value={plantPoints}
-                  onChange={(e) => setPlantPoints(e.target.value)}
-                >
-                  <option value={0}>0 Plant Points</option>
-                  <option value={1}>1 Plant Point</option>
-                  <option value={0.5}>1/2 Plant Point</option>
-                  <option value={0.25}>1/4 Plant Point</option>
-                </PlantPointsSelector>
-              </EntryBox>
+            {!selectedFood?.recipeWeight && (
+              <>
+                <hr />
+                <br />
+                <EntryLabel>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryLabel>
+                <EntryBox>
+                  <AttributeInput
+                    id="calories"
+                    inputMode="decimal"
+                    value={calories || ''}
+                    onChange={(e) => setCalories(e.target.value)}
+                  />
+                  <TextDisplay htmlFor="calories">Calories</TextDisplay>
+                </EntryBox>
+                <EntryBox>
+                  <AttributeInput
+                    id="protein"
+                    inputMode="decimal"
+                    value={protein || ''}
+                    onChange={(e) => setProtein(e.target.value)}
+                  />
+                  <TextDisplay htmlFor="protein">Protein</TextDisplay>
+                </EntryBox>
+                <EntryBox>
+                  <AttributeInput
+                    id="fibre"
+                    inputMode="decimal"
+                    value={fibre || ''}
+                    onChange={(e) => setFibre(e.target.value)}
+                  />
+                  <TextDisplay htmlFor="fibre">Fibre</TextDisplay>
+                </EntryBox>
+                {usePlantPoints && (
+                  <EntryBox>
+                    <PlantPointsSelector
+                      aria-label="Plant Points"
+                      id="plantPoints"
+                      value={plantPoints}
+                      onChange={(e) => setPlantPoints(e.target.value)}
+                    >
+                      <option value={0}>0 Plant Points</option>
+                      <option value={1}>1 Plant Point</option>
+                      <option value={0.5}>1/2 Plant Point</option>
+                      <option value={0.25}>1/4 Plant Point</option>
+                    </PlantPointsSelector>
+                  </EntryBox>
+                )}
+              </>
             )}
           </ItemAttributes>
 
