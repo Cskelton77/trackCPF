@@ -56,7 +56,9 @@ export default function Home() {
   const { rounding } = useContext(SettingsContext);
   const router = useRouter();
 
+  const servingInputRef = useRef<HTMLDivElement>(null);
   const calculateButtonRef = useRef<HTMLDivElement>(null);
+
   const saveButtonRef = useRef<HTMLDivElement>(null);
 
   const [displayDate, setDisplayDate] = useState(moment());
@@ -93,8 +95,8 @@ export default function Home() {
   };
 
   const setCalculationMode = (mode: Mode) => {
-    if (calculateButtonRef.current) {
-      calculateButtonRef.current.scrollIntoView();
+    if (servingInputRef.current) {
+      servingInputRef.current.scrollIntoView();
     }
     setServingDivisor(mode);
   };
@@ -136,9 +138,9 @@ export default function Home() {
         mode: servingDivisor,
         plantPoints: pp,
       });
-      if (saveButtonRef.current) {
-        saveButtonRef.current.scrollIntoView();
-      }
+    }
+    if (saveButtonRef.current) {
+      saveButtonRef.current.scrollIntoView();
     }
   };
 
@@ -321,7 +323,7 @@ export default function Home() {
           Per 100g
         </ServingToggle>
       </FlexSection>
-      <FlexSection>
+      <FlexSection ref={servingInputRef}>
         <ServingLabel>
           {servingDivisor == 1 ? 'Servings: ' : 'Total Cooked Weight (g): '}
         </ServingLabel>
@@ -332,7 +334,12 @@ export default function Home() {
           aria-label={`Recipe ${servingDivisor == 1 ? 'Servings' : 'Cooked Weight'}`}
           name="serving"
           value={servingAmount}
-          onChange={(e) => setServingAmount(e.target.value)}
+          onChange={(e) => {
+            if (calculateButtonRef.current) {
+              calculateButtonRef.current.scrollIntoView();
+            }
+            setServingAmount(e.target.value);
+          }}
         />
       </FlexSection>
 

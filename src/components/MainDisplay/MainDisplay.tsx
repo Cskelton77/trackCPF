@@ -65,7 +65,6 @@ const MainDisplay = ({
 
           const { fid, name, calories, protein, fibre, recipeWeight } = foodEntry;
           const unit = isDirectEntry ? '' : 'g';
-
           return (
             <>
               <tr
@@ -97,9 +96,17 @@ const MainDisplay = ({
                 ingredients.map(
                   ({ rid, fid, name, amount, calories, protein, fibre, plantPoints }) => {
                     const parseDirect = (num: string | undefined) =>
-                      (parseFloat(num || '0') * parseFloat(amount || '0')) / 100;
-                    const parseForRecipe = (num: string | undefined) =>
-                      parseInt(num || '100') * (parseInt(num || '100') / (recipeWeight || 100));
+                      calculateDisplay((parseFloat(num || '0') * parseFloat(amount || '0')) / 100);
+
+                    const parseForRecipe = (num: string | undefined) => {
+                      const calc =
+                        parseInt(num || '100') * (parseInt(num || '100') / (recipeWeight || 100));
+                      if (rounding) {
+                        return Math.round(calc).toString();
+                      } else {
+                        return roundDisplay(calc).toString();
+                      }
+                    };
 
                     const displayCal = isDirectEntry
                       ? parseDirect(calories)
@@ -110,7 +117,7 @@ const MainDisplay = ({
                     const displayFibre = isDirectEntry ? parseDirect(fibre) : parseForRecipe(fibre);
 
                     const displayAmount = isDirectEntry
-                      ? parseFloat(amount || '0')
+                      ? calculateDisplay(parseFloat(amount || '0'))
                       : parseInt(amount || '100') * (serving / (recipeWeight || 100));
 
                     return (
@@ -123,10 +130,10 @@ const MainDisplay = ({
                             ''
                           )}
                         </IndentedTableCell>
-                        <NumberCell>{calculateDisplay(displayAmount)}g</NumberCell>
-                        <NumberCell>{calculateDisplay(displayCal)}</NumberCell>
-                        <NumberCell>{calculateDisplay(displayProtein)}g</NumberCell>
-                        <NumberCell>{calculateDisplay(displayFibre)}g</NumberCell>
+                        <NumberCell>{displayAmount}g</NumberCell>
+                        <NumberCell>{displayCal}</NumberCell>
+                        <NumberCell>{displayProtein}g</NumberCell>
+                        <NumberCell>{displayFibre}g</NumberCell>
                       </IngredientRow>
                     );
                   },
