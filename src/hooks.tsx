@@ -8,15 +8,17 @@ export const useLogin = () => {
   const [email, setEmail] = useState<string>('');
 
   useEffect(() => {
-    if (uid !== 'ERROR') {
-      setUid(localStorage.getItem('uid') || 'ERROR');
-      setEmail(localStorage.getItem('email') || 'ERROR');
-    } else {
+    setUid(localStorage.getItem('uid') || 'ERROR');
+    setEmail(localStorage.getItem('email') || 'ERROR');
+  }, []);
+
+  useEffect(() => {
+    if (uid === 'ERROR') {
       localStorage.removeItem('uid');
       localStorage.removeItem('email');
       router.push('/');
     }
-  }, []);
+  }, [uid]);
 
   return {
     uid,

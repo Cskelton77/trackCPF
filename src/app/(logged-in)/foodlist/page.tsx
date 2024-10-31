@@ -4,7 +4,7 @@ import { UserContext } from '@/context';
 import { FoodEntry, ActionBlock } from './page.style';
 import { deleteFood, getFood } from '@/api/food';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
-import { Delete, PlantPoint } from '@/Icons';
+import { Delete, PlantPoint } from '@/icons';
 import { theme } from '@/theme';
 import ModifyFood from '@/components/ModifyItems/ModifyFood';
 import patchFood from '@/api/food/patch';

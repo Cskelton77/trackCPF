@@ -14,7 +14,7 @@ import { theme } from '@/theme';
 import { useContext } from 'react';
 import { PROTEIN_CALCULATION, SettingsContext } from '@/context';
 import { Moment } from 'moment';
-import { PlantPoint } from '@/Icons';
+import { PlantPoint } from '@/icons';
 import { generateChartData } from './Summary.utils';
 
 const NHS_DAILY_FIBRE = 30;

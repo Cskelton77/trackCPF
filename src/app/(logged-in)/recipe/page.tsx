@@ -25,7 +25,7 @@ import { postDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { roundDisplay } from '@/components/MainDisplay/MainDisplay';
 import { NullableNumber } from '@/interfaces/ItemModes';
-import { PlantPoint } from '@/Icons';
+import { PlantPoint } from '@/icons';
 import { theme } from '@/theme';
 
 export interface RecipeIngredient {
@@ -85,7 +85,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
         setServingDivisor(jsonifiedData.servingDivisor);
         setServingAmount(jsonifiedData.servingAmount);
       } catch (e) {
-        console.log('error decoding', e);
+        // console.log('error decoding', e);
       }
     } else {
       const loadingData = localStorage.getItem('ingredients');
@@ -107,7 +107,6 @@ export default function Home(props: { searchParams: { shared?: string } }) {
       );
     }
   }, [recipeName, ingredients, servingDivisor, servingAmount]);
-
 
   useEffect(() => {
     if (selectedFood) {
@@ -233,25 +232,19 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   const shareRecipe = () => {
-    try {
-      const stringifiedData = JSON.stringify({
-        recipeName,
-        ingredients,
-        servingDivisor,
-        servingAmount,
-      });
-      const encodedData = Buffer.from(stringifiedData).toString('base64');
-      console.log({ encodedData });
-      const url = `${window.location.origin}${window.location.pathname}`;
-      console.log(`${url}?shared=${encodedData}`);
-      navigator.clipboard.writeText(`${url}?shared=${encodedData}`);
-      setCopyText('Copied to Clipboard...');
-      setTimeout(() => {
-        setCopyText('Share Recipe');
-      }, 1500);
-    } catch (e) {
-      //
-    }
+    const stringifiedData = JSON.stringify({
+      recipeName,
+      ingredients,
+      servingDivisor,
+      servingAmount,
+    });
+    const encodedData = Buffer.from(stringifiedData).toString('base64');
+    const url = `${window.location.origin}${window.location.pathname}`;
+    navigator.clipboard.writeText(`${url}?shared=${encodedData}`);
+    setCopyText('Copied to Clipboard...');
+    setTimeout(() => {
+      setCopyText('Share Recipe');
+    }, 1500);
   };
 
   const calculateDisplay = (metric: NullableNumber): string => {
@@ -271,6 +264,8 @@ export default function Home(props: { searchParams: { shared?: string } }) {
       <Section>
         Recipe:{' '}
         <InputField
+          id="Recipe Name"
+          aria-label="Name of recipe"
           style={{ textAlign: 'left' }}
           value={recipeName}
           placeholder="Name of recipe"

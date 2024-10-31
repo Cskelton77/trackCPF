@@ -16,7 +16,7 @@ import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react
 import { FoodObject } from '@/interfaces/FoodObject';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
-import { Delete } from '@/Icons';
+import { Delete } from '@/icons';
 
 export interface AddNewItemInterface {
   name: string;

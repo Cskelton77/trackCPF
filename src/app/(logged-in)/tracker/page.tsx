@@ -9,7 +9,7 @@ import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { UserContext } from '@/context';
 import { v4 as uuidv4 } from 'uuid';
-import { Spinner } from '@/Icons';
+import { Spinner } from '@/icons';
 import DeleteFood from '@/components/ModifyItems/DeleteFood';
 
 export default function Home() {
