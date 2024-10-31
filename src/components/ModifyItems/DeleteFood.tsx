@@ -11,7 +11,7 @@ import { ForwardedRef, forwardRef, useContext } from 'react';
 import { FoodObject } from '@/interfaces/FoodObject';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
-import { Delete } from '@/Icons';
+import { Delete } from '@/icons';
 import { NullableNumber } from '@/interfaces/ItemModes';
 import { roundDisplay } from '../MainDisplay/MainDisplay';
 

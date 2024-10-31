@@ -10,7 +10,7 @@ import {
 } from './MainDisplay.style';
 import { useContext } from 'react';
 import { SettingsContext } from '@/context';
-import { PlantPoint, Recipe } from '@/Icons';
+import { PlantPoint, Recipe } from '@/icons';
 import { theme } from '@/theme';
 import { NullableNumber } from '@/interfaces/ItemModes';
 

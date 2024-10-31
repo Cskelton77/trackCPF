@@ -11,6 +11,16 @@ const config: Config = {
   clearMocks: true,
   coverageProvider: 'v8',
   collectCoverage: true,
+  collectCoverageFrom: ['src/**/*'],
+  coveragePathIgnorePatterns: [
+    'src/api/*',
+    'src/icons/*',
+    'src/interfaces/*',
+    'ParentWrapper.tsx',
+    'layout.tsx',
+    '.style.tsx',
+    '.style.ts',
+  ],
   coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',
   // Add more setup options before each test is run
