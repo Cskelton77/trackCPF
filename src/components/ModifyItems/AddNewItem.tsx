@@ -19,7 +19,6 @@ import { SettingsContext } from '@/context';
 import { Delete } from '@/icons';
 
 export interface AddNewItemInterface {
-  name: string;
   selectedFood?: FoodObject;
   selectedFoodServing?: number;
   isVisible: boolean;
@@ -41,7 +40,6 @@ export interface AddNewItemInterface {
 const AddNewItem = forwardRef(
   (
     {
-      name,
       selectedFood,
       selectedFoodServing,
       handleSave,
@@ -91,7 +89,7 @@ const AddNewItem = forwardRef(
     const handleSubmit = () => {
       if (serving) {
         handleSave(
-          selectedFood?.name || name,
+          selectedFood?.name || 'NO NAME SUPPLIED',
           parseFloat(serving),
           parseFloat(calories || ''),
           parseFloat(protein || ''),
@@ -106,9 +104,9 @@ const AddNewItem = forwardRef(
     const getTitle = () => {
       switch (mode) {
         case MODES.MANUAL:
-          return `New Entry: ${name}`;
+          return `New Entry: ${selectedFood?.name}`;
         case MODES.CALCULATE:
-          return `New Item: ${selectedFood?.name || name}`;
+          return `New Item: ${selectedFood?.name}`;
         case MODES.UPDATE:
           return `Update Entry: ${selectedFood?.name}`;
         default:

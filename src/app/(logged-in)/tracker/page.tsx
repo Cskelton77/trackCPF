@@ -208,7 +208,6 @@ export default function Home() {
         ref={addNewItemRef}
         isVisible={!!foodMode}
         mode={foodMode}
-        name={searchValue}
         selectedFood={selectedFood}
         selectedFoodServing={selectedFoodServing}
         handleSave={handleSaveDiaryEntry}
