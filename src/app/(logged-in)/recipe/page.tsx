@@ -147,9 +147,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   const setCalculationMode = (mode: Mode) => {
-    if (servingInputRef.current) {
-      servingInputRef.current.scrollIntoView();
-    }
+    scrollTo(servingInputRef);
     setServingDivisor(mode);
   };
 
