@@ -1,19 +1,25 @@
 'use client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from '@/context';
-import { FoodEntry, ActionBlock } from './page.style';
+import { FoodEntry, ActionBlock, MenuBarContainer, MenuItem } from './page.style';
 import { deleteFood, getFood } from '@/api/food';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
-import { Delete, PlantPoint } from '@/icons';
-import { theme } from '@/theme';
+import { Recipe, Delete, PlantPoint, Spinner } from '@/icons';
 import ModifyFood from '@/components/ModifyItems/ModifyFood';
 import patchFood from '@/api/food/patch';
 
 export default function Home() {
+  enum Filter {
+    Ingredient = 'ingredient',
+    Plant = 'plant',
+  }
+
   const uid = useContext(UserContext);
 
   const [data, setAllData] = useState<DefinedFoodObject[]>([]);
+  const [foodFilter, setFoodFilter] = useState<Filter>(Filter.Ingredient);
   const [selectedFood, setSelectedFood] = useState<DefinedFoodObject>();
+  const [loadingData, setLoadingData] = useState(true);
 
   const addNewItemRef = useRef<HTMLDivElement>(null);
 
@@ -24,13 +30,27 @@ export default function Home() {
   }, [selectedFood]);
 
   useEffect(() => {
+    setLoadingData(true);
     fetchAllFoodItems();
-  }, []);
+    setLoadingData(false);
+  }, [foodFilter]);
 
   async function fetchAllFoodItems() {
     setSelectedFood(undefined);
     const response = await getFood(uid);
-    setAllData(response);
+    console.log({ foodFilter });
+    if (foodFilter == Filter.Ingredient) {
+      const filteredFood = response.filter((item) => !item.plantPoints || item.plantPoints == 0);
+      console.log({ filteredFood });
+
+      setAllData(filteredFood);
+    }
+    if (foodFilter == Filter.Plant) {
+      console.log(response);
+      const filteredFood = response.filter((item) => item.plantPoints && item.plantPoints > 0);
+      console.log({ filteredFood });
+      setAllData(filteredFood);
+    }
   }
 
   const handleSaveFoodToDatabase = async ({
@@ -66,6 +86,25 @@ export default function Home() {
 
   return (
     <>
+      <MenuBarContainer>
+        <MenuItem
+          $selected={foodFilter == Filter.Ingredient}
+          onClick={() => setFoodFilter(Filter.Ingredient)}
+        >
+          Non-Veg
+        </MenuItem>
+        <MenuItem
+          $selected={foodFilter == Filter.Plant}
+          onClick={() => setFoodFilter(Filter.Plant)}
+        >
+          <PlantPoint />
+          &nbsp;Fruit & Veg&nbsp;
+          <PlantPoint />
+        </MenuItem>
+      </MenuBarContainer>
+      {/* <hr /> */}
+      {loadingData && <Spinner />}
+
       {data &&
         data.map((foodItem) => {
           return (
@@ -73,11 +112,7 @@ export default function Home() {
               <span onClick={() => handleModifyFoodEntry(foodItem)}>
                 {foodItem.name || '[MISSING NAME]'} ({foodItem.calories || '[MISSING CALORIES]'}{' '}
                 cal/100g)
-                {foodItem.plantPoints ? (
-                  <PlantPoint style={{ fill: theme.colours.plantPoint }} />
-                ) : (
-                  ''
-                )}
+                {foodItem.plantPoints ? <PlantPoint /> : ''}
               </span>
               <ActionBlock>
                 <Delete
