@@ -500,6 +500,23 @@ describe('Add a Recipe Page', () => {
       expect(shareBtn3).toBeInTheDocument();
     }, 1550);
   });
+
+  it('Should remove an item from ingredients array', async () => {
+    render(<Home searchParams={{}} />);
+    await searchForAndAddExistingFood();
+    await fillRow({
+      name: 'Dropdown Food',
+      amount: '100',
+      calories: '150',
+      protein: '1.5',
+      fibre: '0',
+    });
+
+    const deleteBtn = await screen.findByRole('button', { name: 'Delete Dropdown Food' });
+    await userEvent.click(deleteBtn);
+    const enteredFood = screen.queryByText('Dropdown Food');
+    expect(enteredFood).not.toBeInTheDocument();
+  });
 });
 
 // untested lines
