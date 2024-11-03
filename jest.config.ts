@@ -20,6 +20,7 @@ const config: Config = {
     'layout.tsx',
     '.style.tsx',
     '.style.ts',
+    'registry.tsx',
   ],
   coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',

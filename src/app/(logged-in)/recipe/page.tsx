@@ -25,7 +25,7 @@ import { postDiary } from '@/api/diary';
 import { useRouter } from 'next/navigation';
 import { roundDisplay } from '@/components/MainDisplay/MainDisplay';
 import { NullableNumber } from '@/interfaces/ItemModes';
-import { PlantPoint } from '@/icons';
+import { Delete, PlantPoint } from '@/icons';
 import { theme } from '@/theme';
 
 export interface RecipeIngredient {
@@ -128,6 +128,13 @@ export default function Home(props: { searchParams: { shared?: string } }) {
     const mod = ingredients.findIndex((ingredient) => ingredient.rid == rid);
     const newIngredients = [...ingredients];
     newIngredients[mod][value] = amount;
+    setIngredients(newIngredients);
+  };
+
+  const handleRemoveIngredient = (rid: string) => {
+    const mod = ingredients.findIndex((ingredient) => ingredient.rid == rid);
+    const newIngredients = [...ingredients];
+    newIngredients.splice(mod, 1);
     setIngredients(newIngredients);
   };
 
@@ -262,7 +269,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
     <>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} compact={true} />
       <Section>
-        Recipe:{' '}
+        Recipe Name
         <InputField
           id="Recipe Name"
           aria-label="Name of recipe"
@@ -279,6 +286,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
             <tr>
               <th colSpan={2}></th>
               <th colSpan={3}>----- per 100g ------</th>
+              <th></th>
             </tr>
             <tr>
               <th></th>
@@ -286,6 +294,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
               <th>Calorie</th>
               <th>Protein</th>
               <th>Fibre</th>
+              <th></th>
             </tr>
           </thead>
         )}
@@ -346,6 +355,13 @@ export default function Home(props: { searchParams: { shared?: string } }) {
                       onChange={(e) =>
                         modifyIngredient(IngredientProperty.FIB, ingredient.rid, e.target.value)
                       }
+                    />
+                  </InputCell>
+                  <InputCell>
+                    <Delete
+                      onClick={() => handleRemoveIngredient(ingredient.rid)}
+                      size={24}
+                      label={`Delete ${ingredient.name}`}
                     />
                   </InputCell>
                 </InputRow>
