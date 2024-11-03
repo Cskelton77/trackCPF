@@ -4,7 +4,7 @@ import { UserContext } from '@/context';
 import { FoodEntry, ActionBlock, MenuBarContainer, MenuItem } from './page.style';
 import { deleteFood, getFood } from '@/api/food';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
-import { Recipe, Delete, PlantPoint, Spinner } from '@/icons';
+import { Delete, PlantPoint, Spinner } from '@/icons';
 import ModifyFood from '@/components/ModifyItems/ModifyFood';
 import patchFood from '@/api/food/patch';
 
@@ -24,31 +24,26 @@ export default function Home() {
   const addNewItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (addNewItemRef.current && selectedFood) {
-      addNewItemRef.current.scrollIntoView();
-    }
-  }, [selectedFood]);
-
-  useEffect(() => {
     setLoadingData(true);
     fetchAllFoodItems();
     setLoadingData(false);
   }, [foodFilter]);
 
+  useEffect(() => {
+    if (addNewItemRef.current && selectedFood) {
+      addNewItemRef.current.scrollIntoView();
+    }
+  }, [selectedFood]);
+
   async function fetchAllFoodItems() {
     setSelectedFood(undefined);
     const response = await getFood(uid);
-    console.log({ foodFilter });
     if (foodFilter == Filter.Ingredient) {
       const filteredFood = response.filter((item) => !item.plantPoints || item.plantPoints == 0);
-      console.log({ filteredFood });
-
       setAllData(filteredFood);
     }
     if (foodFilter == Filter.Plant) {
-      console.log(response);
       const filteredFood = response.filter((item) => item.plantPoints && item.plantPoints > 0);
-      console.log({ filteredFood });
       setAllData(filteredFood);
     }
   }
@@ -88,12 +83,14 @@ export default function Home() {
     <>
       <MenuBarContainer>
         <MenuItem
+          role="button"
           $selected={foodFilter == Filter.Ingredient}
           onClick={() => setFoodFilter(Filter.Ingredient)}
         >
           Non-Veg
         </MenuItem>
         <MenuItem
+          role="button"
           $selected={foodFilter == Filter.Plant}
           onClick={() => setFoodFilter(Filter.Plant)}
         >
@@ -102,7 +99,7 @@ export default function Home() {
           <PlantPoint />
         </MenuItem>
       </MenuBarContainer>
-      {/* <hr /> */}
+
       {loadingData && <Spinner />}
 
       {data &&
