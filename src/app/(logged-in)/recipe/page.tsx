@@ -148,7 +148,6 @@ export default function Home(props: { searchParams: { shared?: string } }) {
 
   const setCalculationMode = (mode: Mode) => {
     if (servingInputRef.current) {
-      console.log('scrollto servingInputRef');
       servingInputRef.current.scrollIntoView();
     }
     setServingDivisor(mode);
