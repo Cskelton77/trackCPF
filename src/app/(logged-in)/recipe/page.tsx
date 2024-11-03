@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { DatePicker, SearchBar } from '@/components';
 import { SettingsContext, UserContext } from '@/context';
 import {
@@ -74,6 +74,14 @@ export default function Home(props: { searchParams: { shared?: string } }) {
 
   const readyToCalculate = !!servingAmount && ingredients.length > 0;
 
+  const scrollTo = (r: RefObject<any>) => {
+    setTimeout(() => {
+      if (r && r.current) {
+        r.current.scrollIntoView();
+      }
+    }, 150);
+  };
+
   useEffect(() => {
     const { shared } = props.searchParams;
     if (shared) {
@@ -139,9 +147,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   const setCalculationMode = (mode: Mode) => {
-    if (servingInputRef.current) {
-      servingInputRef.current.scrollIntoView();
-    }
+    scrollTo(servingInputRef);
     setServingDivisor(mode);
   };
 
@@ -149,6 +155,8 @@ export default function Home(props: { searchParams: { shared?: string } }) {
     localStorage.removeItem('ingredients');
     setIngredients([]);
     setRecipeName('');
+    setServingAmount('');
+    setServingDivisor(Mode.SERVING);
     router.replace('/recipe');
   };
 
@@ -185,9 +193,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
         plantPoints: pp,
       });
     }
-    if (saveButtonRef.current) {
-      saveButtonRef.current.scrollIntoView();
-    }
+    scrollTo(saveButtonRef);
   };
 
   const saveRecipe = async () => {
@@ -409,10 +415,8 @@ export default function Home(props: { searchParams: { shared?: string } }) {
           name="serving"
           value={servingAmount}
           onChange={(e) => {
-            if (calculateButtonRef.current) {
-              calculateButtonRef.current.scrollIntoView();
-            }
             setServingAmount(e.target.value);
+            scrollTo(calculateButtonRef);
           }}
         />
       </FlexSection>
