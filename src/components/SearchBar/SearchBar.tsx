@@ -1,5 +1,5 @@
 import { ItemMode, MODES } from '@/interfaces/ItemModes';
-import { Delete, PlantPoint } from '@/Icons';
+import { Delete, PlantPoint } from '@/icons';
 import { ActionBlock, ResponseDropdown, ResponseRow, SearchBarInput } from './SearchBar.style';
 import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react';

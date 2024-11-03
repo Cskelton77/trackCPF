@@ -18,6 +18,7 @@ const updateDiary = async ({ did, uid, serving, foodEntry }: Partial<DiaryData>)
         protein: foodEntry?.protein,
         fibre: foodEntry?.fibre,
         plantPoints: foodEntry?.plantPoints,
+        ...(foodEntry?.recipeWeight && { recipeWeight: foodEntry.recipeWeight }),
       },
     }),
   });

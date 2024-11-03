@@ -35,6 +35,7 @@ export default function Page() {
       <LoginHeader>Log In</LoginHeader>
       <LoginForm onSubmit={(e) => handleLogin(e)}>
         <EmailForm
+          aria-label="Email for Login"
           value={email}
           onChange={(e) => setUserEmail(e.target.value)}
           placeholder="Please enter your email"

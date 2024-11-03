@@ -16,10 +16,9 @@ import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react
 import { FoodObject } from '@/interfaces/FoodObject';
 import Modal from '../_Modal/Modal';
 import { SettingsContext } from '@/context';
-import { Delete } from '@/Icons';
+import { Delete } from '@/icons';
 
 export interface AddNewItemInterface {
-  name: string;
   selectedFood?: FoodObject;
   selectedFoodServing?: number;
   isVisible: boolean;
@@ -33,6 +32,7 @@ export interface AddNewItemInterface {
     protein: NullableNumber,
     fibre: NullableNumber,
     plantPoints: NullableNumber,
+    recipeWeight?: NullableNumber,
   ) => void;
   close: () => void;
 }
@@ -40,7 +40,6 @@ export interface AddNewItemInterface {
 const AddNewItem = forwardRef(
   (
     {
-      name,
       selectedFood,
       selectedFoodServing,
       handleSave,
@@ -90,12 +89,13 @@ const AddNewItem = forwardRef(
     const handleSubmit = () => {
       if (serving) {
         handleSave(
-          selectedFood?.name || name,
+          selectedFood?.name || 'NO NAME SUPPLIED',
           parseFloat(serving),
           parseFloat(calories || ''),
           parseFloat(protein || ''),
           parseFloat(fibre || ''),
           parseFloat(plantPoints || '0'),
+          selectedFood?.recipeWeight,
         );
       }
       resetForm();
@@ -104,9 +104,9 @@ const AddNewItem = forwardRef(
     const getTitle = () => {
       switch (mode) {
         case MODES.MANUAL:
-          return `New Entry: ${name}`;
+          return `New Entry: ${selectedFood?.name}`;
         case MODES.CALCULATE:
-          return `New Item: ${selectedFood?.name || name}`;
+          return `New Item: ${selectedFood?.name}`;
         case MODES.UPDATE:
           return `Update Entry: ${selectedFood?.name}`;
         default:
@@ -129,50 +129,54 @@ const AddNewItem = forwardRef(
               <TextDisplay>{isManualMode ? 'Serving' : 'grams'}</TextDisplay>
             </EntryBox>
             <br />
-            <hr />
-            <br />
-            <EntryLabel>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryLabel>
-            <EntryBox>
-              <AttributeInput
-                id="calories"
-                inputMode="decimal"
-                value={calories || ''}
-                onChange={(e) => setCalories(e.target.value)}
-              />
-              <TextDisplay htmlFor="calories">Calories</TextDisplay>
-            </EntryBox>
-            <EntryBox>
-              <AttributeInput
-                id="protein"
-                inputMode="decimal"
-                value={protein || ''}
-                onChange={(e) => setProtein(e.target.value)}
-              />
-              <TextDisplay htmlFor="protein">Protein</TextDisplay>
-            </EntryBox>
-            <EntryBox>
-              <AttributeInput
-                id="fibre"
-                inputMode="decimal"
-                value={fibre || ''}
-                onChange={(e) => setFibre(e.target.value)}
-              />
-              <TextDisplay htmlFor="fibre">Fibre</TextDisplay>
-            </EntryBox>
-            {usePlantPoints && (
-              <EntryBox>
-                <PlantPointsSelector
-                  aria-label="Plant Points"
-                  id="plantPoints"
-                  value={plantPoints}
-                  onChange={(e) => setPlantPoints(e.target.value)}
-                >
-                  <option value={0}>0 Plant Points</option>
-                  <option value={1}>1 Plant Point</option>
-                  <option value={0.5}>1/2 Plant Point</option>
-                  <option value={0.25}>1/4 Plant Point</option>
-                </PlantPointsSelector>
-              </EntryBox>
+            {!selectedFood?.recipeWeight && (
+              <>
+                <hr />
+                <br />
+                <EntryLabel>Nutrition {isManualMode ? 'Per Serving: ' : 'Per 100g: '}</EntryLabel>
+                <EntryBox>
+                  <AttributeInput
+                    id="calories"
+                    inputMode="decimal"
+                    value={calories || ''}
+                    onChange={(e) => setCalories(e.target.value)}
+                  />
+                  <TextDisplay htmlFor="calories">Calories</TextDisplay>
+                </EntryBox>
+                <EntryBox>
+                  <AttributeInput
+                    id="protein"
+                    inputMode="decimal"
+                    value={protein || ''}
+                    onChange={(e) => setProtein(e.target.value)}
+                  />
+                  <TextDisplay htmlFor="protein">Protein</TextDisplay>
+                </EntryBox>
+                <EntryBox>
+                  <AttributeInput
+                    id="fibre"
+                    inputMode="decimal"
+                    value={fibre || ''}
+                    onChange={(e) => setFibre(e.target.value)}
+                  />
+                  <TextDisplay htmlFor="fibre">Fibre</TextDisplay>
+                </EntryBox>
+                {usePlantPoints && (
+                  <EntryBox>
+                    <PlantPointsSelector
+                      aria-label="Plant Points"
+                      id="plantPoints"
+                      value={plantPoints}
+                      onChange={(e) => setPlantPoints(e.target.value)}
+                    >
+                      <option value={0}>0 Plant Points</option>
+                      <option value={1}>1 Plant Point</option>
+                      <option value={0.5}>1/2 Plant Point</option>
+                      <option value={0.25}>1/4 Plant Point</option>
+                    </PlantPointsSelector>
+                  </EntryBox>
+                )}
+              </>
             )}
           </ItemAttributes>
 

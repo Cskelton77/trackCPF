@@ -1,5 +1,5 @@
 import { MenuBarContainer, MenuItem } from './MenuBar.style';
-import { Home, AddRecipe, Database } from '@/Icons';
+import { Home, AddRecipe, Database } from '@/icons';
 import { useRouter } from 'next/navigation';
 
 const MenuBar = () => {

@@ -9,7 +9,7 @@ import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { deleteDiary, getDiary, postDiary, updateDiary } from '@/api/diary';
 import { UserContext } from '@/context';
 import { v4 as uuidv4 } from 'uuid';
-import { Spinner } from '@/Icons';
+import { Spinner } from '@/icons';
 import DeleteFood from '@/components/ModifyItems/DeleteFood';
 
 export default function Home() {
@@ -80,6 +80,7 @@ export default function Home() {
     protein: NullableNumber,
     fibre: NullableNumber,
     plantPoints: NullableNumber,
+    recipeWeight?: NullableNumber,
   ) => {
     // Add a new diary item with a food that should be saved to food DB
     const isCompleteEntry =
@@ -130,6 +131,7 @@ export default function Home() {
           protein: protein as number,
           fibre: fibre as number,
           plantPoints: plantPoints as number,
+          ...(recipeWeight && { recipeWeight }),
         },
       };
       await updateDiary(diaryUpdate);
@@ -206,7 +208,6 @@ export default function Home() {
         ref={addNewItemRef}
         isVisible={!!foodMode}
         mode={foodMode}
-        name={searchValue}
         selectedFood={selectedFood}
         selectedFoodServing={selectedFoodServing}
         handleSave={handleSaveDiaryEntry}

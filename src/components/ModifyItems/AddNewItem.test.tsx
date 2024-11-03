@@ -6,11 +6,13 @@ import { AddNewItemInterface } from './AddNewItem';
 import { MODES } from '@/interfaces/ItemModes';
 
 describe('Add New Item modal', () => {
-  const mockHandleSave = jest.fn((name, serving, calories, protein, fibre, plantPoints) => null);
+  const mockHandleSave = jest.fn(
+    (name, serving, calories, protein, fibre, plantPoints, recipeWeight) => null,
+  );
   const shouldNotBeClicked = { pointerEventsCheck: PointerEventsCheckLevel.Never };
   const mockDeleteDiaryEntry = jest.fn();
   const defaultProps: AddNewItemInterface = {
-    name: 'Food',
+    selectedFood: { name: 'Food' },
     isVisible: true,
     mode: MODES.CALCULATE,
     handleSave: mockHandleSave,
@@ -63,7 +65,15 @@ describe('Add New Item modal', () => {
     expect(saveButton).not.toHaveAttribute('disabled');
     await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
-    expect(mockHandleSave).toHaveBeenCalledWith(defaultProps.name, 100, NaN, NaN, NaN, 0);
+    expect(mockHandleSave).toHaveBeenCalledWith(
+      defaultProps.selectedFood?.name,
+      100,
+      NaN,
+      NaN,
+      NaN,
+      0,
+      undefined,
+    );
   });
 
   it('Should save to diary with only serving + calories, with no (but not 0) data for other fields', async () => {
@@ -73,7 +83,15 @@ describe('Add New Item modal', () => {
     expect(saveButton).not.toHaveAttribute('disabled');
     await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
-    expect(mockHandleSave).toHaveBeenCalledWith(defaultProps.name, 100, 100, NaN, NaN, 0);
+    expect(mockHandleSave).toHaveBeenCalledWith(
+      defaultProps.selectedFood?.name,
+      100,
+      100,
+      NaN,
+      NaN,
+      0,
+      undefined,
+    );
   });
 
   it('Should save to diary with 0 protein', async () => {
@@ -86,7 +104,15 @@ describe('Add New Item modal', () => {
     expect(saveButton).not.toHaveAttribute('disabled');
     await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
-    expect(mockHandleSave).toHaveBeenCalledWith(defaultProps.name, 100, 100, 0, 100, 0);
+    expect(mockHandleSave).toHaveBeenCalledWith(
+      defaultProps.selectedFood?.name,
+      100,
+      100,
+      0,
+      100,
+      0,
+      undefined,
+    );
   });
 
   it('Should save to diary with 0 fibre', async () => {
@@ -99,7 +125,15 @@ describe('Add New Item modal', () => {
     expect(saveButton).not.toHaveAttribute('disabled');
     await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
-    expect(mockHandleSave).toHaveBeenCalledWith(defaultProps.name, 100, 100, 100, 0, 0);
+    expect(mockHandleSave).toHaveBeenCalledWith(
+      defaultProps.selectedFood?.name,
+      100,
+      100,
+      100,
+      0,
+      0,
+      undefined,
+    );
   });
 
   it('Should save to diary with 1 plant points', async () => {
@@ -114,12 +148,20 @@ describe('Add New Item modal', () => {
     expect(saveButton).not.toHaveAttribute('disabled');
     await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
-    expect(mockHandleSave).toHaveBeenCalledWith(defaultProps.name, 100, 100, 100, 100, 1);
+    expect(mockHandleSave).toHaveBeenCalledWith(
+      defaultProps.selectedFood?.name,
+      100,
+      100,
+      100,
+      100,
+      1,
+      undefined,
+    );
   });
 
   it('Should allow an entry to be deleted in Update mode', async () => {
     render(<AddNewItem {...defaultProps} mode={MODES.UPDATE} />);
-    const row = await screen.findByRole('button', { name: 'Delete Food' });
+    const row = await screen.findByText('Delete Entry from Diary', { exact: false });
     await userEvent.click(row);
     expect(mockDeleteDiaryEntry).toHaveBeenCalled();
   });
