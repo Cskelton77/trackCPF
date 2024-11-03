@@ -14,6 +14,7 @@ const config: Config = {
   collectCoverageFrom: ['src/**/*'],
   coveragePathIgnorePatterns: [
     'src/api/*',
+    'src/app/api/*',
     'src/icons/*',
     'src/interfaces/*',
     'ParentWrapper.tsx',
