@@ -85,16 +85,17 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   useEffect(() => {
     const { shared } = props.searchParams;
     if (shared) {
-      try {
-        const decryptedData = Buffer.from(shared, 'base64').toString();
-        const jsonifiedData = JSON.parse(decryptedData);
-        setRecipeName(jsonifiedData.recipeName);
-        setIngredients(jsonifiedData.ingredients);
-        setServingDivisor(jsonifiedData.servingDivisor);
-        setServingAmount(jsonifiedData.servingAmount);
-      } catch (e) {
-        // console.log('error decoding', e);
-      }
+        console.log({ shared });
+        try {
+          const decryptedData = Buffer.from(shared, 'base64').toString();
+          const jsonifiedData = JSON.parse(decryptedData);
+          setRecipeName(jsonifiedData.recipeName);
+          setIngredients(jsonifiedData.ingredients);
+          setServingDivisor(jsonifiedData.servingDivisor);
+          setServingAmount(jsonifiedData.servingAmount);
+        } catch (e) {
+          console.log('error decoding', e);
+        }
     } else {
       const loadingData = localStorage.getItem('ingredients');
       if (loadingData) {
