@@ -84,6 +84,8 @@ export default function Home(props: { searchParams: { shared?: string } }) {
 
   useEffect(() => {
     const { shared } = props.searchParams;
+    console.log({ shared });
+
     if (shared) {
         console.log({ shared });
         try {
