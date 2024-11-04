@@ -22,7 +22,7 @@ import { postFood } from '@/api/food';
 import { DiaryData } from '@/interfaces/DailyData';
 import moment from 'moment';
 import { postDiary } from '@/api/diary';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { roundDisplay } from '@/components/MainDisplay/MainDisplay';
 import { NullableNumber } from '@/interfaces/ItemModes';
 import { Delete, PlantPoint } from '@/icons';
@@ -83,21 +83,23 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   useEffect(() => {
-    const { shared } = props.searchParams;
+    const searchParams = useSearchParams();
+    const shared = searchParams.get('shared');
+    // const { shared } = props.searchParams;
     console.log({ shared });
 
     if (shared) {
-        console.log({ shared });
-        try {
-          const decryptedData = Buffer.from(shared, 'base64').toString();
-          const jsonifiedData = JSON.parse(decryptedData);
-          setRecipeName(jsonifiedData.recipeName);
-          setIngredients(jsonifiedData.ingredients);
-          setServingDivisor(jsonifiedData.servingDivisor);
-          setServingAmount(jsonifiedData.servingAmount);
-        } catch (e) {
-          console.log('error decoding', e);
-        }
+      console.log({ shared });
+      try {
+        const decryptedData = Buffer.from(shared, 'base64').toString();
+        const jsonifiedData = JSON.parse(decryptedData);
+        setRecipeName(jsonifiedData.recipeName);
+        setIngredients(jsonifiedData.ingredients);
+        setServingDivisor(jsonifiedData.servingDivisor);
+        setServingAmount(jsonifiedData.servingAmount);
+      } catch (e) {
+        console.log('error decoding', e);
+      }
     } else {
       const loadingData = localStorage.getItem('ingredients');
       if (loadingData) {
