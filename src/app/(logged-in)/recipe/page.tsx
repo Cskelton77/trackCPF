@@ -52,6 +52,14 @@ enum Mode {
 }
 
 export default function Home(props: { searchParams: { shared?: string } }) {
+  return (
+    <Suspense>
+      <RecipePage />
+    </Suspense>
+  );
+}
+
+function RecipePage() {
   const uid = useContext(UserContext);
   const { rounding } = useContext(SettingsContext);
   const router = useRouter();
