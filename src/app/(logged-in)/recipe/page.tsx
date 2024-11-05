@@ -95,7 +95,7 @@ function RecipePage() {
     const shared = searchParams.get('shared');
     if (shared) {
       try {
-        const decryptedData = Buffer.from(shared, 'base64').toString();
+        const decryptedData = decodeURIComponent(Buffer.from(shared, 'base64').toString());
         const jsonifiedData = JSON.parse(decryptedData);
         setRecipeName(jsonifiedData.recipeName);
         setIngredients(jsonifiedData.ingredients);
@@ -262,7 +262,7 @@ function RecipePage() {
     });
     const encodedData = Buffer.from(stringifiedData).toString('base64');
     const url = `${window.location.origin}${window.location.pathname}`;
-    navigator.clipboard.writeText(`${url}?shared=${encodedData}`);
+    navigator.clipboard.writeText(`${url}?shared=${encodeURIComponent(encodedData)}`);
     setCopyText('Copied to Clipboard...');
     setTimeout(() => {
       setCopyText('Share Recipe');
