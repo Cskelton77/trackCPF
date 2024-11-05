@@ -1,5 +1,5 @@
 'use client';
-import { RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { RefObject, Suspense, useContext, useEffect, useRef, useState } from 'react';
 import { DatePicker, SearchBar } from '@/components';
 import { SettingsContext, UserContext } from '@/context';
 import {
@@ -277,7 +277,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   return (
-    <>
+    <Suspense>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} compact={true} />
       <Section>
         Recipe Name
@@ -481,6 +481,6 @@ export default function Home(props: { searchParams: { shared?: string } }) {
           </Save>
         </>
       )}
-    </>
+    </Suspense>
   );
 }
