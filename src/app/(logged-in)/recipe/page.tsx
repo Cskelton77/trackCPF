@@ -1,5 +1,5 @@
 'use client';
-import { RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { RefObject, Suspense, useContext, useEffect, useRef, useState } from 'react';
 import { DatePicker, SearchBar } from '@/components';
 import { SettingsContext, UserContext } from '@/context';
 import {
@@ -22,7 +22,7 @@ import { postFood } from '@/api/food';
 import { DiaryData } from '@/interfaces/DailyData';
 import moment from 'moment';
 import { postDiary } from '@/api/diary';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { roundDisplay } from '@/components/MainDisplay/MainDisplay';
 import { NullableNumber } from '@/interfaces/ItemModes';
 import { Delete, PlantPoint } from '@/icons';
@@ -51,10 +51,19 @@ enum Mode {
   GRAMS = 100,
 }
 
-export default function Home(props: { searchParams: { shared?: string } }) {
+export default function Home() {
+  return (
+    <Suspense>
+      <RecipePage />
+    </Suspense>
+  );
+}
+
+function RecipePage() {
   const uid = useContext(UserContext);
   const { rounding } = useContext(SettingsContext);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const servingInputRef = useRef<HTMLDivElement>(null);
   const calculateButtonRef = useRef<HTMLDivElement>(null);
@@ -83,7 +92,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   useEffect(() => {
-    const { shared } = props.searchParams;
+    const shared = searchParams.get('shared');
     if (shared) {
       try {
         const decryptedData = Buffer.from(shared, 'base64').toString();
@@ -93,7 +102,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
         setServingDivisor(jsonifiedData.servingDivisor);
         setServingAmount(jsonifiedData.servingAmount);
       } catch (e) {
-        // console.log('error decoding', e);
+        console.log('error decoding', e);
       }
     } else {
       const loadingData = localStorage.getItem('ingredients');
@@ -272,7 +281,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   return (
-    <>
+    <Suspense>
       <DatePicker date={displayDate} setDisplayDate={setDisplayDate} compact={true} />
       <Section>
         Recipe Name
@@ -476,6 +485,6 @@ export default function Home(props: { searchParams: { shared?: string } }) {
           </Save>
         </>
       )}
-    </>
+    </Suspense>
   );
 }
