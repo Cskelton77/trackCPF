@@ -51,7 +51,7 @@ enum Mode {
   GRAMS = 100,
 }
 
-export default function Home(props: { searchParams: { shared?: string } }) {
+export default function Home() {
   return (
     <Suspense>
       <RecipePage />
@@ -93,8 +93,6 @@ function RecipePage() {
 
   useEffect(() => {
     const shared = searchParams.get('shared');
-    // const { shared } = props.searchParams;
-    console.log({ shared });
 
     if (shared) {
       console.log({ shared });
