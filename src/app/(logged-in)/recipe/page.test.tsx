@@ -6,6 +6,7 @@ import { DefinedFoodObject } from '@/interfaces/FoodObject';
 import { postDiary } from '@/api/diary';
 import { postFood } from '@/api/food';
 import mockLocalStorage from '@/mockLocalStorage';
+import { useSearchParams } from 'next/navigation';
 
 const mockResponse: DefinedFoodObject[] = [
   {
@@ -26,7 +27,9 @@ jest.mock('next/navigation', () => ({
       replace: jest.fn(),
     };
   },
+  useSearchParams: jest.fn(),
 }));
+const mockGet = jest.fn();
 
 jest.mock('../../../api/food', () => ({
   deleteFood: jest.fn(),
@@ -48,6 +51,10 @@ describe('Add a Recipe Page', () => {
       value: mockLocalStorage,
     });
     mockLocalStorage.removeItem('ingredients');
+
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: mockGet,
+    });
   });
 
   const searchFor = async (text: string = 'D') => {
@@ -122,14 +129,14 @@ describe('Add a Recipe Page', () => {
   };
 
   it('Should add an ingredient from the database to the recipe', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddExistingFood();
     const enteredFood = await screen.findByText('Dropdown Food');
     expect(enteredFood).toBeInTheDocument();
   });
 
   it('Should add a new ingredient to the recipe', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddNewFood('New Item');
     const enteredFood = await screen.findByText('New Item');
     expect(enteredFood).toBeInTheDocument();
@@ -138,7 +145,7 @@ describe('Add a Recipe Page', () => {
   it('Should add two ingredients to a recipe', async () => {
     // This is more of a unit-test-test since this functionality is
     // covered by the previous two tests separately
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddExistingFood();
     const existingFood = await screen.findByText('Dropdown Food');
     expect(existingFood).toBeInTheDocument();
@@ -165,7 +172,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should calculate the recipe per serving', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddNewFood('Apples');
 
     await fillRow({
@@ -187,7 +194,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should calculate recipe per 100g', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddNewFood('New Item');
     await fillRow({
       name: 'New Item',
@@ -208,7 +215,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should be able to recalculate', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddNewFood('New Item');
     await fillRow({
       name: 'New Item',
@@ -247,7 +254,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should save recipe to diary', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddExistingFood();
     await fillRow({
       name: 'Dropdown Food',
@@ -291,7 +298,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should save new recipe ingredients to food DB', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddExistingFood();
     await searchForAndAddNewFood('Banana');
     await fillRow({
@@ -381,7 +388,7 @@ describe('Add a Recipe Page', () => {
 
     mockLocalStorage.setItem('ingredients', JSON.stringify(testRecipe));
 
-    render(<Home searchParams={{}} />);
+    render(<Home />);
 
     const recipeName = await screen.findByLabelText('Name of recipe');
     expect(recipeName).toHaveValue('Test Recipe Name');
@@ -407,7 +414,9 @@ describe('Add a Recipe Page', () => {
       ],
     };
     const urlToken = Buffer.from(JSON.stringify(testRecipe)).toString('base64');
-    render(<Home searchParams={{ shared: urlToken }} />);
+    mockGet.mockReturnValue(urlToken);
+
+    render(<Home />);
 
     const recipeName = await screen.findByLabelText('Name of recipe');
     expect(recipeName).toHaveValue('Test Recipe From URL');
@@ -416,7 +425,9 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should not crash with junk share URL', async () => {
-    render(<Home searchParams={{ shared: '35g42fq3g4gq354gtrwsg34q' }} />);
+    mockGet.mockReturnValue('35g42fq3g4gq354gtrwsg34q');
+
+    render(<Home />);
 
     const recipeName = await screen.findByLabelText('Name of recipe');
     expect(recipeName).toHaveValue('');
@@ -459,7 +470,9 @@ describe('Add a Recipe Page', () => {
       ],
     };
     const urlToken = Buffer.from(JSON.stringify(testRecipeUrl)).toString('base64');
-    render(<Home searchParams={{ shared: urlToken }} />);
+    mockGet.mockReturnValue(urlToken);
+
+    render(<Home />);
 
     const recipeName = await screen.findByLabelText('Name of recipe');
     expect(recipeName).toHaveValue('Test Recipe From URL');
@@ -475,7 +488,7 @@ describe('Add a Recipe Page', () => {
       },
     });
 
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddExistingFood();
     await fillRow({
       name: 'Dropdown Food',
@@ -502,7 +515,7 @@ describe('Add a Recipe Page', () => {
   });
 
   it('Should remove an item from ingredients array', async () => {
-    render(<Home searchParams={{}} />);
+    render(<Home />);
     await searchForAndAddExistingFood();
     await fillRow({
       name: 'Dropdown Food',
