@@ -93,9 +93,7 @@ function RecipePage() {
 
   useEffect(() => {
     const shared = searchParams.get('shared');
-
     if (shared) {
-      console.log({ shared });
       try {
         const decryptedData = Buffer.from(shared, 'base64').toString();
         const jsonifiedData = JSON.parse(decryptedData);
