@@ -55,6 +55,7 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   const uid = useContext(UserContext);
   const { rounding } = useContext(SettingsContext);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const servingInputRef = useRef<HTMLDivElement>(null);
   const calculateButtonRef = useRef<HTMLDivElement>(null);
@@ -83,7 +84,6 @@ export default function Home(props: { searchParams: { shared?: string } }) {
   };
 
   useEffect(() => {
-    const searchParams = useSearchParams();
     const shared = searchParams.get('shared');
     // const { shared } = props.searchParams;
     console.log({ shared });
