@@ -480,9 +480,9 @@ function RecipePage() {
             Save to Diary on {moment(displayDate).format('MMM Do')}
           </Save>
 
-          <Save role="button" onClick={() => shareRecipe()}>
+          {/* <Save role="button" onClick={() => shareRecipe()}>
             {copyText}
-          </Save>
+          </Save> */}
         </>
       )}
     </Suspense>
