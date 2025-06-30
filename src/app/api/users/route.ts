@@ -7,9 +7,9 @@ interface Users {
 }
 
 /*
-* Attempt to retreive a UID for the user's email address
-* If the email address is not found, create a UID for them
-*/
+ * Attempt to retreive a UID for the user's email address
+ * If the email address is not found, create a UID for them
+ */
 export async function POST(request: Request) {
   const body = await request.json();
   const email = body.email.toLowerCase();
@@ -33,10 +33,10 @@ export async function POST(request: Request) {
   return Response.json(data.rows[0].uid);
 }
 /*
-* Delete an email address/user account
-* This functionality is not exposed through the app
-* and exists primarily for testing database maintenance
-*/
+ * Delete an email address/user account
+ * This functionality is not exposed through the app
+ * and exists primarily for testing database maintenance
+ */
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const email = searchParams.get('email');
@@ -64,4 +64,3 @@ export async function DELETE(request: Request) {
   }
   return new Response('304');
 }
-
