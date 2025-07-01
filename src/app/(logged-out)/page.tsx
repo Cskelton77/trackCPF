@@ -20,7 +20,7 @@ export default function Page() {
     e.preventDefault();
     if (email) {
       const uid = await postUser(email);
-      if (uid) {
+      if (uid && uid !== 500) {
         localStorage.setItem('uid', uid);
         localStorage.setItem('email', email);
         router.push('/tracker/');

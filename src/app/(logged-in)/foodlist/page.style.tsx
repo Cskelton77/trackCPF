@@ -43,4 +43,3 @@ export const FoodEntry = styled.div`
 export const ActionBlock = styled.div`
   display: flex;
 `;
-

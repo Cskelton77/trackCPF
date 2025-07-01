@@ -1,4 +1,4 @@
-import { FoodObject } from "@/interfaces/FoodObject";
+import { FoodObject } from '@/interfaces/FoodObject';
 
 interface PostFood extends FoodObject {
   uid: string;
