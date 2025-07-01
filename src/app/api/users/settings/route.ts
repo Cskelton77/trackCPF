@@ -3,8 +3,8 @@ import { sql } from '@vercel/postgres';
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const uid = body.uid;
-  const settings = body.settings;
+  const uid = body?.uid;
+  const settings = body?.settings;
   const existingSettings = await sql`
   SELECT settings
   FROM settings
@@ -15,14 +15,14 @@ export async function POST(request: Request) {
       ...existingSettings.rows[0].settings,
       ...settings,
     };
-    const data = await sql`
+    await sql`
         UPDATE settings
         SET "settings"=${newSettings}
         WHERE uid like ${uid}
     `;
     return new Response('201');
   } else {
-    const data = await sql`
+    await sql`
         INSERT INTO settings(uid, settings)
         VALUES(${uid}, ${settings})
     `;
@@ -40,12 +40,15 @@ export async function GET(request: Request) {
         WHERE uid like ${uid}
         LIMIT 1`;
 
-  if (data) {
+  if (data.rowCount && data.rowCount > 0) {
     return Response.json(data.rows[0].settings);
   } else {
-    const data = await sql`
+    const blankSettings = {}
+    await sql`
         INSERT INTO settings(uid, settings)
-        VALUES(${uid}, {}
+        VALUES(${uid}, null)
     `;
+    return Response.json(blankSettings);
   }
+   
 }

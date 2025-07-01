@@ -12,4 +12,4 @@ const postUser = async (email: string) => {
   return response;
 };
 
-export default postUser
+export default postUser;

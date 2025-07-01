@@ -1,4 +1,4 @@
-import {IconProps} from './Icon.interface'
+import { IconProps } from './Icon.interface';
 import { getStyles } from './Icon.style';
 
 const ChevronLeft = ({ size = 12, style, onClick, label }: IconProps) => {
@@ -15,4 +15,4 @@ const ChevronLeft = ({ size = 12, style, onClick, label }: IconProps) => {
   );
 };
 
-export default ChevronLeft
+export default ChevronLeft;
