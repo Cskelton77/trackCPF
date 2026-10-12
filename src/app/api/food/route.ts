@@ -69,7 +69,7 @@ type Patch = {
   foodId: string;
   update: Partial<FoodObject>;
 };
-export async function PATCH(request: Request, context: { params: Patch }) {
+export async function PATCH(request: Request) {
   const body = await request.json();
   const uid = body.uid;
   const fid = body.food.fid;

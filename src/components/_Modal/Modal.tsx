@@ -5,7 +5,7 @@ export interface ModalInterface {
   title?: string;
   isVisible: boolean;
   close?: () => void;
-  children: JSX.Element;
+  children: React.JSX.Element;
 }
 const Modal = forwardRef(
   ({ title, isVisible, close, children }: ModalInterface, ref: ForwardedRef<HTMLDivElement>) => {
